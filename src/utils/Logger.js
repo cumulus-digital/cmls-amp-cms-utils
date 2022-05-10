@@ -134,7 +134,7 @@ export default class Logger {
 		) {
 			this.displayHeader(type, message, headerLength);
 			if (headerLength !== Infinity) {
-				window.top.console[type](message);
+				window.top.console.debug(message);
 			}
 			this.displayFooter();
 		}

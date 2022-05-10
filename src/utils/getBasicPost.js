@@ -12,8 +12,6 @@ function getBasicPost() {
 
 	const doc = window.self.document;
 
-	log.info(doc.body.classList);
-
 	if (!doc.body.classList.contains('post-template-default')) {
 		log.info('Not the default post template.');
 		return false;

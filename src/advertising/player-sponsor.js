@@ -19,7 +19,8 @@ import domReady from 'Utils/domReady';
 	 * the TuneGenie iframe and activate the sponsor adtag in the parent window.
 	 */
 	if (window.self !== window.top || window.self.name === 'pwm_pageFrame') {
-		window.parent._CMLS[nameSpace].inject();
+		log.info('Inside iframe, will assume parent has taken care of this.');
+		//window.parent._CMLS[nameSpace].init();
 		return;
 	}
 
@@ -27,6 +28,14 @@ import domReady from 'Utils/domReady';
 	window._CMLS[nameSpace] = {
 		inject: () => {
 			waitForPlayer().then(() => {
+				log.info(
+					window.self.name,
+					elementId,
+					window.self.document.querySelector(`#${elementId}`),
+					window.top.document.getElementById(elementId),
+					window.self.document.getElementById(elementId)
+				);
+
 				if (window.top.document.getElementById(elementId)) {
 					log.info('Sponsor ad is already injected.');
 					return;
@@ -97,15 +106,18 @@ import domReady from 'Utils/domReady';
 				});
 			});
 		},
+		init: () => {
+			domReady(() => {
+				if (window?._CMLS?.adPath) {
+					window._CMLS[nameSpace].inject();
+				} else {
+					window.addEventListener('cmls-adpath-discovered', () =>
+						window._CMLS[nameSpace].inject()
+					);
+				}
+			});
+		},
 	};
 
-	domReady(() => {
-		if (window?._CMLS?.adPath) {
-			window._CMLS[nameSpace].inject();
-		} else {
-			window.addEventListener('cmls-adpath-discovered', () =>
-				window._CMLS[nameSpace].inject()
-			);
-		}
-	});
+	window._CMLS[nameSpace].init();
 })(window.self);
