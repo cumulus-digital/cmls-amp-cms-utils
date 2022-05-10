@@ -8,7 +8,8 @@ import {
 	navigateThroughPlayer,
 	addAfterPageFrame,
 } from 'Utils/playerTools';
-import domReady from '../utils/domReady';
+import domReady from 'Utils/domReady';
+import createElement from 'Utils/createElement';
 
 (($, window, undefined) => {
 	const scriptName = 'NAV THROUGH PLAYER',
@@ -22,205 +23,180 @@ import domReady from '../utils/domReady';
 		return;
 	}
 
-	waitForPlayer().then(() => {
-		const updateIframeLinks = (iframe) => {
-			if (!detectPlayer()) {
-				return;
-			}
+	const updateAdIframe = (iframe) => {
+		if (!iframe) {
+			log.warn(
+				'updateAdIframe called without an iframe! This should never happen.'
+			);
+			return;
+		}
 
-			if (!iframe) {
-				log.warn('updateIframeLinks called without an iframe');
-				return;
-			}
+		// make sure we can access content in this iframe
+		const src = iframe.getAttribute('src');
+		if (
+			src &&
+			(!src.includes(window.location.hoostname) ||
+				src.includes('/safeframe/'))
+		) {
+			log.info('iframe is a safeframe, skipping.');
+			return;
+		}
 
-			if (iframe?.tagName.toLowerCase() !== 'iframe') {
-				log.warn('updateIframeLinks called on a non-iframe', iframe);
-				return;
-			}
-
+		try {
 			const $iframe = iframe.jquery ? iframe : $(iframe);
-
-			// make sure we can access this iframe
-			if (
-				iframe.getAttribute('src') &&
-				(!iframe
-					.getAttribute('src')
-					.includes(window.location.hostname) ||
-					iframe.getAttribute('src').includes('/safeframe/'))
-			) {
-				log.info('Skipping safe frame ad', iframe);
-			}
-
-			try {
-				$iframe
-					.contents()
-					.find(
-						'a[target="_self"],a[target="_top"],a[target="_parent"]'
-					)
-					.each(() => {
-						log.info('Updating link in slot', iframe.id, this);
-						updateLink(this);
-					});
-			} catch (e) {
-				log.warn('Unable to update links in iframe', iframe, e);
-			}
-		};
-
-		const updateLink = (link) => {
-			if (!detectPlayer()) {
-				return;
-			}
-			if (!link) {
-				log.warn('updateLink called without a link');
-				return;
-			}
-			if (link?.tagName?.toLowerCase() !== 'a') {
-				log.warn('updateLink called on a non-link', link);
-			}
-
-			const $link = link.jquery ? link : $(link);
-			const testLink = window.document.createElement('a');
-			testLink.href = $link.prop('href');
-
-			// Modify DFP clickthrough links with relative destination URLs
-			// https://adclick.g.doubleclick.net/pcs/click?xai=AKAOjsuvjv8o-MlaMVicrisvj4oUF99EfgdZlQTft_qATngPo-agSxGvJJfpZIdv8lpTnPijPwvHFd1A63O55CPoXAXsiutchSikcVVlu0SRF0lcJAuJ0P8cMPDIMI2fH3pT_EO3VBcav_GBGmT7X1yl9PIZHTTMY34mCfLj1rwSRJvuIXARMXVeXzNdKLExKo41Xro_c4_7-oICux_fvv6X6BF_qo_9beWVsoKJCu4U8M1ZBZQIgXCLmpfsyw&sig=Cg0ArKJSzCv5yAsBtw7xEAE&urlfix=1&adurl=/2019/04/08/bbmas-t2w/
-			// https://adclick.g.doubleclick.net/pcs/click?xai=AKAOjsvw4br-d0qrU4kyoGKAPTkjV23vKmjv5ZtUqiN5FUIvHvGUVsyzD3GIcTZwaWpzX7Iy8XG5ANHDFd4RZWl7mwQdzYOh-XuOnTdxtg93HIa8d4QvPClZthG8JVXTVq7XQ_m8lKJKjl-E5QIOzjG2y94ZHDvuwhmqeVxY7sXmSM2PZjnCM8KFQHwsgRAdpfXkgiaG0SlaKaeOD_9zJYryIzZf-6d3peddeDo54fDIhvJvz0IxM46aaPirng&sig=Cg0ArKJSzAlOWQms07awEAE&urlfix=1&adurl=http://www.test107.com//2019/04/08/bbmas-t2w/2019/04/08/bbmas-t2w/
-			if (
-				testLink.href.includes('doubleclick.net') &&
-				testLink.href.includes('adurl=/')
-			) {
-				log.info(
-					'Found a DFP clickthrough with a relative link',
-					testLink.href
+			const links = $iframe
+				.contents()
+				.find(
+					'a[target="_self"],a[target="_top"],a[target="_parent"],a[href*="adurl=/"]'
 				);
-				const u = new window.URL(testLink.href);
-				const usr = new window.URLSearchParams(u.search);
-				const relUrl = usr.get('adurl');
+			if (links.length) {
+				links.each((i, link) => updateLink(link));
+			} else {
+				log.info('No relevant links in iframe');
+			}
+		} catch (e) {
+			log.info('updateLinks failed', e);
+		}
+	};
 
-				if (relUrl) {
-					testLink.href = testLink.href.replace(
+	const updateLink = (link, force) => {
+		if (!link) {
+			log.info('updateLink called without a link?', link);
+			return;
+		}
+
+		const $link = link.jquery ? link : $(link);
+		const testLink = createElement.el('a', { href: $link.prop('href') });
+		const testURL = new URL(testLink.href);
+
+		// Modify DFP clickthrough links with relative destination URLs
+		// https://adclick.g.doubleclick.net/pcs/click?xai=AKAOjsuvjv8o-MlaMVicrisvj4oUF99EfgdZlQTft_qATngPo-agSxGvJJfpZIdv8lpTnPijPwvHFd1A63O55CPoXAXsiutchSikcVVlu0SRF0lcJAuJ0P8cMPDIMI2fH3pT_EO3VBcav_GBGmT7X1yl9PIZHTTMY34mCfLj1rwSRJvuIXARMXVeXzNdKLExKo41Xro_c4_7-oICux_fvv6X6BF_qo_9beWVsoKJCu4U8M1ZBZQIgXCLmpfsyw&sig=Cg0ArKJSzCv5yAsBtw7xEAE&urlfix=1&adurl=/2019/04/08/bbmas-t2w/
+		// https://adclick.g.doubleclick.net/pcs/click?xai=AKAOjsvw4br-d0qrU4kyoGKAPTkjV23vKmjv5ZtUqiN5FUIvHvGUVsyzD3GIcTZwaWpzX7Iy8XG5ANHDFd4RZWl7mwQdzYOh-XuOnTdxtg93HIa8d4QvPClZthG8JVXTVq7XQ_m8lKJKjl-E5QIOzjG2y94ZHDvuwhmqeVxY7sXmSM2PZjnCM8KFQHwsgRAdpfXkgiaG0SlaKaeOD_9zJYryIzZf-6d3peddeDo54fDIhvJvz0IxM46aaPirng&sig=Cg0ArKJSzAlOWQms07awEAE&urlfix=1&adurl=http://www.test107.com//2019/04/08/bbmas-t2w/2019/04/08/bbmas-t2w/
+
+		log.info('Processing', link, link.href);
+
+		if (
+			testURL.hostname.includes('doubleclick') &&
+			testURL.searchParams.has('adurl') &&
+			testURL.searchParams.get('adurl').indexOf('/') === 0
+		) {
+			log.info(
+				'Found a relative link in a GPT clickthrough! Transforming...',
+				link.href
+			);
+			link.setAttribute(
+				'href',
+				link
+					.getAttribute('href')
+					.replace(
 						'adurl=/',
-						`adurl=${window.location.protocol}//${window.location.hostname}/`
-					);
-					$link.prop('href', testLink.href);
-					log.info(
-						'Modified relative clickthrough',
-						relUrl,
-						testLink.href
-					);
-				} else {
-					log.warn(
-						'Could not parse query string in clickthrough',
-						testLink.href
-					);
-				}
-			} else if (
-				// Do not modify off-domain URLs unless forced to
-				testLink.href.indexOf('/') !== 0 &&
-				testLink.hostname !== window.location.hostname &&
-				!force
-			) {
-				log.info('Off-site URL found in link, skipping', testLink);
-				testLink = null;
-				return;
-			} else if (testLink.href.indexOf('/') === 0) {
-				log.info('Relative link found', testLink);
-				$link.prop('target', '_top');
-			}
+						'adurl=' +
+							window.location.protocol +
+							'//' +
+							window.location.hostname +
+							'/'
+					)
+			);
+		} else if (
+			link.href.indexOf('/') !== 0 &&
+			testURL.hostname !== window.location.hostname
+		) {
+			log.info('Link contains off-site URL, will not modify.', link.href);
+			return;
+		} else if (link.href.indexOf('/') === 0) {
+			log.info(
+				'Relative link found, prepending local hostname',
+				link.href
+			);
+			link.setAttribut(
+				'href',
+				window.location.protocol +
+					'//' +
+					window.location.hostname +
+					link.getAttribute('href')
+			);
+			link.setAttribute('target', '_top');
+		} else if (testURL.hostname === window.location.hostname) {
+			log.info(
+				'Local site link found, setting target to _top',
+				link.href
+			);
+			link.setAttribute('target', '_top');
+		}
 
-			log.info('Setting link to navigate through player', link);
-			$link.off(`.${nameSpace}`).on(`click.${nameSpace}`, clickThrough);
-			testLink = null;
-		};
-
-		const clickThrough = (e) => {
-			if (e && detectPlayer()) {
-				e.preventDefault();
-			} else {
-				return;
-			}
-			log.info('Intercepting click.');
-			navigate(e.currentTarget.href);
-		};
-
-		const navigate = (url) => {
-			try {
-				// Attempt to push events through GTM
-			} catch (e) {}
-
-			log.info('Navigating through TuneGenie player', url);
-			navigateThroughPlayer(url);
-		};
-
-		const init = () => {
-			if (!detectPlayer()) {
-				log.info('No player is active, exiting');
-			}
-
-			// watch for future slots
-			function watchSlots(e) {
-				if (!e?.slot) {
-					log.warn('Caught slot render event but it was invalid', e);
-					return;
-				}
-				const slot = e.slot;
-				const ID = slot.getSlotElementId();
-				let el = window.document.getElementById(ID);
-				if (!el) {
-					log.warn(
-						'Caught slot render event but ID could not be found'
-					);
-					return;
-				}
-
-				if (el.tagName.toLowerCase() !== 'iframe') {
-					el = el.querySelector('iframe[id*="google_ads_iframe"]');
-				}
-
-				if (!el) {
-					log.info(
-						'Render event on slot without iframe',
-						slot,
-						ID,
-						el
-					);
-					return;
-				}
-
-				log.info('Caught render event', ID, el, slot);
-				updateIframeLinks(el);
-			}
-
-			window._CMLS.adTag.addListener('slotRenderEnded', watchSlots);
-
-			// Deregister listener after TG creates pageframe
-			addAfterPageFrame(() => {
-				window._CMLS.adTag.removeListener(
-					'slotRenderEnded',
-					watchSlots
-				);
-			});
-
-			const updateExisting = () => {
-				$(
-					'iframe[id^="google_ads_iframe"],#cmlsWallpaperInjectorContainer iframe, #CMLSPlayerSponsorship iframe'
-				).each(function () {
-					log.info('Addressing existing google ad frame', this);
-					updateIframeLinks(this);
-				});
-			};
-			updateExisting();
-			$(window)
-				.off(`.${nameSpace}`)
-				.on(`load.${nameSpace}`, () => updateExisting());
-		};
-
-		domReady(() => {
-			if (window?._CMLS?.adPath) {
-				init();
-			} else {
-				window.addEventListener('cmls-adpath-discovered', () => init());
-			}
+		log.info('Setting ad link to navigate through player', link);
+		$link.off(`.${nameSpace}`).on(`click.${nameSpace}`, (e) => {
+			clickThrough(e);
 		});
+	};
+
+	const clickThrough = (e) => {
+		if (!e || !e?.currentTarget?.href) {
+			return;
+		}
+		if (detectPlayer()) {
+			log.info('Intercepting click.');
+			e.preventDefault();
+			navigateThroughPlayer(e.currentTarget.href);
+		}
+	};
+
+	const init = () => {
+		// watch for future slots
+		function watchSlots(e) {
+			if (!e?.slot) {
+				log.warn('Caught slot render event but it was invalid', e);
+				return;
+			}
+			const slot = e.slot;
+			const ID = slot.getSlotElementId();
+			let el = window.document.getElementById(ID);
+			if (!el) {
+				log.warn(
+					'Caught slot render event but element could not be found'
+				);
+				return;
+			}
+
+			if (el.tagName.toLowerCase() !== 'iframe') {
+				el = el.querySelector('iframe[id*="google_ads_iframe"]');
+			}
+
+			if (!el) {
+				log.info('Render event on slot without iframe', slot, ID, el);
+				return;
+			}
+
+			log.info('Caught render event', ID, el, slot);
+			updateAdIframe(el);
+		}
+
+		window._CMLS.adTag.addListener('slotRenderEnded', watchSlots);
+
+		// Deregister listener after TG creates pageframe
+		addAfterPageFrame(() => {
+			window._CMLS.adTag.removeListener('slotRenderEnded', watchSlots);
+		});
+
+		const updateExisting = () => {
+			$(
+				'iframe[id^="google_ads_iframe"],#cmlsWallpaperInjectorContainer iframe, #CMLSPlayerSponsorship iframe'
+			).each(function () {
+				log.info('Addressing existing google ad frame', this);
+				updateAdIframe(this);
+			});
+		};
+		updateExisting();
+		$(window)
+			.off(`.${nameSpace}`)
+			.on(`load.${nameSpace}`, () => updateExisting());
+	};
+
+	domReady(() => {
+		if (window?._CMLS?.adPath) {
+			init();
+		} else {
+			window.addEventListener('cmls-adpath-discovered', () => init());
+		}
 	});
 })(window?.jQuery, window.self);

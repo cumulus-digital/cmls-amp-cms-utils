@@ -28,14 +28,6 @@ import domReady from 'Utils/domReady';
 	window._CMLS[nameSpace] = {
 		inject: () => {
 			waitForPlayer().then(() => {
-				log.info(
-					window.self.name,
-					elementId,
-					window.self.document.querySelector(`#${elementId}`),
-					window.top.document.getElementById(elementId),
-					window.self.document.getElementById(elementId)
-				);
-
 				if (window.top.document.getElementById(elementId)) {
 					log.info('Sponsor ad is already injected.');
 					return;
