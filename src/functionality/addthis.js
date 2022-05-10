@@ -5,7 +5,7 @@ import Logger from 'Utils/Logger';
 import domReady from 'Utils/domReady';
 import createElement from 'Utils/createElement';
 import getBasicPost from 'Utils/getBasicPost';
-import { addAfterPageFrame } from 'Utils/detectPlayer';
+import { addAfterPageFrame } from 'Utils/playerTools';
 
 (($, window, undefined) => {
 	const scriptName = 'ADDTHIS INJECTOR',

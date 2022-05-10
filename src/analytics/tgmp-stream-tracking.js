@@ -4,7 +4,7 @@
 import Logger from 'Utils/Logger';
 import { push as gtmPush } from 'Utils/GTM';
 
-import { detectPlayer, waitForPlayer } from 'Utils/detectPlayer';
+import { detectPlayer, waitForPlayer } from 'Utils/playerTools';
 
 ((window, undefined) => {
 	const scriptName = 'STREAM TRACKING',

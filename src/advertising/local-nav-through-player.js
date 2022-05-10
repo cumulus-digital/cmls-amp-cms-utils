@@ -7,7 +7,7 @@ import {
 	waitForPlayer,
 	navigateThroughPlayer,
 	addAfterPageFrame,
-} from 'Utils/detectPlayer';
+} from 'Utils/playerTools';
 import domReady from '../utils/domReady';
 
 (($, window, undefined) => {

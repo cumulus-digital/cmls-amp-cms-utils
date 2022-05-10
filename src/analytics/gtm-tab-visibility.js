@@ -3,7 +3,7 @@
  */
 import Logger from 'Utils/Logger';
 import { addVisibilityListener, isVisible } from 'Utils/tabVisibility';
-import { addAfterPageFrame } from 'Utils/detectPlayer';
+import { addAfterPageFrame } from 'Utils/playerTools';
 import { push as gtmPush } from 'Utils/GTM';
 
 ((window, undefined) => {

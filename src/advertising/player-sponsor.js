@@ -2,7 +2,7 @@
  * Send global targeting (cms-sgroups) values as GTM events
  */
 import Logger from 'Utils/Logger';
-import { waitForPlayer } from 'Utils/detectPlayer';
+import { waitForPlayer, isInIframe } from 'Utils/playerTools';
 import domReady from 'Utils/domReady';
 
 ((window) => {
@@ -18,7 +18,7 @@ import domReady from 'Utils/domReady';
 	 * If we're not the top window, assume we're on a second click in
 	 * the TuneGenie iframe and activate the sponsor adtag in the parent window.
 	 */
-	if (window.self !== window.top || window.self.name === 'pwm_pageFrame') {
+	if (isInIframe()) {
 		log.info('Inside iframe, will assume parent has taken care of this.');
 		//window.parent._CMLS[nameSpace].init();
 		return;

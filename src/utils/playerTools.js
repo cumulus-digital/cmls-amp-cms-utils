@@ -1,5 +1,5 @@
 /**
- * Detect if site has player
+ * Tools related to TuneGenie player
  */
 import triggerEvent from 'Utils/triggerEvent';
 import domReady from 'Utils/domReady';
@@ -48,6 +48,14 @@ export const getPageWindow = () => {
 		return pageFrame.contentWindow;
 	}
 	return window.top;
+};
+
+/**
+ * Detects if the current window is in an iframe
+ * @returns {boolean}
+ */
+export const isInIframe = () => {
+	return window.self !== window.top || window.self.name === 'pwm_pageFrame';
 };
 
 /**

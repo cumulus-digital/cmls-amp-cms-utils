@@ -12,7 +12,7 @@ import {
 	detectPlayer,
 	getPageWindow,
 	addAfterPageFrame,
-} from 'Utils/detectPlayer';
+} from 'Utils/playerTools';
 import domReady from 'Utils/domReady';
 
 ((window, undefined) => {
