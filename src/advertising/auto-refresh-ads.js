@@ -34,7 +34,7 @@ import {
 		window?._CMLS?.autoRefreshAdsExclusion || [];
 
 	class AutoRefreshAds {
-		tabVisibile = true;
+		tabVisible = true;
 		timer = null;
 		fireTime = null;
 		state = 'off';
@@ -44,11 +44,23 @@ import {
 				this.fireTime = fireTime;
 				this.start(this.fireTime);
 			}
-			this.tabVisible = isTabVisible();
 			const me = this;
 			addVisibilityListener(() => {
-				me.tabVisibile = isTabVisible();
+				log.info(
+					'Caught visibility change',
+					me.tabVisible,
+					isTabVisible()
+				);
+				// Pase timer if tab goes away
+				if (me.tabVisible && !isTabVisible()) {
+					me.tabVisible = isTabVisible();
+				}
+				// Restart timer if tab returns
+				if (!me.tabVisible && isTabVisible()) {
+					me.tabVisible = isTabVisible();
+				}
 			});
+			this.tabVisible = isTabVisible();
 		}
 
 		checkConditions() {
@@ -66,7 +78,7 @@ import {
 				return -1;
 			}
 			if (!this.tabVisible) {
-				log.info('Tab is hidden, ads will not refresh.');
+				log.info('Tab is hidden.');
 				return 0;
 			}
 			return 1;
@@ -76,10 +88,18 @@ import {
 			const condition = this.checkConditions();
 			if (condition === 1) {
 				const now = new Date();
-				log.debug('Checking timer', [
-					now.toLocaleString(),
-					this.fireTime.toLocaleString(),
-				]);
+				if (Math.random() > 0.8) {
+					log.debug({
+						headerLength: Infinity,
+						message: [
+							'Checking timer (This notice is random to reduce noise)',
+							[
+								now.toLocaleString(),
+								this.fireTime.toLocaleString(),
+							],
+						],
+					});
+				}
 				if (now.getTime() >= this.fireTime.getTime()) {
 					this.fire();
 					return;
@@ -122,11 +142,14 @@ import {
 					return false;
 				}
 
+				const quarterHeight = rect.height * 0.25;
+				const quarterWidth = rect.width * 0.25;
+
 				const check = {
-					top: rect?.top + rect.height * 0.25,
-					right: rect?.right - rect.width * 0.25,
-					bottom: rect?.bottom - rect.height * 0.25,
-					left: rect?.left + rect.width * 0.25,
+					top: rect?.top + quarterHeight,
+					right: rect?.right - quarterWidth,
+					bottom: rect?.bottom - quarterHeight,
+					left: rect?.left + quarterWidth,
 				};
 
 				const winHeight =
@@ -137,8 +160,10 @@ import {
 					window.document.documentElement.clientWidth;
 
 				return (
-					(check.bottom >= 0 || check.top <= winHeight) &&
-					(check.right >= 0 || check.left <= winWidth)
+					check.bottom >= 0 &&
+					check.top <= winHeight &&
+					check.right >= 0 &&
+					check.left <= winWidth
 				);
 			}
 
@@ -211,6 +236,17 @@ import {
 			this.timer = null;
 			this.fireTime = null;
 			this.state = false;
+		}
+
+		pause() {
+			log.info('Pausing timer.', this.fireTime);
+			clearTimeout(this.timer);
+			this.timer = null;
+		}
+
+		restart() {
+			log.info('Restarting timer', this.fireTime);
+			this.checkTimer();
 		}
 
 		start(fireTime) {

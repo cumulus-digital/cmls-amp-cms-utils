@@ -45,7 +45,7 @@ export function isVisible() {
  * @param {boolean,object} options Optional options object for listener
  * @returns
  */
-export function addVisibilityListener(callback, options = false) {
+export function addVisibilityListener(callback, options = {}) {
 	return window.document.addEventListener(
 		visibilityApi.event,
 		callback,
