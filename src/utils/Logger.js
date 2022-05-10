@@ -61,7 +61,7 @@ export default class Logger {
 
 	resolveMessage(request) {
 		let message = request;
-		let headerLength = 80;
+		let headerLength = 160;
 		if (
 			Array.isArray(request) &&
 			request.length > 0 &&
@@ -74,7 +74,7 @@ export default class Logger {
 		return { message, headerLength };
 	}
 
-	smallString(str, length = 80) {
+	smallString(str, length = 160) {
 		return !str
 			? str
 			: (str instanceof Element
@@ -83,7 +83,7 @@ export default class Logger {
 			  ).substring(0, length);
 	}
 
-	displayHeader(type, message, headerLength = 80) {
+	displayHeader(type, message, headerLength = 160) {
 		// Add icon to message type
 		const icons = {
 			debug: '🐞',
@@ -122,7 +122,7 @@ export default class Logger {
 		window.top.console.groupEnd();
 	}
 
-	logMessage(type, message, headerLength = 80) {
+	logMessage(type, message, headerLength = 160) {
 		if (!(typeof console === 'object' && console.groupCollapsed)) {
 			return false;
 		}
