@@ -1,0 +1,29 @@
+{
+  "name": "cmls-amp-fse-utils",
+  "version": "1.0.0",
+  "description": "Front-end scripting for CMLS AMP CMS sites",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack --env NODE_ENV=production",
+    "start": "webpack-dev-server --config ./webpack.config.js"
+  },
+  "author": "vena",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@babel/core": "^7.17.10",
+    "@babel/preset-env": "^7.17.10",
+    "@wordpress/prettier-config": "^1.2.0",
+    "babel-loader": "^8.2.5",
+    "browserslist": "^4.20.3",
+    "clean-webpack-plugin": "^4.0.0",
+    "core-js": "^3.22.4",
+    "core-js-compat": "^3.22.4",
+    "lodash": "^4.17.21",
+    "prettier": "^2.6.2",
+    "terser-webpack-plugin": "^5.3.1",
+    "webpack": "^5.72.0",
+    "webpack-cli": "^4.9.2",
+    "webpack-dev-server": "^4.9.0"
+  }
+}
