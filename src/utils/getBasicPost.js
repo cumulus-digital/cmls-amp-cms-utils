@@ -13,7 +13,7 @@ function getBasicPost() {
 	const doc = window.self.document;
 
 	if (!doc.body.classList.contains('post-template-default')) {
-		log.info('Not the default post template.');
+		log.info('Not the default post template.', doc.body.classList);
 		return false;
 	}
 

@@ -36,6 +36,9 @@ export const api = visibilityApi;
  * @returns {boolean}
  */
 export function isVisible() {
+	if (window.document.visibilityState) {
+		return !(window.document.visibilityState === 'hidden');
+	}
 	return !window.document[visibilityApi.hidden];
 }
 

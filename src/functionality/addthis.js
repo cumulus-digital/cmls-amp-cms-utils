@@ -71,7 +71,7 @@ import { addAfterPageFrame } from 'Utils/playerTools';
 			});
 
 			addThisDiv.innerHTML = `
-				<div class="label">Share this:</div>
+				<div class="custom-label">Share this:</div>
 				<a class="addthis_button_preferred_1"></a>
 				<a class="addthis_button_preferred_2"></a>
 				<a class="addthis_button_preferred_3"></a>
@@ -83,7 +83,7 @@ import { addAfterPageFrame } from 'Utils/playerTools';
 				#${id} {
 					font-size: 1rem;
 				}
-				#${id} > .label {
+				#${id} .custom-label {
 					line-height: 32px;
 					float: left;
 				}
@@ -110,15 +110,14 @@ import { addAfterPageFrame } from 'Utils/playerTools';
 				}
 			`;
 
-			if (post || window.matchMedia('(max-width: 600px)').matches) {
-				// On basic posts and mobile, inject after post content
+			const injectInline = (injectPoint) => {
 				log.info('Injecting inline share buttons.');
 				addThisDiv.classList.add('addthis_default_style');
-				post.after(addThisStyle);
-				post.after(addThisDiv);
+				injectPoint.after(addThisStyle);
+				injectPoint.after(addThisDiv);
 				addthis.init();
-			} else if (window.document.querySelector('body.single')) {
-				// Any other single post, inject floating bar
+			};
+			const injectFloating = () => {
 				log.info('Injecting floating share buttons');
 				addThisDiv.classList.add('addthis_floating_style');
 				addThisStyle.innerHTML += `
@@ -130,7 +129,7 @@ import { addAfterPageFrame } from 'Utils/playerTools';
 						bottom: 100px;
 						z-index: 999999;
 					}
-					#${id} > label {
+					#${id} .custom-label {
 						display: none;
 					}
 					#${id} .addthis_button_compact,
@@ -144,6 +143,29 @@ import { addAfterPageFrame } from 'Utils/playerTools';
 				window.document.body.appendChild(addThisStyle);
 				window.document.body.appendChild(addThisDiv);
 				addthis.init();
+			};
+
+			if (post) {
+				// On basic posts, inject after post content
+				injectInline(post);
+			} else if (
+				window.document.querySelector(
+					'body.single,body.layout-using-single'
+				)
+			) {
+				// Any other single post/page
+				if (window.matchMedia('(min-width: 600px)').matches) {
+					// Not mobile, inject floater
+					injectFloating();
+				} else {
+					// Mobile, figure out a good place to put it
+					const placement = $(
+						'.wrapper-content > .grid-container > *:last,.is-fse-theme .wp-block-post-content:first'
+					);
+					if (placement.length) {
+						injectInline(post);
+					}
+				}
 			}
 		}
 
@@ -166,7 +188,7 @@ import { addAfterPageFrame } from 'Utils/playerTools';
 				'_atc',
 				'_atd',
 				'_ate',
-				'_atr',
+				//'_atr',
 				'_atw',
 			];
 			const els = window.document.querySelectorAll(
