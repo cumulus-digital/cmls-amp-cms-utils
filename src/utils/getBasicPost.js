@@ -12,7 +12,8 @@ function getBasicPost() {
 
 	const doc = window.self.document;
 
-	if (!doc.body.classList.contains('post-template-default')) {
+	const isPost = ['post-template-default', 'feed_posts-template-default'];
+	if (!isPost.some((cl) => doc.body.classList.contains(cl))) {
 		log.info('Not the default post template.', doc.body.classList);
 		return false;
 	}
