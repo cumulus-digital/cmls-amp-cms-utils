@@ -189,15 +189,15 @@ import { addAfterPageFrame } from 'Utils/playerTools';
 				'_atd',
 				'_ate',
 				//'_atr',
-				'_atw',
+				//'_atw',
 			];
-			const els = window.document.querySelectorAll(
+			const els = window.top.document.querySelectorAll(
 				`[id*="${nameSpace}"],#_atssh,#at4-thankyou,#at-expanded-menu-host`
 			);
 			Array.prototype.forEach.call(els, (el) => el.remove());
 			addthis_properties.forEach((prop) => {
-				if (window[prop]) {
-					delete window[prop];
+				if (window.top[prop]) {
+					delete window.top[prop];
 				}
 			});
 		});
