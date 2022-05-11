@@ -21,12 +21,12 @@ import { push as gtmPush } from 'Utils/GTM';
 			const changeTime = Math.round((Date.now() - start) / 10000);
 			log.info(
 				'Event fired',
-				isVisible() ? 'visible' : 'hidden',
+				isVisible() === true ? 'visible' : 'hidden',
 				changeTime
 			);
 			gtmPush({
 				event: 'page-visibility',
-				'page-visible': isVisible(),
+				'page-visible': isVisible() === true ? true : false,
 				'page-visible-time-change': changeTime,
 			});
 			start = Date.now();

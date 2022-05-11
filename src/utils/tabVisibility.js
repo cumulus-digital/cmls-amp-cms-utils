@@ -30,16 +30,29 @@ if (typeof window.document.mozHidden !== 'undefined') {
 }
 
 export const api = visibilityApi;
+let isUnloading = false;
+/**
+ * Visibility changes on navigation, but we don't want to track that.
+ */
+window.addEventListener('beforeunload', () => {
+	isUnloading = true;
+});
 
 /**
  * Detect if the tab is currently visible.
  * @returns {boolean}
  */
 export function isVisible() {
+	let visibile = true;
 	if (window.document.visibilityState) {
-		return !(window.document.visibilityState === 'hidden');
+		visibile = !(window.document.visibilityState === 'hidden');
+	} else {
+		visibile = !window.document[visibilityApi.hidden];
 	}
-	return !window.document[visibilityApi.hidden];
+	if (!visibile && isUnloading) {
+		return -1;
+	}
+	return visibile;
 }
 
 /**

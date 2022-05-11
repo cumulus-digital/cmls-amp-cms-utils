@@ -46,21 +46,25 @@ import {
 			}
 			const me = this;
 			addVisibilityListener(() => {
+				// Handle unloading
+				if (isTabVisible() === -1) {
+					me.tabVisible = false;
+				}
 				log.info(
 					'Caught visibility change',
 					me.tabVisible,
 					isTabVisible()
 				);
 				// Pase timer if tab goes away
-				if (me.tabVisible && !isTabVisible()) {
-					me.tabVisible = isTabVisible();
+				if (me.tabVisible && !isTabVisible() === true) {
+					me.tabVisible = false;
 				}
 				// Restart timer if tab returns
-				if (!me.tabVisible && isTabVisible()) {
-					me.tabVisible = isTabVisible();
+				if (!me.tabVisible && isTabVisible() === true) {
+					me.tabVisible = true;
 				}
 			});
-			this.tabVisible = isTabVisible();
+			this.tabVisible = isTabVisible() === true ? true : false;
 		}
 
 		checkConditions() {
