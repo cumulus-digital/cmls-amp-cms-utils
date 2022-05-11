@@ -40,7 +40,7 @@ window.addEventListener('beforeunload', () => {
 
 /**
  * Detect if the tab is currently visible.
- * @returns {boolean}
+ * @returns {boolean,number} Returns boolean on basic visibility events, -1 if window is unloading
  */
 export function isVisible() {
 	let visibile = true;
