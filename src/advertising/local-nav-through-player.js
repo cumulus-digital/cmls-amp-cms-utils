@@ -23,6 +23,9 @@ import createElement from 'Utils/createElement';
 		return;
 	}
 
+	window._CMLS = window._CMLS || {};
+	window._CMLS[nameSpace] = {};
+
 	const updateAdIframe = (iframe) => {
 		if (!iframe) {
 			log.warn(
@@ -129,6 +132,7 @@ import createElement from 'Utils/createElement';
 			clickThrough(e);
 		});
 	};
+	window._CMLS[nameSpace].updateLink = updateLink;
 
 	const clickThrough = (e) => {
 		if (!e || !e?.currentTarget?.href) {
