@@ -123,20 +123,21 @@ import debounce from 'lodash/debounce';
 			});
 		}
 
-		checkSum(s) {
-			let hash = 0,
-				i,
-				c;
-			const strlen = s.length;
-			if (strlen === 0) {
-				return hash;
+		checkSum(str, seed = 0) {
+			let h1 = 0xdeadbeef ^ seed,
+				h2 = 0x41c6ce57 ^ seed;
+			for (let i = 0, ch; i < str.length; i++) {
+				ch = str.charCodeAt(i);
+				h1 = Math.imul(h1 ^ ch, 2654435761);
+				h2 = Math.imul(h2 ^ ch, 1597334677);
 			}
-			for (i = 0; i < strlen; i++) {
-				c = s.charCodeAt(i);
-				hash = (hash << 5) - hash + c;
-				hash = hash & hash;
-			}
-			return hash;
+			h1 =
+				Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^
+				Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+			h2 =
+				Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^
+				Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+			return 4294967296 * (2097151 & h2) + (h1 >>> 0);
 		}
 
 		hasPassedStickPosition() {
@@ -390,7 +391,7 @@ import debounce from 'lodash/debounce';
 					return;
 				}
 
-				log.info('Checking wallpaper slot.');
+				log.info('Checking wallpaper request.');
 
 				const slotIframe = me.cache.dfpSlot.querySelector('iframe');
 				if (!slotIframe || !slotIframe.contentWindow) {
@@ -419,49 +420,56 @@ import debounce from 'lodash/debounce';
 					return;
 				}
 
-				const container = me.getContainer();
-				log.debug(container);
-
-				// Generate a simple hash of the image url and link
-				// so we don't inject the same background twice
-				const hash = me.checkSum(
-					(slotLink.length
-						? slotLink.getAttribute('href') +
-						  slotLink.getAttribute('target')
-						: '') + slotImage.getAttribute('src')
-				);
-				log.info('Generated request hash.', hash);
-
-				if (hash === container.dataset.hash) {
-					log.info('Request is already handled.');
-					return;
-				}
-				container.dataset.hash = hash;
-
-				let bgColor = 'rgba(0,0,0,1)';
-				container.style.setProperty('background-color', bgColor);
-				if (slotBgColor && slotBgColor.test(/\#[a-z0-9]+/i)) {
-					const bgColorTest = slotBgColor.match(/(\#[a-z0-9])/i);
-					if (bgColorTest?.length > 1) {
-						bgColor = bgColorCheck[1];
-					}
-					container.style.setProperty('background-color', bgColor);
-				} else {
-					log.info(
-						'No background color in request, will attempt to discover one from image.'
-					);
-					me.getBackgroundColorFromImage(slotImage).then((color) => {
-						const container = me.getContainer();
-						log.info(
-							'Got updated background color',
-							color,
-							container
-						);
-						container.style.setProperty('background-color', color);
-					});
-				}
-
 				me.reset().then(() => {
+					const container = me.getContainer();
+
+					// Generate a simple hash of the image url and link
+					// so we don't inject the same background twice
+					const hash = me.checkSum(
+						(slotLink.length
+							? slotLink.getAttribute('href') +
+							  slotLink.getAttribute('target')
+							: '') + slotImage.getAttribute('src')
+					);
+					log.info('Generated request hash.', hash);
+
+					if (hash === container.dataset.hash) {
+						log.info('Request is already handled.');
+						return;
+					}
+					container.dataset.hash = hash;
+
+					let bgColor = 'rgba(0,0,0,1)';
+					container.style.setProperty('background-color', bgColor);
+					if (slotBgColor && slotBgColor.test(/\#[a-z0-9]+/i)) {
+						const bgColorTest = slotBgColor.match(/(\#[a-z0-9])/i);
+						if (bgColorTest?.length > 1) {
+							bgColor = bgColorCheck[1];
+						}
+						container.style.setProperty(
+							'background-color',
+							bgColor
+						);
+					} else {
+						log.info(
+							'No background color in request, will attempt to discover one from image.'
+						);
+						me.getBackgroundColorFromImage(slotImage).then(
+							(color) => {
+								const container = me.getContainer();
+								log.info(
+									'Got updated background color',
+									color,
+									container
+								);
+								container.style.setProperty(
+									'background-color',
+									color
+								);
+							}
+						);
+					}
+
 					log.info('Building new wallpaper.', slotLink);
 
 					let link = createElement.el('span');
@@ -487,7 +495,6 @@ import debounce from 'lodash/debounce';
 					});
 
 					log.info('Injecting iframe into container');
-					const container = me.getContainer();
 					container.append(iframe);
 
 					const imgSrc = slotImage.getAttribute('src');
