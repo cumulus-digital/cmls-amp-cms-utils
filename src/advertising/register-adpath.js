@@ -19,8 +19,10 @@ function registerAdPath() {
 		slots.some((slot) => {
 			const p = slot?.getAdUnitPath();
 			if (p && p.indexOf(`/${network}/`) > -1) {
+				log.info(slot.getSlotElementId(), p);
 				window._CMLS = window._CMLS || {};
 				window._CMLS.adPath = p;
+				return true;
 			}
 		});
 	}
@@ -30,7 +32,7 @@ function registerAdPath() {
 	}
 }
 
-if (window?._CMLS?.adTag?.rawInterface()) {
+if (window?._CMLS?.adTag?.rawInterface().pubadsReady) {
 	registerAdPath();
 } else {
 	window.addEventListener('cmls-adtag-loaded', () => registerAdPath());
