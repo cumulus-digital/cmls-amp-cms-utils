@@ -262,8 +262,9 @@ import debounce from 'lodash/debounce';
 			const originalStyles = this.getOriginalStyles();
 			log.info('Checking positioning', originalStyles);
 			if (
-				originalStyles?.injection?.position === 'relative' ||
-				originalStyles?.injection?.position === 'static'
+				['relative', 'static'].includes(
+					originalStyles?.injection?.position
+				)
 			) {
 				log.info('Setting injection position to relative.');
 				this.cache.injectionNode.style.setProperty(
@@ -271,21 +272,33 @@ import debounce from 'lodash/debounce';
 					'relative'
 				);
 			}
-			if (originalStyles?.content?.position === 'relative') {
+			if (
+				['reltive', 'static'].includes(
+					originalStyles?.content?.position
+				)
+			) {
 				log.info('Setting content node position to relative.');
 				this.cache.contentNode.style.setProperty(
 					'position',
 					'relative'
 				);
 			}
-			if (originalStyles?.content?.zIndex === 'auto') {
+			if (
+				originalStyles?.content?.zIndex === 'auto' ||
+				(Number.isInteger(originalStyles?.content?.zIndex) &&
+					originalStyles?.content?.zIndex <= containerStyle.zIndex)
+			) {
 				log.info('Raising content area above wallpeper container.');
 				this.cache.contentNode.style.setProperty(
 					'z-index',
 					containerStyle.zIndex + 1
 				);
 			}
-			if (originalStyles?.footer?.position === 'static') {
+			if (
+				['relative', 'static'].includes(
+					originalStyles?.footer?.position
+				)
+			) {
 				log.info('Setting footer area position to relative.');
 				this.cache.footerNode.style.setProperty('position', 'relative');
 				this.cache.footerNode.style.setProperty(
