@@ -454,10 +454,10 @@ import debounce from 'lodash/debounce';
 
 					let bgColor = 'rgba(0,0,0,1)';
 					container.style.setProperty('background-color', bgColor);
-					if (slotBgColor && slotBgColor.test(/\#[a-z0-9]+/i)) {
+					if (slotBgColor && /\#[a-z0-9]+/i.test(slotBgColor)) {
 						const bgColorTest = slotBgColor.match(/(\#[a-z0-9])/i);
 						if (bgColorTest?.length > 1) {
-							bgColor = bgColorCheck[1];
+							bgColor = bgColorTest[1];
 						}
 						container.style.setProperty(
 							'background-color',
