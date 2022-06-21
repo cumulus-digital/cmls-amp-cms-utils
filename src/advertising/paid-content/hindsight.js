@@ -1,7 +1,13 @@
+import Logger from 'Utils/Logger';
 import createElement from 'Utils/createElement';
 
 export default () => {
+	const scriptName = 'HINDSIGHT',
+		version = '0.1';
+	const log = new Logger(`${scriptName} ${version}`);
+
 	if (window.self.NO_HINDSIGHT || window.parent.NO_HINDSIGHT) {
+		log.info('NO_HINDSIGHT found, refusing injection.');
 		return;
 	}
 
@@ -40,10 +46,12 @@ export default () => {
 	];
 
 	if (
+		// Explicitly named
 		(window?._ampconfig?.settings?.syn_site_name &&
 			hindsightSites.includes(
 				window?._ampconfig?.settings?.syn_site_name?.toUpperCase()
 			)) ||
+		// All "news" formats
 		(window?._ampconfig?.settings?.format &&
 			window?._ampconfig?.settings?.format
 				?.toLowerCase()
@@ -52,5 +60,9 @@ export default () => {
 		var url =
 			'//static.solutionshindsight.net/teju-webclient/teju-webclient.min.js';
 		return createElement.script(url);
+	} else {
+		log.info(
+			'Site is not allowlisted or a News format, refusing injection.'
+		);
 	}
 };

@@ -16,7 +16,7 @@ const injectables = {
 (($, window, undefined) => {
 	const scriptName = 'PAID CONTENT INJECTOR',
 		nameSpace = 'paidContentInjector',
-		version = '0.1';
+		version = '0.2';
 
 	const log = new Logger(`${scriptName} ${version}`);
 
