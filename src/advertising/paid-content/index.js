@@ -26,6 +26,11 @@ const injectables = {
 	}
 
 	$(() => {
+		if (window.self.NO_PAIDCONTENT) {
+			log.info('NO_PAIDCONTENT flag found, exiting.');
+			return;
+		}
+
 		const doc = window.document;
 
 		const entry = getBasicPost();
