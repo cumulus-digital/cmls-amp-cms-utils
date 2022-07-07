@@ -103,19 +103,18 @@ import domReady from '../utils/domReady';
 				window.top?.tgmp?.options?.theme;
 
 			const triggers = selectors.join(',');
-			$(window)
+			console.log('Attaching click handler to our selectors.', selectors);
+			$(window.document.body)
 				.off(`click.${nameSpace}`)
-				.on(`click.${nameSpace}`, (e) => {
-					if (!detectPlayer()) {
-						return;
-					}
-					if (e.target.matches(triggers)) {
+				.on(`click.${nameSpace}`, triggers, (e) => {
+					if (detectPlayer()) {
 						e.preventDefault();
 						const attr = getCommandSource(e.target);
 						if (attr) {
 							const command = parseCommand(e.target, attr);
-							log.info('Received command click', command);
+							log.info('Received command', command);
 							if (typeof window?.tgmp?.update === 'function') {
+								log.info('Executing command', command);
 								window.tgmp.update(command);
 							}
 						}

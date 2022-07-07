@@ -34,26 +34,40 @@ import domReady from '../utils/domReady';
 
 	domReady(() => {
 		waitForPlayer().then(() => {
+			log.info('Attaching click listener to our selectors', selectors);
 			$(window.document.body)
 				.off(`click.${nameSpace}`)
 				.on(`click.${nameSpace}`, selectors.join(','), (e) => {
-					if (!detectPlayer()) {
-						return;
+					if (detectPlayer()) {
+						e.preventDefault();
+						if (
+							window.top?.tgmp_default_brand &&
+							window.top?.tgmp?.options?.brand !==
+								window.top?.tgmp_default_brand
+						) {
+							window.top.tgmp.update({
+								brand: window.top.tgmp_default_brand,
+								theme: window.top?.tgmp_default_theme,
+								autostart: true,
+							});
+						}
+						log.info('Caught a listen live request');
+						window.tgmp.playStream();
+						e.preventDefault();
+						if (
+							window.top?.tgmp_default_brand &&
+							window.top?.tgmp?.options?.brand !==
+								window.top?.tgmp_default_brand
+						) {
+							window.top.tgmp.update({
+								brand: window.top.tgmp_default_brand,
+								theme: window.top?.tgmp_default_theme,
+								autostart: true,
+							});
+						}
+						log.info('Caught a listen live request');
+						window.tgmp.playStream();
 					}
-					e.preventDefault();
-					if (
-						window.top?.tgmp_default_brand &&
-						window.top?.tgmp?.options?.brand !==
-							window.top?.tgmp_default_brand
-					) {
-						window.top.tgmp.update({
-							brand: window.top.tgmp_default_brand,
-							theme: window.top?.tgmp_default_theme,
-							autostart: true,
-						});
-					}
-					log.info('Caught a listen live request');
-					window.tgmp.playStream();
 				});
 			addAfterPageFrame(() => {
 				$(window).off(`click.${nameSpace}`);
