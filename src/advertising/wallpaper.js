@@ -90,6 +90,16 @@ import debounce from 'lodash/debounce';
 				doc.body.append(style);
 			}
 
+			this.refreshCache();
+			if (
+				!this.cache.dfpSlot ||
+				!this.cache.injectionNode ||
+				!this.cache.contentNode
+			) {
+				log.info('Could not locate important DOM nodes, exiting.');
+				return;
+			}
+
 			const me = this;
 
 			// Watch for slot renders
