@@ -48,21 +48,7 @@ import domReady from '../utils/domReady';
 							window.top.tgmp.update({
 								brand: window.top.tgmp_default_brand,
 								theme: window.top?.tgmp_default_theme,
-								autostart: true,
-							});
-						}
-						log.info('Caught a listen live request');
-						window.tgmp.playStream();
-						e.preventDefault();
-						if (
-							window.top?.tgmp_default_brand &&
-							window.top?.tgmp?.options?.brand !==
-								window.top?.tgmp_default_brand
-						) {
-							window.top.tgmp.update({
-								brand: window.top.tgmp_default_brand,
-								theme: window.top?.tgmp_default_theme,
-								autostart: true,
+								//autostart: true,
 							});
 						}
 						log.info('Caught a listen live request');

@@ -1,6 +1,6 @@
 {
   "name": "cmls-amp-fse-utils",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Front-end scripting for CMLS AMP CMS sites",
   "main": "index.js",
   "scripts": {
