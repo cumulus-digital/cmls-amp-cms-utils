@@ -75,7 +75,6 @@ import { addAfterPageFrame } from 'Utils/playerTools';
 				<a class="addthis_button_preferred_1"></a>
 				<a class="addthis_button_preferred_2"></a>
 				<a class="addthis_button_preferred_3"></a>
-				<a class="addthis_button_preferred_4"></a>
 				<a class="addthis_button_compact"></a>
 			`;
 
