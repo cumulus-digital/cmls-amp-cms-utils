@@ -72,9 +72,9 @@ import { addAfterPageFrame } from 'Utils/playerTools';
 
 			addThisDiv.innerHTML = `
 				<div class="custom-label">Share this:</div>
-				<a class="addthis_button_preferred_1"></a>
-				<a class="addthis_button_preferred_2"></a>
-				<a class="addthis_button_preferred_3"></a>
+				<a class="addthis_button_facebook"></a>
+				<a class="addthis_button_twitter"></a>
+				<a class="addthis_button_mailto"></a>
 				<a class="addthis_button_compact"></a>
 			`;
 
