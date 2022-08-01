@@ -112,6 +112,7 @@ import { addAfterPageFrame } from 'Utils/playerTools';
 			const injectInline = (injectPoint) => {
 				log.info('Injecting inline share buttons.');
 				addThisDiv.classList.add('addthis_default_style');
+				const $injectPoint = $(injectPoint);
 				injectPoint.after(addThisStyle);
 				injectPoint.after(addThisDiv);
 				addthis.init();
@@ -162,7 +163,7 @@ import { addAfterPageFrame } from 'Utils/playerTools';
 						'.wrapper-content > .grid-container > *:last,.is-fse-theme .wp-block-post-content:first'
 					);
 					if (placement.length) {
-						injectInline(post);
+						injectInline(placement);
 					}
 				}
 			}
