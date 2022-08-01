@@ -113,8 +113,8 @@ import { addAfterPageFrame } from 'Utils/playerTools';
 				log.info('Injecting inline share buttons.');
 				addThisDiv.classList.add('addthis_default_style');
 				const $injectPoint = $(injectPoint);
-				injectPoint.after(addThisStyle);
-				injectPoint.after(addThisDiv);
+				$injectPoint.after(addThisStyle);
+				$injectPoint.after(addThisDiv);
 				addthis.init();
 			};
 			const injectFloating = () => {
