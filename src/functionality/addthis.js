@@ -159,9 +159,20 @@ import { addAfterPageFrame } from 'Utils/playerTools';
 					injectFloating();
 				} else {
 					// Mobile, figure out a good place to put it
-					const placement = $(
-						'.wrapper-content > .grid-container > *:last,.is-fse-theme .wp-block-post-content:first'
+					let pId = document.body.className.match(
+						/(page|post)\-id\-(\d+)/
 					);
+					let placement = false;
+					if (pId && pId.length > 2) {
+						placement = $(
+							`.wrapper-content > .grid-container article#post-${pId[2]}:first`
+						);
+					} else {
+						placement = $(
+							'.wrapper-content > .grid-container > *:last,.is-fse-theme .wp-block-post-content:first'
+						);
+					}
+					console.log(placement);
 					if (placement.length) {
 						injectInline(placement);
 					}
