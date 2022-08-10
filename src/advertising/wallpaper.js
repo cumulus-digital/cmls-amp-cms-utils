@@ -642,10 +642,12 @@ import debounce from 'lodash/debounce';
 	domReady(() => {
 		// Do not operate on FSE sites.
 		if (doc.body.classList.contains('is-fse-theme')) {
+			log.info('Is FSE site, will not handle wallpapers.');
 			return;
 		}
 		// Do not operate on mobile.
 		if (window.matchMedia('(max-width: 1100px)').matches) {
+			log.info('Viewport is too narrow for wallpapers.');
 			return;
 		}
 
