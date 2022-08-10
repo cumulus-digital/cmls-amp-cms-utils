@@ -31,8 +31,6 @@ const injectables = {
 			return;
 		}
 
-		const doc = window.document;
-
 		const entry = getBasicPost();
 
 		if (!entry) {

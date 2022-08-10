@@ -36,7 +36,7 @@ function getBasicPost() {
 	}
 
 	const entryBox = entry.getBoundingClientRect();
-	if (entryBox.width > 900 || entryBox.width < 300) {
+	if (entryBox.width > 800 || entryBox.width < 300) {
 		log.info('Post content width is suspicious.', entryBox.width);
 		return false;
 	}

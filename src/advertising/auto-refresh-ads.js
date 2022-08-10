@@ -10,7 +10,7 @@ import {
 ((window, undefined) => {
 	const scriptName = 'AUTO REFRESH ADS',
 		nameSpace = 'autoRefreshAds',
-		version = '0.1';
+		version = '0.2';
 
 	const log = new Logger(`${scriptName} ${version}`);
 
