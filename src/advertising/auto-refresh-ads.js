@@ -14,6 +14,11 @@ import {
 
 	const log = new Logger(`${scriptName} ${version}`);
 
+	if (window.document.body.className.indexOf('is-fse-theme') > -1) {
+		log.info('Auto refresh ads are handled by Express Ads');
+		return;
+	}
+
 	if (window.location.search.includes('cmlsDisableAdRefresh')) {
 		log.info('Disabled by cmlsDisableAdRefresh query');
 		return;
