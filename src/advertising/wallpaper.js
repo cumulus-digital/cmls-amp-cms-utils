@@ -327,6 +327,13 @@ import debounce from 'lodash/debounce';
 
 			this.trackScroll();
 
+			// Disable freestar's side walls
+			window.freestar = window.freestar || {};
+			window.freestar.config = window.freestar.config || {};
+			window.freestar.config.disabledProducts =
+				freestar.config.disabledProducts || {};
+			window.freestar.config.disabledProducts.sideWall = true;
+
 			// Remove any obstructive nodes
 			if (this.cache?.obstructiveNodes?.length) {
 				log.info(
@@ -398,6 +405,14 @@ import debounce from 'lodash/debounce';
 					log.info('Removing container');
 					container.remove();
 				}
+
+				// re-enable freestar's side walls
+				window.freestar = window.freestar || {};
+				window.freestar.config = window.freestar.config || {};
+				window.freestar.config.disabledProducts =
+					freestar.config.disabledProducts || {};
+				window.freestar.config.disabledProducts.sideWall = false;
+
 				me.cache.container = null;
 				me.untrackScroll();
 				resolve();
