@@ -242,6 +242,10 @@ import debounce from 'lodash/debounce';
 			}
 			log.info('Generating new wallpaper container.');
 			this.refreshCache();
+			if (!this.cache.injectionNode) {
+				log.warn('Could not find injection node!', this.cache);
+				return;
+			}
 			const container = createElement.el('div', {
 				id: `${nameSpace}Container`,
 				class: `${nameSpace}-container`,

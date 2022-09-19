@@ -103,7 +103,7 @@ import domReady from '../utils/domReady';
 				window.top?.tgmp?.options?.theme;
 
 			const triggers = selectors.join(',');
-			console.log('Attaching click handler to our selectors.', selectors);
+			log.info('Attaching click handler to our selectors.', selectors);
 			$(window.document.body)
 				.off(`click.${nameSpace}`)
 				.on(`click.${nameSpace}`, triggers, (e) => {
