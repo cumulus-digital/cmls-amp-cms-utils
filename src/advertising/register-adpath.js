@@ -15,20 +15,25 @@ function registerAdPath() {
 	const pa = window?._CMLS?.adTag.rawInterface().pubads();
 	const slots = pa?.getSlots();
 
+	log.info(`Testing ${slots.length} slots`);
 	if (slots.length) {
 		slots.some((slot) => {
 			const p = slot?.getAdUnitPath();
 			if (p && p.indexOf(`/${network}/`) > -1) {
-				log.info(slot.getSlotElementId(), p);
+				log.info('Found in-network slot', slot.getSlotElementId(), p);
 				window._CMLS = window._CMLS || {};
 				window._CMLS.adPath = p;
+				log.info('Ad path discovered', window._CMLS.adPath);
+				triggerEvent(
+					window,
+					'cmls-adpath-discovered',
+					window._CMLS.adPath
+				);
 				return true;
 			}
 		});
-	}
-	if (window?._CMLS?.adPath) {
-		log.info('Ad path discovered', window._CMLS.adPath);
-		triggerEvent(window, 'cmls-adpath-discovered', window._CMLS.adPath);
+	} else {
+		log.warn('Found no slots!');
 	}
 }
 
