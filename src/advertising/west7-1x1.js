@@ -20,7 +20,10 @@ import domReady from 'Utils/domReady';
 			return;
 		}
 
-		const tag = createElement.el('div', { id: elementId });
+		const tag = createElement.el('div', {
+			id: elementId,
+			style: 'line-height:0;font-size:0;height:0',
+		});
 		doc.body.appendChild(tag);
 		log.info('Slot injected');
 
