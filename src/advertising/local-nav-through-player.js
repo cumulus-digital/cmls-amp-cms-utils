@@ -87,18 +87,20 @@ import createElement from 'Utils/createElement';
 				'Found a relative link in a GPT clickthrough! Transforming...',
 				link.href
 			);
+			let newUrl =
+				window.location.protocol +
+				'//' +
+				window.location.hostname +
+				'/';
+			if (
+				window.location.hostname.includes('franklymedia.com') &&
+				window?._ampconfig?.site_url
+			) {
+				newUrl = window._ampconfig.site_url.replace(/\/+$/, '') + '/';
+			}
 			link.setAttribute(
 				'href',
-				link
-					.getAttribute('href')
-					.replace(
-						'adurl=/',
-						'adurl=' +
-							window.location.protocol +
-							'//' +
-							window.location.hostname +
-							'/'
-					)
+				link.getAttribute('href').replace('adurl=/', 'adurl=' + newUrl)
 			);
 		} else if (
 			link.href.indexOf('/') !== 0 &&
