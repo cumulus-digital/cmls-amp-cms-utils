@@ -116,7 +116,7 @@ import createElement from 'Utils/createElement';
 				'Relative link found, prepending local hostname',
 				link.getAttribute('href')
 			);
-			let newUrl = getHostname() + '/' + link.getAttribute('href');
+			let newUrl = getHostname() + link.getAttribute('href');
 			link.setAttribute('href', newUrl);
 			link.setAttribute('target', '_top');
 		} else if (testURL.hostname === window.location.hostname) {
