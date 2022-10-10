@@ -89,7 +89,7 @@ import createElement from 'Utils/createElement';
 		// https://adclick.g.doubleclick.net/pcs/click?xai=AKAOjsuvjv8o-MlaMVicrisvj4oUF99EfgdZlQTft_qATngPo-agSxGvJJfpZIdv8lpTnPijPwvHFd1A63O55CPoXAXsiutchSikcVVlu0SRF0lcJAuJ0P8cMPDIMI2fH3pT_EO3VBcav_GBGmT7X1yl9PIZHTTMY34mCfLj1rwSRJvuIXARMXVeXzNdKLExKo41Xro_c4_7-oICux_fvv6X6BF_qo_9beWVsoKJCu4U8M1ZBZQIgXCLmpfsyw&sig=Cg0ArKJSzCv5yAsBtw7xEAE&urlfix=1&adurl=/2019/04/08/bbmas-t2w/
 		// https://adclick.g.doubleclick.net/pcs/click?xai=AKAOjsvw4br-d0qrU4kyoGKAPTkjV23vKmjv5ZtUqiN5FUIvHvGUVsyzD3GIcTZwaWpzX7Iy8XG5ANHDFd4RZWl7mwQdzYOh-XuOnTdxtg93HIa8d4QvPClZthG8JVXTVq7XQ_m8lKJKjl-E5QIOzjG2y94ZHDvuwhmqeVxY7sXmSM2PZjnCM8KFQHwsgRAdpfXkgiaG0SlaKaeOD_9zJYryIzZf-6d3peddeDo54fDIhvJvz0IxM46aaPirng&sig=Cg0ArKJSzAlOWQms07awEAE&urlfix=1&adurl=http://www.test107.com//2019/04/08/bbmas-t2w/2019/04/08/bbmas-t2w/
 
-		log.info('Processing', link, link.href);
+		log.info('Processing', link, link.getAttribute('href'), testURL);
 
 		if (
 			testURL.hostname.includes('doubleclick') &&
@@ -106,12 +106,12 @@ import createElement from 'Utils/createElement';
 				link.getAttribute('href').replace('adurl=/', 'adurl=' + newUrl)
 			);
 		} else if (
-			link.href.indexOf('/') !== 0 &&
+			link.getAttribute('href').indexOf('/') !== 0 &&
 			testURL.hostname !== window.location.hostname
 		) {
 			log.info('Link contains off-site URL, will not modify.', link.href);
 			return;
-		} else if (link.href.indexOf('/') === 0) {
+		} else if (link.getAttribute('href').indexOf('/') === 0) {
 			log.info(
 				'Relative link found, prepending local hostname',
 				link.href
