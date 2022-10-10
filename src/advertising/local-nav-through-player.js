@@ -62,6 +62,19 @@ import createElement from 'Utils/createElement';
 		}
 	};
 
+	const getHostname = () => {
+		let newUrl =
+			window.location.protocol + '//' + window.location.hostname + '/';
+		if (
+			window.location.hostname.includes('franklymedia.com') &&
+			window?._ampconfig?.site_url
+		) {
+			newUrl = window._ampconfig.site_url.replace(/\/+$/, '') + '/';
+		}
+		log.info('Returning hostname URL base', newUrl);
+		return newUrl;
+	};
+
 	const updateLink = (link, force) => {
 		if (!link) {
 			log.info('updateLink called without a link?', link);
@@ -87,17 +100,7 @@ import createElement from 'Utils/createElement';
 				'Found a relative link in a GPT clickthrough! Transforming...',
 				link.href
 			);
-			let newUrl =
-				window.location.protocol +
-				'//' +
-				window.location.hostname +
-				'/';
-			if (
-				window.location.hostname.includes('franklymedia.com') &&
-				window?._ampconfig?.site_url
-			) {
-				newUrl = window._ampconfig.site_url.replace(/\/+$/, '') + '/';
-			}
+			let newUrl = getHostname();
 			link.setAttribute(
 				'href',
 				link.getAttribute('href').replace('adurl=/', 'adurl=' + newUrl)
@@ -113,13 +116,8 @@ import createElement from 'Utils/createElement';
 				'Relative link found, prepending local hostname',
 				link.href
 			);
-			link.setAttribut(
-				'href',
-				window.location.protocol +
-					'//' +
-					window.location.hostname +
-					link.getAttribute('href')
-			);
+			let newUrl = getHostname();
+			link.setAttribute('href', newUrl);
 			link.setAttribute('target', '_top');
 		} else if (testURL.hostname === window.location.hostname) {
 			log.info(
