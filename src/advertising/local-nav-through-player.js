@@ -69,7 +69,7 @@ import createElement from 'Utils/createElement';
 			window.location.hostname.includes('franklymedia.com') &&
 			window?._ampconfig?.site_url
 		) {
-			newUrl = window._ampconfig.site_url.replace(/\/+$/, '') + '/';
+			newUrl = window._ampconfig.site_url.replace(/\/+$/, '');
 		}
 		log.info('Returning hostname URL base', newUrl);
 		return newUrl;
@@ -98,9 +98,9 @@ import createElement from 'Utils/createElement';
 		) {
 			log.info(
 				'Found a relative link in a GPT clickthrough! Transforming...',
-				link.href
+				link.getAttribute('href')
 			);
-			let newUrl = getHostname();
+			let newUrl = getHostname() + '/';
 			link.setAttribute(
 				'href',
 				link.getAttribute('href').replace('adurl=/', 'adurl=' + newUrl)
@@ -114,9 +114,9 @@ import createElement from 'Utils/createElement';
 		} else if (link.getAttribute('href').indexOf('/') === 0) {
 			log.info(
 				'Relative link found, prepending local hostname',
-				link.href
+				link.getAttribute('href')
 			);
-			let newUrl = getHostname();
+			let newUrl = getHostname() + '/' + link.getAttribute('href');
 			link.setAttribute('href', newUrl);
 			link.setAttribute('target', '_top');
 		} else if (testURL.hostname === window.location.hostname) {
