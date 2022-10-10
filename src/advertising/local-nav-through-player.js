@@ -63,8 +63,7 @@ import createElement from 'Utils/createElement';
 	};
 
 	const getHostname = () => {
-		let newUrl =
-			window.location.protocol + '//' + window.location.hostname + '/';
+		let newUrl = window.location.protocol + '//' + window.location.hostname;
 		if (
 			window.location.hostname.includes('franklymedia.com') &&
 			window?._ampconfig?.site_url
