@@ -41,14 +41,17 @@ import { waitForPlayer, isInIframe } from 'Utils/playerTools';
 
 			if (track?.title && track.title !== lastTrack.title) {
 				lastTrack.title = track.title;
-				log.info('Setting tgmp-title', track.title);
-				window._CMLS.adTag.setTargeting('tgmp-title', track.artist);
+				log.info('Setting webplayer-title', track.title);
+				window._CMLS.adTag.setTargeting(
+					'webplayer-title',
+					track.artist
+				);
 
 				if (track?.artist && track.artist !== lastTrack.artist) {
 					lastTrack.artist = track.artist;
-					log.info('Setting tgmp-artist', track.artist);
+					log.info('Setting webplayer-artist', track.artist);
 					window._CMLS.adTag.setTargeting(
-						'tgmp-artist',
+						'webplayer-artist',
 						track.artist
 					);
 				}
