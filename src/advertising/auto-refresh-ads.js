@@ -202,7 +202,7 @@ import {
 								if (el && me.isElVisible(el)) {
 									return slot;
 								}
-								const pos = el.getTargeting('pos');
+								const pos = slot.getTargeting('pos');
 								if (
 									pos &&
 									pos.length &&
