@@ -202,6 +202,14 @@ import {
 								if (el && me.isElVisible(el)) {
 									return slot;
 								}
+								const pos = el.getTargeting('pos');
+								if (
+									pos &&
+									pos.length &&
+									pos.includes('wallpaper-ad')
+								) {
+									return slot;
+								}
 							});
 
 							if (visibleSlots.length) {
