@@ -84,11 +84,18 @@ import domReady from '../utils/domReady';
 		autostart = true,
 		userInitStart = 'true'
 	) => {
-		log.info({ brand, theme, autostart });
 		if (autostart === false) {
 			userInitStart = 'false';
 		}
+		log.info({ brand, theme, autostart, userInitStart });
 		if (detectPlayer() && typeof window?.tgmp?.update === 'function') {
+			window.top.tgmp_default_brand =
+				window.top.tgmp_default_brand ||
+				'' + window.top?.tgmp?.options?.brand;
+			window.top.tgmp_default_theme =
+				window.top.tgmp_default_theme ||
+				window.top?.tgmp?.options?.theme;
+
 			window.tgmp.update({ brand, theme });
 			if (autostart || userInitStart === 'true') {
 				log.info('Auto-starting stream.');
@@ -125,10 +132,13 @@ import domReady from '../utils/domReady';
 						if (attr) {
 							const command = parseCommand(e.target, attr);
 							log.info('Received command', command);
+							window._CMLS.switchStream.apply(command);
+							/*
 							if (typeof window?.tgmp?.update === 'function') {
 								log.info('Executing command', command);
 								window.tgmp.update(command);
 							}
+							*/
 						}
 					}
 				});

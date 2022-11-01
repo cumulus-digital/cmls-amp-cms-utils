@@ -40,19 +40,20 @@ import domReady from '../utils/domReady';
 				.on(`click.${nameSpace}`, selectors.join(','), (e) => {
 					if (detectPlayer()) {
 						e.preventDefault();
+						log.info('Caught a listen live request');
 						if (
 							window.top?.tgmp_default_brand &&
 							window.top?.tgmp?.options?.brand !==
 								window.top?.tgmp_default_brand
 						) {
-							window.top.tgmp.update({
+							window._CMLS.switchStream({
 								brand: window.top.tgmp_default_brand,
 								theme: window.top?.tgmp_default_theme,
-								//autostart: true,
+								autostart: true,
 							});
+						} else {
+							window.tgmp.playStream();
 						}
-						log.info('Caught a listen live request');
-						window.tgmp.playStream();
 					}
 				});
 			addAfterPageFrame(() => {
