@@ -128,10 +128,18 @@ export default class Logger {
 		}
 
 		// Only display if debug flag is set
-		if (
-			window?._CMLS?.debug ||
-			/(1|true|yes)/i.test(window.sessionStorage.getItem('cmlsDebug'))
-		) {
+		let forceDebug = false;
+		try {
+			if (
+				/(1|true|yes)/i.test(
+					window.sessionStorage.getItem('cmlsDebug')
+				) ||
+				/cmlsDebug/i.test(window.document.cookie)
+			) {
+				forceDebug = true;
+			}
+		} catch (e) {}
+		if (window?._CMLS?.debug || forceDebug) {
 			this.displayHeader(type, message, headerLength);
 			if (headerLength !== Infinity) {
 				window.top.console.debug(message);
