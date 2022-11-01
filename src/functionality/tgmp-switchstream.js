@@ -78,10 +78,22 @@ import domReady from '../utils/domReady';
 	};
 
 	window._CMLS = window._CMLS || {};
-	window._CMLS.switchStream = (brand = '', theme = '', autostart = true) => {
+	window._CMLS.switchStream = (
+		brand = '',
+		theme = '',
+		autostart = true,
+		userInitStart = true
+	) => {
 		log.info({ brand, theme, autostart });
+		if (autostart === false) {
+			userInitStart = false;
+		}
 		if (detectPlayer() && typeof window?.tgmp?.update === 'function') {
-			window.tgmp.update({ brand, theme, autostart });
+			window.tgmp.update({ brand, theme, autostart, userInitStart });
+			if (autostart || userInitStart) {
+				log.info('Auto-starting stream.');
+				window.tgmp.playStream();
+			}
 		}
 	};
 	// Backwards compatibility
