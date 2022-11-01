@@ -82,15 +82,15 @@ import domReady from '../utils/domReady';
 		brand = '',
 		theme = '',
 		autostart = true,
-		userInitStart = true
+		userInitStart = 'true'
 	) => {
 		log.info({ brand, theme, autostart });
 		if (autostart === false) {
-			userInitStart = false;
+			userInitStart = 'false';
 		}
 		if (detectPlayer() && typeof window?.tgmp?.update === 'function') {
-			window.tgmp.update({ brand, theme, autostart, userInitStart });
-			if (autostart || userInitStart) {
+			window.tgmp.update({ brand, theme });
+			if (autostart || userInitStart === 'true') {
 				log.info('Auto-starting stream.');
 				window.tgmp.playStream();
 			}
