@@ -23,7 +23,7 @@ import domReady from '../utils/domReady';
 (($, window, undefined) => {
 	const scriptName = 'TGMP SWITCHSTREAM',
 		nameSpace = 'tgmpSwitchStream',
-		version = '0.1';
+		version = '0.2';
 
 	const log = new Logger(`${scriptName} ${version}`);
 
@@ -107,9 +107,10 @@ import domReady from '../utils/domReady';
 			theme = window.top.tgmp_default_theme || ['#000'];
 		}
 
-		log.info({ brand, theme, autostart, userInitStart });
+		log.info({ brand, theme, userInitStart });
 		if (detectPlayer() && typeof window?.tgmp?.update === 'function') {
-			window.tgmp.update({ brand, theme });
+			window.tgmp.update({ brand, theme, userInitStart });
+			/*
 			if (autostart || userInitStart === 'true') {
 				window.tgmp.playStop;
 				log.info('Auto-starting stream.');
@@ -117,6 +118,7 @@ import domReady from '../utils/domReady';
 					window.tgmp.playStream();
 				}, 200);
 			}
+			*/
 		}
 	};
 	// Backwards compatibility
