@@ -109,8 +109,9 @@ import domReady from '../utils/domReady';
 
 		log.info({ brand, theme, autostart, userInitStart });
 		if (detectPlayer() && typeof window?.tgmp?.update === 'function') {
-			window.tgmp.update({ brand, theme, autostart, userInitStart });
+			window.tgmp.update({ brand, theme });
 			if (autostart || userInitStart === 'true') {
+				window.tgmp.playStop;
 				log.info('Auto-starting stream.');
 				setTimeout(function () {
 					window.tgmp.playStream();
