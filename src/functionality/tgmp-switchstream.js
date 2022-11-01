@@ -84,7 +84,7 @@ import domReady from '../utils/domReady';
 		autostart = true,
 		userInitStart = 'true'
 	) => {
-		if (Object.isObject(brand)) {
+		if (Object.prototype.toString.call(brand) === '[object Object]') {
 			userInitStart = brand?.userInitStart || userInitStart;
 			autostart = brand?.autostart || autostart;
 			theme = brand?.theme || theme;
