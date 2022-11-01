@@ -42,17 +42,22 @@ import { waitForPlayer, isInIframe } from 'Utils/playerTools';
 			if (track?.title && track.title !== lastTrack.title) {
 				lastTrack.title = track.title;
 				log.info('Setting webplayer-title', track.title);
-				window._CMLS.adTag.setTargeting(
-					'webplayer-title',
-					track.artist
+				let validTitle = track.title.replace(
+					/["'=!+#*~;^()<>\[\],&]/g,
+					'-'
 				);
+				window._CMLS.adTag.setTargeting('webplayer-title', validTitle);
 
 				if (track?.artist && track.artist !== lastTrack.artist) {
 					lastTrack.artist = track.artist;
+					let validArtist = track.artist.replace(
+						/["'=!+#*~;^()<>\[\],&]/g,
+						'-'
+					);
 					log.info('Setting webplayer-artist', track.artist);
 					window._CMLS.adTag.setTargeting(
 						'webplayer-artist',
-						track.artist
+						validArtist
 					);
 				}
 			}
