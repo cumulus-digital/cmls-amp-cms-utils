@@ -84,18 +84,31 @@ import domReady from '../utils/domReady';
 		autostart = true,
 		userInitStart = 'true'
 	) => {
+		if (Object.isObject(brand)) {
+			userInitStart = brand?.userInitStart || userInitStart;
+			autostart = brand?.autostart || autostart;
+			theme = brand?.theme || theme;
+			brand = brand?.brand;
+		}
 		if (autostart === false) {
 			userInitStart = 'false';
 		}
+
+		window.top.tgmp_default_brand =
+			window.top.tgmp_default_brand ||
+			'' + window.top?.tgmp?.options?.brand;
+		window.top.tgmp_default_theme =
+			window.top.tgmp_default_theme || window.top?.tgmp?.options?.theme;
+
+		if (!brand) {
+			brand = window.top.tgmp_default_brand;
+		}
+		if (!theme) {
+			theme = window.top.tgmp_default_theme || ['#000'];
+		}
+
 		log.info({ brand, theme, autostart, userInitStart });
 		if (detectPlayer() && typeof window?.tgmp?.update === 'function') {
-			window.top.tgmp_default_brand =
-				window.top.tgmp_default_brand ||
-				'' + window.top?.tgmp?.options?.brand;
-			window.top.tgmp_default_theme =
-				window.top.tgmp_default_theme ||
-				window.top?.tgmp?.options?.theme;
-
 			window.tgmp.update({ brand, theme });
 			if (autostart || userInitStart === 'true') {
 				log.info('Auto-starting stream.');
@@ -132,7 +145,7 @@ import domReady from '../utils/domReady';
 						if (attr) {
 							const command = parseCommand(e.target, attr);
 							log.info('Received command', command);
-							window._CMLS.switchStream.apply(command);
+							window._CMLS.switchStream(command);
 							/*
 							if (typeof window?.tgmp?.update === 'function') {
 								log.info('Executing command', command);
