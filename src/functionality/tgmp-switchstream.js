@@ -109,11 +109,13 @@ import domReady from '../utils/domReady';
 
 		log.info({ brand, theme, autostart, userInitStart });
 		if (detectPlayer() && typeof window?.tgmp?.update === 'function') {
-			window.tgmp.update({ brand, theme });
+			window.tgmp.update({ brand, theme, autostart, userInitStart });
+			/*
 			if (autostart || userInitStart === 'true') {
 				log.info('Auto-starting stream.');
 				window.tgmp.playStream();
 			}
+			*/
 		}
 	};
 	// Backwards compatibility
