@@ -147,6 +147,7 @@ import domReady from '../utils/domReady';
 					if (detectPlayer()) {
 						e.preventDefault();
 						const attr = getCommandSource(e.target);
+						log.info('Caught click', e, triggers, attr);
 						if (attr) {
 							const command = parseCommand(e.target, attr);
 							log.info('Received command', command);
