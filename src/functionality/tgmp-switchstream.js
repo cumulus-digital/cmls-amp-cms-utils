@@ -23,7 +23,7 @@ import domReady from '../utils/domReady';
 (($, window, undefined) => {
 	const scriptName = 'TGMP SWITCHSTREAM',
 		nameSpace = 'tgmpSwitchStream',
-		version = '0.2';
+		version = '0.3';
 
 	const log = new Logger(`${scriptName} ${version}`);
 
@@ -65,10 +65,10 @@ import domReady from '../utils/domReady';
 		let brandTest = options.match(/tgmp\-streamid\-([a-z0-9]+)/i),
 			themeTest = options.match(/tgmp\-theme-([\#a-z0-9]+)/i),
 			autostartTest = options.match(/tgmp\-autostart/i);
-		if (brandTest.length > 1) {
+		if (brandTest?.length > 1) {
 			command.brand = brandTest.pop();
 		}
-		if (themeTest.length > 1) {
+		if (themeTest?.length > 1) {
 			command.theme = themeTest.pop();
 		}
 		if (autostartTest) {
