@@ -146,10 +146,10 @@ import domReady from '../utils/domReady';
 				.on(`click.${nameSpace}`, triggers, (e) => {
 					if (detectPlayer()) {
 						e.preventDefault();
-						const attr = getCommandSource(e.target);
+						const attr = getCommandSource(e.currentTarget);
 						log.info('Caught click', e, triggers, attr);
 						if (attr) {
-							const command = parseCommand(e.target, attr);
+							const command = parseCommand(e.currentTarget, attr);
 							log.info('Received command', command);
 							window._CMLS.switchStream(command);
 							/*
