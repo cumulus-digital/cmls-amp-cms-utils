@@ -23,7 +23,7 @@ import domReady from '../utils/domReady';
 (($, window, undefined) => {
 	const scriptName = 'TGMP SWITCHSTREAM',
 		nameSpace = 'tgmpSwitchStream',
-		version = '0.4';
+		version = '0.5';
 
 	const log = new Logger(`${scriptName} ${version}`);
 
@@ -109,11 +109,13 @@ import domReady from '../utils/domReady';
 
 		log.info({ brand, theme, userInitStart });
 		if (detectPlayer() && typeof window?.tgmp?.update === 'function') {
-			window.tgmp.update({ brand, theme, userInitStart: 'false' });
+			window.tgmp.update({ brand, theme, userInitStart });
+			/*
 			if (autostart || userInitStart === 'true') {
 				log.info('Auto-starting stream.');
 				window.tgmp.playStream();
 			}
+			*/
 		}
 	};
 	// Backwards compatibility
