@@ -8,7 +8,7 @@ import domReady from 'Utils/domReady';
 ((window) => {
 	const scriptName = 'PLAYER-SPONSOR',
 		nameSpace = 'playerSponsor',
-		version = '0.1',
+		version = '0.2',
 		elementId = 'CMLSPlayerSponsorship';
 	let zIndexInterval = null;
 
@@ -39,6 +39,20 @@ import domReady from 'Utils/domReady';
 					return;
 				}
 
+				const playerFrame = window.document.querySelector(
+					'iframe[name="pwm_bar"]'
+				);
+				if (!playerFrame) {
+					log.info('Could not determine player frame.');
+					return;
+				}
+
+				const injectPoint = playerFrame.parentNode;
+				if (!injectPoint) {
+					log.info('Injection point could not be found.');
+					return;
+				}
+
 				// Append styles for positioning ad slot
 				const styleEl = window.document.createElement('style');
 				styleEl.id = `${elementId}Style`;
@@ -60,12 +74,12 @@ import domReady from 'Utils/domReady';
 								}
 							}
 					`;
-				window.top.document.body.appendChild(styleEl);
+				injectPoint.appendChild(styleEl);
 
 				// Inject ad slot
 				const div = window.top.document.createElement('div');
 				div.id = elementId;
-				window.top.document.body.appendChild(div);
+				injectPoint.appendChild(div);
 
 				window._CMLS.adTag.queue(() => {
 					log.info('Defining slot', elementId);
