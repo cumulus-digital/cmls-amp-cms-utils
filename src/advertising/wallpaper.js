@@ -39,7 +39,7 @@ import debounce from 'lodash/debounce';
 
 			// Node selectors to hide/show along with wallpaper changes.
 			obstructiveNode:
-				'.takeover-left, .takeover-right, .skyscraper-left, .skyscraper-right',
+				'.takeover-left, .takeover-right, .skyscraper-left, .skyscraper-right. .fs-sidewall-container',
 		};
 		settings = {};
 		cache = {};
@@ -347,11 +347,13 @@ import debounce from 'lodash/debounce';
 				// Destroy any ad slots in obstructive nodes
 				if (window._CMLS?.adTag) {
 					// get GPT ad slot IDs inside obstructive nodes
-					const badSlotIds = [];
+					// by default we include freestar's sidewalls
+					const badSlotIds = ['sidewall_left', 'sidewall_right'];
 					Array.prototype.forEach.call(
 						me.cache.obstructiveNodes,
 						(n) => {
-							const slotId = n.querySelector('[id^="div-gpt-ad"');
+							const slotId =
+								n.querySelector('[id^="div-gpt-ad"]');
 							if (slotId?.id) {
 								badSlotIds.push(slotId.id);
 							}
