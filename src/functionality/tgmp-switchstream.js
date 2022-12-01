@@ -23,7 +23,7 @@ import domReady from '../utils/domReady';
 (($, window, undefined) => {
 	const scriptName = 'TGMP SWITCHSTREAM',
 		nameSpace = 'tgmpSwitchStream',
-		version = '0.5';
+		version = '0.6';
 
 	const log = new Logger(`${scriptName} ${version}`);
 
@@ -107,8 +107,13 @@ import domReady from '../utils/domReady';
 			theme = window.top.tgmp_default_theme || ['#000'];
 		}
 
-		log.info({ brand, theme, userInitStart });
+		log.info('Received switchStream request', {
+			brand,
+			theme,
+			userInitStart,
+		});
 		if (detectPlayer() && typeof window?.tgmp?.update === 'function') {
+			log.info('Updating TuneGenie', { brand, theme, userInitStart });
 			window.tgmp.update({ brand, theme, userInitStart });
 			/*
 			if (autostart || userInitStart === 'true') {
