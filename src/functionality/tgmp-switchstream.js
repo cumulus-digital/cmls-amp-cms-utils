@@ -114,7 +114,7 @@ import domReady from '../utils/domReady';
 		});
 		if (detectPlayer() && typeof window?.tgmp?.update === 'function') {
 			log.info('Updating TuneGenie', { brand, theme, userInitStart });
-			window.tgmp.update({ brand, theme, userInitStart });
+			window.tgmp.update({ brand, theme });
 			if (autostart || userInitStart === 'true') {
 				log.info('Auto-starting stream.');
 				window.tgmp.playStream();
