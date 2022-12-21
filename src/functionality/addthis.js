@@ -17,6 +17,11 @@ import { addAfterPageFrame } from 'Utils/playerTools';
 	const addThisPubId = 'ra-55dc79597bae383e';
 
 	domReady(() => {
+		if (document.body.classList.contains('visual-editor-mode-design')) {
+			log.info('Headway visual editor detected, exiting.');
+			return;
+		}
+
 		if (window?.addthis && window?.addthis_config?.pubid !== addThisPubId) {
 			log.info('addThis already included by local.');
 			return;
