@@ -13,6 +13,7 @@ import domReady from '../utils/domReady';
 		version = '0.1',
 		injectPoint = '.wrapper-content, body > .wp-site-blocks > header + *',
 		elementClass = 'cmls-sidewalls',
+		contentWidth = '1070px',
 		doc = window.document;
 
 	const log = new Logger(`${scriptName} ${version}`);
@@ -25,7 +26,7 @@ import domReady from '../utils/domReady';
 
 		if (
 			doc.querySelector(
-				'.takeover-left,.takeover-right,.skyscraper-left,.skyscraper-right'
+				'.takeover-left div[id^="div-gpt"],.takeover-right div[id^="div-gpt"],.skyscraper-left div[id^="div-gpt"],.skyscraper-right div[id^="div-gpt"]'
 			)
 		) {
 			log.info('Legacy skyscrapers exist, exiting.');
@@ -42,7 +43,7 @@ import domReady from '../utils/domReady';
 			return;
 		}
 
-		if (window.matchMedia('(max-width: 1499px)').matches) {
+		if (window.matchMedia('(max-width: 1399px)').matches) {
 			log.info('Device width is too narrow, exiting.');
 			return;
 		}
@@ -58,13 +59,19 @@ import domReady from '../utils/domReady';
 				return;
 			}
 
+			// Get padding-top of inject point
+			const topPad =
+				window.getComputedStyle(doc.querySelector(injectPoint))
+					.paddingTop || '10px';
+
 			const template = `
 				<div id="cmls-sidewall-left" class="cmls-sidewall"></div>
 				<div id="cmls-sidewall-right" class="cmls-sidewall"></div>
 				<style>
-					.cmls-sidewalls { position: absolute; left: 50%; top: 0; width: 1500px; height: 100%; transform: translateX(-50%); display: flex; justify-content: space-between; box-sizing: border-box; padding: 10px; }
-					.cmls-sidewall { position: sticky; top: 10px; width: fit-content; height: fit-content; }
-					#cmls-sidewall-right { margin-left: auto; }
+					.cmls-sidewalls { position: absolute; left: 50%; top: 0; width: ${contentWidth}; height: 100%; transform: translateX(-50%); display: flex; justify-content: space-between; box-sizing: border-box; padding: ${topPad} 10px; }
+					.cmls-sidewall { position: sticky; top: ${topPad}; width: fit-content; height: fit-content; }
+					#cmls-sidewall-left { transform: translateX(-100%); }
+					#cmls-sidewall-right { margin-left: auto; transform: translateX(100%); }
 				</style>
 			`;
 			const container = createElement.el('div', {
@@ -83,7 +90,7 @@ import domReady from '../utils/domReady';
 				var sizeMap = gt
 					.sizeMapping()
 					.addSize(
-						[1500, 0],
+						[parseInt(contentWidth), 0],
 						[
 							[160, 600],
 							[300, 600],
@@ -97,7 +104,7 @@ import domReady from '../utils/domReady';
 							window._CMLS.adPath + '/sidewallLeft',
 							[
 								[160, 600],
-								[300, 600],
+								//[300, 600],
 							],
 							'cmls-sidewall-left',
 						],
@@ -117,7 +124,7 @@ import domReady from '../utils/domReady';
 							window._CMLS.adPath + '/sidewallRight',
 							[
 								[160, 600],
-								[300, 600],
+								//[300, 600],
 							],
 							'cmls-sidewall-right',
 						],
@@ -125,7 +132,7 @@ import domReady from '../utils/domReady';
 						{ pos: 'right' },
 						true
 					)
-					.defineSizeMap(sizeMap);
+					.defineSizeMapping(sizeMap);
 				window._CMLS.adTag.display(
 					'cmls-sidewall-right',
 					window._CMLS.adTag.isInitialLoadDisabled()
