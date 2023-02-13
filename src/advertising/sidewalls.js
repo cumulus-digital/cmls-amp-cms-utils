@@ -14,6 +14,7 @@ import domReady from '../utils/domReady';
 		injectPoint = '.wrapper-content, body > .wp-site-blocks > header + *',
 		elementClass = 'cmls-sidewalls',
 		contentWidth = '1070px',
+		sizeMapBuffer = 400,
 		doc = window.document;
 
 	const log = new Logger(`${scriptName} ${version}`);
@@ -43,7 +44,11 @@ import domReady from '../utils/domReady';
 			return;
 		}
 
-		if (window.matchMedia('(max-width: 1399px)').matches) {
+		if (
+			window.matchMedia(
+				`(max-width: ${parseInt(contentWidth) + sizeMapBuffer}px)`
+			).matches
+		) {
 			log.info('Device width is too narrow, exiting.');
 			return;
 		}
@@ -90,7 +95,7 @@ import domReady from '../utils/domReady';
 				var sizeMap = gt
 					.sizeMapping()
 					.addSize(
-						[parseInt(contentWidth) + 400, 0],
+						[parseInt(contentWidth) + sizeMapBuffer, 0],
 						[
 							[160, 600],
 							[300, 600],
