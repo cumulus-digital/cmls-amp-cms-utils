@@ -20,7 +20,7 @@ import domReady from '../utils/domReady';
 	const log = new Logger(`${scriptName} ${version}`);
 
 	domReady(() => {
-		if (window?.freestar?.loaded) {
+		if (window?.freestar?.queue) {
 			log.info('Freestar enabled, exiting.');
 			return;
 		}
@@ -54,7 +54,7 @@ import domReady from '../utils/domReady';
 		}
 
 		function init() {
-			if (window?.freestar?.loaded) {
+			if (window?.freestar?.queue) {
 				log.info('Freestar enabled, exiting.');
 				return;
 			}
