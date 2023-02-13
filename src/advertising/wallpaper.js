@@ -39,7 +39,7 @@ import debounce from 'lodash/debounce';
 
 			// Node selectors to hide/show along with wallpaper changes.
 			obstructiveNode:
-				'.takeover-left, .takeover-right, .skyscraper-left, .skyscraper-right, .fs-sidewall-container',
+				'.takeover-left, .takeover-right, .skyscraper-left, .skyscraper-right, .fs-sidewall-container, .cmls-sidwalls',
 		};
 		settings = {};
 		cache = {};

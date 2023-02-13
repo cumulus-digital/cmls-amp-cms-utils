@@ -6,6 +6,7 @@ require('./register-adpath');
 require('./auto-refresh-ads');
 require('./local-nav-through-player');
 require('./tg-player-event-targeting');
+require('./sidewalls');
 require('./player-sponsor');
 require('./paid-content');
 require('./pushdown');
