@@ -78,7 +78,7 @@ import domReady from '../utils/domReady';
 				class: 'cmls-sidewalls',
 			});
 			container.innerHTML = template;
-			doc.querySelector(injectPoint).append(container);
+			doc.querySelector(injectPoint).prepend(container);
 
 			// Define slots
 			window._CMLS.adTag.queue(() => {
@@ -90,7 +90,7 @@ import domReady from '../utils/domReady';
 				var sizeMap = gt
 					.sizeMapping()
 					.addSize(
-						[parseInt(contentWidth), 0],
+						[parseInt(contentWidth) + 400, 0],
 						[
 							[160, 600],
 							[300, 600],
@@ -104,7 +104,7 @@ import domReady from '../utils/domReady';
 							window._CMLS.adPath + '/sidewallLeft',
 							[
 								[160, 600],
-								//[300, 600],
+								[300, 600],
 							],
 							'cmls-sidewall-left',
 						],
@@ -124,7 +124,7 @@ import domReady from '../utils/domReady';
 							window._CMLS.adPath + '/sidewallRight',
 							[
 								[160, 600],
-								//[300, 600],
+								[300, 600],
 							],
 							'cmls-sidewall-right',
 						],
