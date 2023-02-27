@@ -2,8 +2,9 @@
  * Holder for our multiple dataLayers
  */
 export const dataLayers = [
-	window?.sharedContainerDataLayer,
-	window?.corpDataLayer,
+	'dataLayer',
+	'sharedContainerDataLayer',
+	'corpDataLayer',
 ];
 
 /**
@@ -12,6 +13,7 @@ export const dataLayers = [
  */
 export const push = (ev) => {
 	dataLayers.forEach((dl) => {
-		if (dl?.push) dl.push(ev);
+		window.self[dl] = window.self[dl] || [];
+		window.self[dl].push(ev);
 	});
 };
