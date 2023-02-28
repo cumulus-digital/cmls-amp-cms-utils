@@ -19,17 +19,24 @@ import domReady from '../utils/domReady';
 
 	const log = new Logger(`${scriptName} ${version}`);
 
-	domReady(() => {
+	const init = () => {
 		if (window.NO_SIDEWALLS) {
 			log.info('NO_SIDEWALLS configured, exiting.');
 			return;
 		}
 
 		if (window?.freestar?.queue) {
-			log.info('Freestar enabled');
-			if (window.freestar?.disabledProducts?.sideWall !== true) {
+			log.info(
+				'Freestar enabled, will check for disabled products in freestar queue.'
+			);
+			if (
+				window?.freestar?.config?.disabledProducts?.sideWall === true ||
+				window?.freestar?.config?.products?.sideWall?.disabled
+			) {
+				log.info('Freestar sideWall product is disabled, continuing.');
+			} else {
 				log.info(
-					'Freestar sidewalls are not explicitly disabled, exiting.'
+					'Freestar sideWall product is not explicitly disabled, exiting.'
 				);
 				return;
 			}
@@ -160,5 +167,6 @@ import domReady from '../utils/domReady';
 		} else {
 			window.addEventListener('cmls-adpath-discovered', () => init());
 		}
-	});
+	};
+	domReady(init);
 })(window.self);
