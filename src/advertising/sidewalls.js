@@ -44,6 +44,7 @@ import domReady from '../utils/domReady';
 					return false;
 				}
 			}
+			return true;
 		};
 
 		if (!freestarSidewallsEnabled()) {
