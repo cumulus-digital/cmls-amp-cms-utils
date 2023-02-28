@@ -10,7 +10,7 @@ import domReady from '../utils/domReady';
 ((window, undefined) => {
 	const scriptName = 'SIDEWALL ADS',
 		nameSpace = 'sideWallInjector',
-		version = '0.1',
+		version = '0.2',
 		injectPoint = '.wrapper-content, body > .wp-site-blocks > header + *',
 		elementClass = 'cmls-sidewalls',
 		contentWidth = '1070px',
@@ -36,7 +36,9 @@ import domReady from '../utils/domReady';
 				log.info('Freestar sideWall product is disabled, continuing.');
 			} else {
 				log.info(
-					'Freestar sideWall product is not explicitly disabled, exiting.'
+					'Freestar sideWall product is not explicitly disabled, exiting.',
+					window?.freestar?.config?.disabledProducts,
+					window?.freestar?.config?.products?.sideWall
 				);
 				return;
 			}
