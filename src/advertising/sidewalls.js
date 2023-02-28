@@ -20,9 +20,19 @@ import domReady from '../utils/domReady';
 	const log = new Logger(`${scriptName} ${version}`);
 
 	domReady(() => {
-		if (window?.freestar?.queue) {
-			log.info('Freestar enabled, exiting.');
+		if (window.NO_SIDEWALLS) {
+			log.info('NO_SIDEWALLS configured, exiting.');
 			return;
+		}
+
+		if (window?.freestar?.queue) {
+			log.info('Freestar enabled');
+			if (window.freestar?.disabledProducts?.sideWall !== true) {
+				log.info(
+					'Freestar sidewalls are not explicitly disabled, exiting.'
+				);
+				return;
+			}
 		}
 
 		if (
