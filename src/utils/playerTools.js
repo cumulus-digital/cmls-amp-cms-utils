@@ -10,6 +10,13 @@ let counter = 0;
 export const detectPlayer = () => {
 	if (window.top.tgmp) {
 		player = 'tunegenie';
+		if (
+			!window.self.document.body.classList.contains(
+				'cmls-player-tunegenie'
+			)
+		) {
+			window.self.document.body.classList.add('cmls-player-tunegenie');
+		}
 		return player;
 	}
 };
