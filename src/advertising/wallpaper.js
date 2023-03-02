@@ -338,6 +338,9 @@ import debounce from 'lodash/debounce';
 				freestar.config.disabledProducts || {};
 			window.freestar.config.disabledProducts.sideWall = true;
 
+			// Disable our own sidewalls
+			window.NO_SIDEWALLS = true;
+
 			// Remove any obstructive nodes
 			if (this.cache?.obstructiveNodes?.length) {
 				log.info(
