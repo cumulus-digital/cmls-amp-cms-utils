@@ -95,7 +95,7 @@ import domReady from '../utils/domReady';
 			const injectPointNode = doc.querySelector(injectPoint);
 			const injectPointStyle = window.getComputedStyle(injectPointNode);
 			let topPad = injectPointStyle?.paddingTop;
-			if (!topPad) {
+			if (!topPad || !parseInt(topPad)) {
 				topPad = '10px';
 			}
 
