@@ -13,7 +13,7 @@ import domReady from '../utils/domReady';
 		version = '0.2',
 		injectPoint = '.wrapper-content, body > .wp-site-blocks > header + *',
 		elementClass = 'cmls-sidewalls',
-		contentWidth = '1070px',
+		contentWidth = '1080px',
 		sizeMapBuffer = 400,
 		doc = window.document;
 
