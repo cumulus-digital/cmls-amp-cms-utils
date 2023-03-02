@@ -103,7 +103,7 @@ import domReady from '../utils/domReady';
 				!injectPointStyle?.position ||
 				injectPointStyle.position.toLowerCase() === 'static'
 			) {
-				injectPoint.style.position = 'relative';
+				injectPointNode.style.position = 'relative';
 			}
 
 			const template = `
