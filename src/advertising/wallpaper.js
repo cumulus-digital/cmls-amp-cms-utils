@@ -21,7 +21,7 @@ import debounce from 'lodash/debounce';
 	class WallpaperInjector {
 		defaults = {
 			// ID of wallpaper ad's slot div
-			dfpSlotNode: '#div-gpt-ad-1418849849333-16',
+			dfpSlotNode: '#div-gpt-ad-1418849849333-16,#cmls-gpt-wallpaper',
 
 			// Node selector for where to inject wallpaper
 			injectionNode: '.wrapper-content',

@@ -92,9 +92,19 @@ import domReady from '../utils/domReady';
 			}
 
 			// Get padding-top of inject point
-			const topPad =
-				window.getComputedStyle(doc.querySelector(injectPoint))
-					.paddingTop || '10px';
+			injectPointNode = doc.querySelector(injectPoint);
+			injectPointStyle = window.getComputedStyle(injectPointNode);
+			let topPad = injectPointStyle?.paddingTop;
+			if (!topPad) {
+				topPad = '10px';
+			}
+
+			if (
+				!injectPointStyle?.position ||
+				injectPointStyle.position.toLowerCase() === 'static'
+			) {
+				injectPoint.style.position = 'relative';
+			}
 
 			const template = `
 				<div id="cmls-sidewall-left" class="cmls-sidewall"></div>
