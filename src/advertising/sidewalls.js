@@ -92,8 +92,8 @@ import domReady from '../utils/domReady';
 			}
 
 			// Get padding-top of inject point
-			injectPointNode = doc.querySelector(injectPoint);
-			injectPointStyle = window.getComputedStyle(injectPointNode);
+			const injectPointNode = doc.querySelector(injectPoint);
+			const injectPointStyle = window.getComputedStyle(injectPointNode);
 			let topPad = injectPointStyle?.paddingTop;
 			if (!topPad) {
 				topPad = '10px';
@@ -120,7 +120,7 @@ import domReady from '../utils/domReady';
 				class: 'cmls-sidewalls',
 			});
 			container.innerHTML = template;
-			doc.querySelector(injectPoint).prepend(container);
+			injectPointNode.prepend(container);
 
 			// Define slots
 			window._CMLS.adTag.queue(() => {
