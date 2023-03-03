@@ -14,7 +14,7 @@ import domReady from '../utils/domReady';
 		injectPoint = '.wrapper-content, body > .wp-site-blocks > header + *',
 		elementClass = 'cmls-sidewalls',
 		contentWidth = '1080px',
-		sizeMapBuffer = 400,
+		sizeMapBuffer = 550,
 		doc = window.document;
 
 	const log = new Logger(`${scriptName} ${version}`);
