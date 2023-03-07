@@ -78,7 +78,7 @@ export default class GPTInterface extends DefaultInterface {
 		});
 
 		if (settings.init) {
-			slot = slot.addServices(this.pubads());
+			slot = slot.addService(this.pubads());
 		}
 
 		this.log.info(
