@@ -12,7 +12,7 @@ export default class APSInterface extends GPTInterface {
 	static identity = 'APS-GPT';
 
 	static detectTag() {
-		if (window?.apstag) {
+		if (super.detectTag() && window?.apstag) {
 			return true;
 		}
 	}
