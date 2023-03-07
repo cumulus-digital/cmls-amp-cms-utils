@@ -29,7 +29,7 @@ export default class DefaultInterface {
 	static detectTag() {}
 
 	constructor() {
-		this.logger = new Logger(`DEFAULT ADTAG INTERFACE v${this.version}`);
+		this.logger = new Logger(`${this.scriptName} v${this.version}`);
 	}
 
 	/**
@@ -97,22 +97,7 @@ export default class DefaultInterface {
 	 * @param {string} ID div ID for ad slot
 	 * @param {Boolean} forceLoad force a call to refresh() on the slot
 	 */
-	display(ID, forceLoad = false) {
-		const me = this;
-		this.queue(() => {
-			this.log.info('Calling display', ID, forceLoad);
-			me.rawInterface().display(ID);
-			if (forceLoad) {
-				const slot = me
-					.pubads()
-					.getSlots()
-					.find((slot) => slot.getSlotElementId() === ID);
-				if (slot) {
-					me.refresh(slot);
-				}
-			}
-		});
-	}
+	display(ID, forceLoad = false) {}
 
 	/**
 	 * Refresh given slots

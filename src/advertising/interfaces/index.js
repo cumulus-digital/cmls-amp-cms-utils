@@ -5,9 +5,10 @@ import Logger from 'Utils/Logger';
 import triggerEvent from 'Utils/triggerEvent';
 import domReady from 'Utils/domReady';
 
+import APSInterface from './aps-gpt';
 import GPTInterface from './gpt';
 
-const registeredDetectors = [GPTInterface];
+const registeredDetectors = [APSInterface, GPTInterface];
 
 ((window, undefined) => {
 	const scriptName = 'ADTAG DETECTION',

@@ -19,7 +19,7 @@ export default class GPTInterface extends DefaultInterface {
 
 	constructor() {
 		super();
-		this.log = new Logger(`GPT INTERFACE v${this.version}`);
+		this.log = new Logger(`${this.scriptName} v${this.version}`);
 	}
 
 	rawInterface() {
@@ -91,5 +91,27 @@ export default class GPTInterface extends DefaultInterface {
 		window.GPT_SITE_SLOTS[slot.getSlotElementId()] = slot;
 
 		return slot;
+	}
+
+	/**
+	 * Queues the display of a given slot ID
+	 * @param {string} ID div ID for ad slot
+	 * @param {Boolean} forceLoad force a call to refresh() on the slot
+	 */
+	display(ID, forceLoad = false) {
+		const me = this;
+		this.queue(() => {
+			this.log.info('Calling display', ID, forceLoad);
+			me.rawInterface().display(ID);
+			if (forceLoad) {
+				const slot = me
+					.pubads()
+					.getSlots()
+					.find((slot) => slot.getSlotElementId() === ID);
+				if (slot) {
+					me.refresh(slot);
+				}
+			}
+		});
 	}
 }
