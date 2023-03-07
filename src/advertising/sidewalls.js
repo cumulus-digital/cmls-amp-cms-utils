@@ -140,6 +140,8 @@ import domReady from '../utils/domReady';
 					)
 					.addSize([0, 0], [])
 					.build();
+
+				/*
 				window._CMLS.adTag
 					.defineSlot(
 						[
@@ -155,11 +157,26 @@ import domReady from '../utils/domReady';
 						true
 					)
 					.defineSizeMapping(sizeMap);
+				*/
+				window._CMLS.adTag
+					.defineSlot({
+						adUnitPath: window._CMLS.adPath + '/sidewallLeft',
+						size: [
+							[160, 600],
+							[300, 600],
+						],
+						div: 'cmls-sidewall-left',
+						collapse: true,
+						targeting: { pos: 'left' },
+						prebid: true,
+					})
+					.defineSizeMapping(sizeMap);
 				window._CMLS.adTag.display(
 					'cmls-sidewall-left',
 					window._CMLS.adTag.isInitialLoadDisabled()
 				);
 
+				/*
 				window._CMLS.adTag
 					.defineSlot(
 						[
@@ -174,6 +191,20 @@ import domReady from '../utils/domReady';
 						{ pos: 'right' },
 						true
 					)
+					.defineSizeMapping(sizeMap);
+				*/
+				window._CMLS.adTag
+					.defineSlot({
+						adUnitPath: window._CMLS.adPath + '/sidewallLeft',
+						size: [
+							[160, 600],
+							[300, 600],
+						],
+						div: 'cmls-sidewall-right',
+						collapse: true,
+						targeting: { pos: 'right' },
+						prebid: true,
+					})
 					.defineSizeMapping(sizeMap);
 				window._CMLS.adTag.display(
 					'cmls-sidewall-right',

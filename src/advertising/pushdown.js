@@ -376,12 +376,22 @@ import debounce from 'lodash/debounce';
 
 			window._CMLS.adTag.queue(() => {
 				log.info('Defining slot', elementId);
+				/*
 				window._CMLS.adTag.defineSlot(
 					[window._CMLS.adPath + '/pushdown', [1020, 574], elementId],
 					true,
 					{ pos: 'pushdown' },
 					true
 				);
+				*/
+				window._CMLS.adTag.defineSlot({
+					adUnitPath: window._CMLS.adPath + '/pushdown',
+					size: [[1020, 574]],
+					div: elementId,
+					collapse: true,
+					targeting: { pos: 'pushdown' },
+					prebid: false,
+				});
 				window._CMLS.adTag.display(
 					elementId,
 					window._CMLS.adTag.isInitialLoadDisabled()

@@ -3,6 +3,17 @@
  */
 import Logger from 'Utils/Logger';
 
+/**
+ * @typedef {object} DefineSlotOptions
+ * @property {string} adUnitPath Full ad unit path with network and unit code
+ * @property {array} size Slot sizes
+ * @property {string} div ID of the div that will contain the slot
+ * @property {boolean} [collapse = true] Enable collapseEmptyDiv for the slot
+ * @property {object=} targeting Set targeting parameters for slot as key: value, may be an array of objects
+ * @property {boolean} [init = true] Initialize the slot with pubads service
+ * @property {boolean} [prebid = false] Route slot through prebid wrapper
+ */
+
 export default class DefaultInterface {
 	#scriptName = 'DEFAULT ADTAG INTERFACE';
 	#nameSpace = 'defaultAdtagInterface';
@@ -59,14 +70,27 @@ export default class DefaultInterface {
 	}
 
 	/**
-	 * Define a lot and apply options, targeting, and init
-	 * @param {array} options Options for defineSlot. [ path, [sizes], ID ]
-	 * @param {Boolean} collapse Apply collapseEmptyDiv
-	 * @param {array|object} targeting Define targeting parameters for the slot [{key: value}]
-	 * @param {Boolean} init True to add pubads service and initialize the slot
+	 * Default options for defineSlot
+	 * @returns {DefineSlotOptions}
+	 */
+	defaultDefineSlotOptions() {
+		return {
+			adUnitPath: null,
+			size: [],
+			div: null,
+			collapse: true,
+			targeting: [],
+			init: true,
+			prebid: false,
+		};
+	}
+
+	/**
+	 * Define a slot and apply options, targeting, init, etc
+	 * @param {DefineSlotOptions} options Options for defineSlot
 	 * @return {object}
 	 */
-	defineSlot(options, collapse, targeting, init) {}
+	defineSlot(options) {}
 
 	/**
 	 * Queues the display of a given slot ID
@@ -92,20 +116,44 @@ export default class DefaultInterface {
 
 	/**
 	 * Refresh given slots
-	 * @param {object|array} slots
+	 * @param {object|array} requestSlots
 	 */
-	refresh(slots) {
-		if (!slots) {
-			this.log.warn('Refresh called without slots', slots);
+	refresh(requestSlots) {
+		if (!requestSlots) {
+			this.log.warn('Refresh called without slots', requestSlots);
 			return;
 		}
-		if (!Array.isArray(slots)) {
-			slots = [slots];
+		const refreshSlots = this.filterSlots(requestSlots);
+		if (!refreshSlots?.length) {
+			this.log.info('No slots found for refreshing after filtering.');
+			return;
 		}
-		slots.forEach((slot) => {
-			this.log.info('Refresh called for slot', slot.getSlotElementId());
+		this.log.info('Refresh called for slots', refreshSlots);
+		return this.pubads().refresh(refreshSlots);
+	}
+
+	/**
+	 * Filter given slots for those that return element IDs
+	 * @param {array} requestSlots
+	 */
+	filterSlots(requestSlots) {
+		if (!requestSlots) {
+			this.log.warn('Filter called without slots', requestSlots);
+			return;
+		}
+		if (!Array.isArray(requestSlots)) {
+			requestSlots = [requestSlots];
+		}
+		const refreshSlots = [];
+		requestSlots.forEach((slot) => {
+			if (slot?.getSlotElementId()) {
+				refreshSlots.push(slot);
+			}
 		});
-		return this.pubads().refresh(slots);
+		if (refreshSlots.length) {
+			return refreshSlots;
+		}
+		return false;
 	}
 
 	/**

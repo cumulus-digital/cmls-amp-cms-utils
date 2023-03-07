@@ -41,36 +41,54 @@ export default class GPTInterface extends DefaultInterface {
 		return this.pubads().setTargeting(key, val);
 	}
 
-	defineSlot(options, collapse = false, targeting = [], init = true) {
-		let slot = this.rawInterface().defineSlot.apply(null, options);
+	/**
+	 * @typedef {import('./DefaultInterface.js').DefineSlotOptions} DefineSlotOptions
+	 * @param {DefineSlotOptions} options
+	 * @returns {object|boolean}
+	 */
+	defineSlot(options) {
+		const settings = Object.assign(
+			this.defaultDefineSlotOptions(),
+			options
+		);
+		let slot = this.rawInterface().defineSlot(
+			settings.adUnitPath,
+			settings.size,
+			settings.div
+		);
 
 		if (!slot) {
-			this.log.error('Failed to create slot!', arguments);
+			this.log.error('Failed to create slot!', settings);
 			return false;
 		}
 
-		if (collapse) {
-			slot = slot.setCollapseEmptyDiv(true);
+		if (settings.collapse) {
+			slot = slot.setCollapseEmptyDiv.apply(settings.collapse);
 		}
 
-		targeting = Array.isArray(targeting) ? targeting : [targeting];
-		targeting.forEach((target) => {
+		settings.targeting = Array.isArray(settings.targetting)
+			? settings.targeting
+			: [settings.targeting];
+		settings.targeting.forEach((target) => {
 			for (const k in target) {
-				if (target.hasOwnProperty(k)) {
+				if (target?.hasOwnProperty(k)) {
 					slot = slot.setTargeting(k, target[k]);
 				}
 			}
 		});
 
-		if (init) {
-			slot = slot.addService(this.pubads());
+		if (settings.init) {
+			slot = slot.addServices(this.pubads());
 		}
 
 		this.log.info(
 			'Defined slot',
 			slot.getSlotElementId(),
-			slot.getSlotId()
+			slot.getSlotId(),
+			settings
 		);
+		window.GPT_SITE_SLOTS = window.GPT_SITE_SLOTS || {};
+		window.GPT_SITE_SLOTS[slot.getSlotElementId()] = slot;
 
 		return slot;
 	}

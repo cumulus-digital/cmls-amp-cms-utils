@@ -28,12 +28,23 @@ import domReady from 'Utils/domReady';
 		log.info('Slot injected');
 
 		window._CMLS.adTag.queue(() => {
+			/*
 			const slot = window._CMLS.adTag.defineSlot(
 				[window._CMLS.adPath, [[1, 1]], elementId],
 				true,
 				{ pos: 'w7m' },
-				true
+				true,
+				false
 			);
+			*/
+			const slot = window._CMLS.adTag.defineSlot({
+				adUnitPath: window._CMLS.adPath,
+				size: [[1, 1]],
+				div: elementId,
+				collapse: true,
+				targeting: { pos: 'w7m' },
+				prebid: false,
+			});
 			window._CMLS.adTag.display(elementId);
 			if (window._CMLS.adTag.isInitialLoadDisabled()) {
 				window._CMLS.adTag.refresh(slot);

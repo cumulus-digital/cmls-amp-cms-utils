@@ -83,12 +83,22 @@ import domReady from 'Utils/domReady';
 
 				window._CMLS.adTag.queue(() => {
 					log.info('Defining slot', elementId);
+					/*
 					window._CMLS.adTag.defineSlot(
 						[window._CMLS.adPath, [120, 60], elementId],
 						true,
 						{ pos: 'playersponsorlogo' },
 						true
 					);
+					*/
+					window._CMLS.adTag.defineSlot({
+						adUnitPath: window._CMLS.adPath,
+						size: [[120, 60]],
+						div: elementId,
+						collapse: true,
+						targeting: { pos: 'playersponsorlogo' },
+						prebid: false,
+					});
 					window._CMLS.adTag.display(
 						elementId,
 						window._CMLS.adTag.isInitialLoadDisabled()
