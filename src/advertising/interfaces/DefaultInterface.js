@@ -103,19 +103,7 @@ export default class DefaultInterface {
 	 * Refresh given slots
 	 * @param {object|array} requestSlots
 	 */
-	refresh(requestSlots) {
-		if (!requestSlots) {
-			this.log.warn('Refresh called without slots', requestSlots);
-			return;
-		}
-		const refreshSlots = this.filterSlots(requestSlots);
-		if (!refreshSlots?.length) {
-			this.log.info('No slots found for refreshing after filtering.');
-			return;
-		}
-		this.log.info('Refresh called for slots', refreshSlots);
-		return this.pubads().refresh(refreshSlots);
-	}
+	refresh(requestSlots) {}
 
 	/**
 	 * Filter given slots for those that return element IDs
@@ -139,6 +127,15 @@ export default class DefaultInterface {
 			return refreshSlots;
 		}
 		return false;
+	}
+
+	/**
+	 * Return API queried information about slots, good for logging
+	 * @param {array|object} slots
+	 * @returns {array}
+	 */
+	listSlotData(slots) {
+		return [];
 	}
 
 	/**

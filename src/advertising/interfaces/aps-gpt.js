@@ -52,10 +52,16 @@ export default class APSInterface extends GPTInterface {
 	refresh(requestSlots) {
 		const me = this;
 		if (!requestSlots) {
-			me.log.warn('Refresh called without slots', requestSlots);
+			me.log.warn(
+				'Refresh called without slots',
+				me.listSlotData(requestSlots)
+			);
 			return;
 		}
-		me.log.info('Refresh requested for slots', requestSlots);
+		me.log.info(
+			'Refresh requested for slots',
+			me.listSlotData(requestSlots)
+		);
 		const refreshSlots = me.filterSlots(requestSlots);
 		if (!refreshSlots?.length) {
 			me.log.info('No slots found for refreshing after filtering.');
@@ -71,7 +77,10 @@ export default class APSInterface extends GPTInterface {
 			});
 		}
 		if (prebidSlots.length) {
-			me.log.info('Found prebid slots for refresh', prebidSlots);
+			me.log.info(
+				'Found prebid slots for refresh',
+				this.listSlotData(prebidSlots)
+			);
 			window.apstag.fetchBids(
 				{
 					slots: prebidSlots,
@@ -80,13 +89,16 @@ export default class APSInterface extends GPTInterface {
 				function (bids) {
 					me.queue(() => {
 						window.apstag.setDisplayBids();
-						me.log.info('Refreshing slots', refreshSlots);
+						me.log.info(
+							'Refreshing slots',
+							me.listSlotData(refreshSlots)
+						);
 						me.pubads().refresh(refreshSlots);
 					});
 				}
 			);
 		} else {
-			me.log.info('Refreshing slots', refreshSlots);
+			me.log.info('Refreshing slots', me.listSlotData(refreshSlots));
 			return me.pubads().refresh(refreshSlots);
 		}
 	}

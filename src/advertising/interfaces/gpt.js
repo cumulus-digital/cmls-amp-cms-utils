@@ -81,12 +81,10 @@ export default class GPTInterface extends DefaultInterface {
 			slot = slot.addService(this.pubads());
 		}
 
-		this.log.info(
-			'Defined slot',
-			slot.getSlotElementId(),
-			slot.getSlotId(),
-			settings
-		);
+		this.log.info('Defined slot', {
+			slot: this.listSlotData(slot).shift(),
+			settings: settings,
+		});
 		window.GPT_SITE_SLOTS = window.GPT_SITE_SLOTS || {};
 		window.GPT_SITE_SLOTS[slot.getSlotElementId()] = slot;
 
@@ -113,5 +111,56 @@ export default class GPTInterface extends DefaultInterface {
 				}
 			}
 		});
+	}
+
+	/**
+	 * Refresh given slots
+	 * @param {object|array} requestSlots
+	 */
+	refresh(requestSlots) {
+		if (!requestSlots) {
+			this.log.warn(
+				'Refresh called without slots',
+				this.listSlotData(requestSlots)
+			);
+			return;
+		}
+		const refreshSlots = this.filterSlots(requestSlots);
+		if (!refreshSlots?.length) {
+			this.log.info('No slots found for refreshing after filtering.');
+			return;
+		}
+		this.log.info(
+			'Refresh called for slots',
+			this.listSlotData(refreshSlots)
+		);
+		return this.pubads().refresh(refreshSlots);
+	}
+
+	/**
+	 * Return API queried information about slots, good for logging
+	 * @param {array|object} slots
+	 * @returns {array}
+	 */
+	listSlotData(slots) {
+		if (!Array.isArray(slots)) {
+			slots = [slots];
+		}
+		const slotData = [];
+		slots.forEach((slot) => {
+			const thisSlot = {
+				adUnitPath: slot.getAdUnitPath(),
+				div: slot.getSlotElementId(),
+				targeting: [],
+			};
+			const targetingKeys = slot.getTargetingKeys();
+			if (targetingKeys?.length) {
+				for (let k of targetingKeys) {
+					thisSlot.targeting.push({ [k]: slot.getTargeting(k) });
+				}
+			}
+			slotData.push(thisSlot);
+		});
+		return slotData;
 	}
 }
