@@ -91,7 +91,8 @@ export default class APSInterface extends GPTInterface {
 						window.apstag.setDisplayBids();
 						me.log.info(
 							'Refreshing slots after bids received',
-							me.listSlotData(refreshSlots)
+							me.listSlotData(refreshSlots),
+							bids
 						);
 						me.pubads().refresh(refreshSlots);
 					});
