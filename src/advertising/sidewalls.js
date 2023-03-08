@@ -158,7 +158,7 @@ import domReady from '../utils/domReady';
 					)
 					.defineSizeMapping(sizeMap);
 				*/
-				window._CMLS.adTag
+				const leftSlot = window._CMLS.adTag
 					.defineSlot({
 						adUnitPath: window._CMLS.adPath + '/sidewallLeft',
 						size: [
@@ -171,10 +171,7 @@ import domReady from '../utils/domReady';
 						prebid: true,
 					})
 					.defineSizeMapping(sizeMap);
-				window._CMLS.adTag.display(
-					'cmls-sidewall-left',
-					window._CMLS.adTag.isInitialLoadDisabled()
-				);
+				window._CMLS.adTag.display('cmls-sidewall-left', false);
 
 				/*
 				window._CMLS.adTag
@@ -193,7 +190,7 @@ import domReady from '../utils/domReady';
 					)
 					.defineSizeMapping(sizeMap);
 				*/
-				window._CMLS.adTag
+				const rightSlot = window._CMLS.adTag
 					.defineSlot({
 						adUnitPath: window._CMLS.adPath + '/sidewallLeft',
 						size: [
@@ -206,10 +203,11 @@ import domReady from '../utils/domReady';
 						prebid: true,
 					})
 					.defineSizeMapping(sizeMap);
-				window._CMLS.adTag.display(
-					'cmls-sidewall-right',
-					window._CMLS.adTag.isInitialLoadDisabled()
-				);
+				window._CMLS.adTag.display('cmls-sidewall-right', false);
+
+				if (window._CMLS.adTag.isInitialLoadDisabled()) {
+					window._CMLS.adTag.refresh([leftSlot, rightSlot]);
+				}
 			});
 		}
 

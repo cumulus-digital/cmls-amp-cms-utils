@@ -15,10 +15,10 @@ import Logger from 'Utils/Logger';
  */
 
 export default class DefaultInterface {
-	#scriptName = 'DEFAULT ADTAG INTERFACE';
-	#nameSpace = 'defaultAdtagInterface';
-	#parentNameSpace = 'adTagDetection';
-	#version = 'x';
+	scriptName = 'DEFAULT ADTAG INTERFACE';
+	nameSpace = 'defaultAdtagInterface';
+	parentNameSpace = 'adTagDetection';
+	version = 'x';
 
 	static identity = 'DEFAULT';
 
@@ -42,9 +42,6 @@ export default class DefaultInterface {
 	 */
 	queue(callback) {
 		return this.rawInterface().cmd.push(callback);
-		return this.rawInterface()?.cmd
-			? this.rawInterface().cmd.push(callback)
-			: { cmd: [callback] };
 	}
 
 	/**
@@ -90,7 +87,9 @@ export default class DefaultInterface {
 	 * @param {DefineSlotOptions} options Options for defineSlot
 	 * @return {object}
 	 */
-	defineSlot(options) {}
+	defineSlot(options) {
+		return {};
+	}
 
 	/**
 	 * Queues the display of a given slot ID
