@@ -63,7 +63,7 @@ export default class GPTInterface extends DefaultInterface {
 		}
 
 		if (settings.collapse) {
-			slot = slot.setCollapseEmptyDiv.apply(settings.collapse);
+			slot = slot.setCollapseEmptyDiv.apply([...settings.collapse]);
 		}
 
 		settings.targeting = Array.isArray(settings.targetting)
