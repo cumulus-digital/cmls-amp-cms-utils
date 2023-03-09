@@ -55,7 +55,7 @@ export const generateForeground = (color) => {
 		b = ((rgb >> 0) & 0xff) / 255;
 
 	const luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-	return luma > 0.5 ? '000000' : 'FFFFFF';
+	return luma > 0.6 ? '000000' : 'FFFFFF';
 };
 
 export default class Logger {
