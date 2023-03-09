@@ -161,7 +161,7 @@ export default class Logger {
 		} catch (e) {}
 		if (window?._CMLS?.debug || forceDebug) {
 			if (!namesToColors[this.defaultHeader]) {
-				this.generateColor();
+				this.setupColors();
 			}
 			this.displayHeader(type, message, headerLength);
 			if (headerLength !== Infinity) {
