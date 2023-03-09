@@ -4,13 +4,29 @@
 const namesToColors = {};
 
 /**
- * Generate a random color
+ * Generate a random color that's not red.
  * @returns string
  */
 export const generateColor = () => {
-	return ('000000' + Math.floor(Math.random() * 0xffffff).toString(16)).slice(
-		-6
-	);
+	const genC = () => Math.floor(Math.random() * 0xccffff);
+	let color = 0x000000;
+	let haveColor = false;
+	while (!haveColor) {
+		color = genC();
+		const channels = color
+			.toString(16)
+			.slice(-6)
+			.match(/.{1,2}/g);
+		const red = parseInt('0x' + channels[0]);
+		const green = parseInt('0x' + channels[1]);
+		const blue = parseInt('0x' + channels[2]);
+		console.log(channels, red, green, blue);
+
+		if (red > 0x00 && (red < green * 1.5 || red < blue * 1.5)) {
+			haveColor = true;
+		}
+	}
+	return ('000000' + color.toString(16)).slice(-6);
 };
 
 /**
@@ -30,29 +46,33 @@ export const generateForeground = (color) => {
 };
 
 export default class Logger {
-	background = null;
-	foreground = null;
+	background = 'cccccc';
+	foreground = '000000';
 
 	#header = null;
+	#defaultHeader = null;
 
 	constructor(defaultHeader) {
-		if (namesToColors[defaultHeader]) {
+		this.defaultHeader = defaultHeader;
+		this.header = [
+			`%c ${defaultHeader} `,
+			`background: #${this.background}; color: #${this.foreground}`,
+		];
+	}
+
+	setupColors() {
+		if (namesToColors[this.defaultHeader]) {
 			//[this.background, this.foreground] = namesToColors[defaultHeader];
 			this.background = namesToColors[defaultHeader]?.background;
 			this.foreground = namesToColors[defaultHeader]?.foreground;
 		} else {
 			this.background = generateColor();
 			this.foreground = generateForeground(this.background);
-			namesToColors[defaultHeader] = {
+			namesToColors[this.defaultHeader] = {
 				background: this.background,
 				foreground: this.foreground,
 			};
 		}
-
-		this.header = [
-			`%c ${defaultHeader} `,
-			`background: #${this.background}; color: #${this.foreground}`,
-		];
 	}
 
 	timestamp() {
@@ -140,6 +160,9 @@ export default class Logger {
 			}
 		} catch (e) {}
 		if (window?._CMLS?.debug || forceDebug) {
+			if (!namesToColors[this.defaultHeader]) {
+				this.generateColor();
+			}
 			this.displayHeader(type, message, headerLength);
 			if (headerLength !== Infinity) {
 				window.top.console.debug(message);
