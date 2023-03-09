@@ -4,34 +4,37 @@
 const namesToColors = {};
 
 /**
+ * Convert RGB to HSV
+ */
+const rgb2hsv = (r, g, b) => {
+	r /= 255;
+	g /= 255;
+	b /= 255;
+	const v = Math.max(r, g, b),
+		n = v - Math.min(r, g, b);
+	const h =
+		n === 0
+			? 0
+			: n && v === r
+			? (g - b) / n
+			: v === g
+			? 2 + (b - r) / n
+			: 4 + (r - g) / n;
+	return [60 * (h < 0 ? h + 6 : h), v && (n / v) * 100, v * 100];
+};
+
+/**
  * Generate a random color that's not red.
  * @returns string
  */
 export const generateColor = () => {
 	const genC = () => Math.floor(Math.random() * 0xffffff);
-	const rgb2hsv = (r, g, b) => {
-		r /= 255;
-		g /= 255;
-		b /= 255;
-		const v = Math.max(r, g, b),
-			n = v - Math.min(r, g, b);
-		const h =
-			n === 0
-				? 0
-				: n && v === r
-				? (g - b) / n
-				: v === g
-				? 2 + (b - r) / n
-				: 4 + (r - g) / n;
-		return [60 * (h < 0 ? h + 6 : h), v && (n / v) * 100, v * 100];
-	};
 	let color;
 	let haveColor = false;
 	while (!haveColor) {
 		color = genC();
 		const rgb = [(color >> 16) & 0xff, (color >> 8) & 0xff, color & 0xff];
 		const hsv = rgb2hsv.apply(this, rgb);
-		console.log(hsv);
 		if (hsv[0] > 25 && hsv[0] < 330) {
 			haveColor = true;
 		}
@@ -47,12 +50,12 @@ export const generateColor = () => {
  */
 export const generateForeground = (color) => {
 	const rgb = parseInt(color, 16);
-	const r = (rgb >> 16) & 0xff;
-	const g = (rgb >> 8) & 0xff;
-	const b = (rgb >> 0) & 0xff;
+	const r = ((rgb >> 16) & 0xff) / 255,
+		g = ((rgb >> 8) & 0xff) / 255,
+		b = ((rgb >> 0) & 0xff) / 255;
 
-	const luma = 0.2126 * r + 0.7152 * g + 0.0722 * b; // ITU-R BT.709
-	return luma > 130 ? '000000' : 'FFFFFF';
+	const luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+	return luma > 0.5 ? '000000' : 'FFFFFF';
 };
 
 export default class Logger {
