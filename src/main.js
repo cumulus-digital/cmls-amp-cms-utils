@@ -34,8 +34,7 @@ import Logger from './utils/Logger';
  ______ ____ _  __ __/ /_ _____
 / __/ // /  ' \\/ // / / // (_-<
 \\__/\\_,_/_/_/_/\\_,_/_/\\_,_/___/
-          MAIN LIBRARY LOADED
-	`,
+          MAIN LIBRARY LOADED`,
 		headerLength: Infinity,
 	});
 })(window, undefined);
