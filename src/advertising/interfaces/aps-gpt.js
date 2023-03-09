@@ -39,6 +39,9 @@ export default class APSInterface extends GPTInterface {
 		);
 		const slot = super.defineSlot(settings);
 		if (settings.prebid && slot && slot.getSlotElementId()) {
+			if (window.GPT_SITE_SLOTS[slot.getSlotElementId()]) {
+				delete window.GPT_SITE_SLOTS[slot.getSlotElementId()];
+			}
 			window.GPT_PREBID_SLOTS = window.GPT_PREBID_SLOTS || {};
 			window.GPT_PREBID_SLOTS[slot.getSlotElementId()] = slot;
 		}
