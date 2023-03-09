@@ -8,7 +8,7 @@ const namesToColors = {};
  * @returns string
  */
 export const generateColor = () => {
-	return ('000000' + Math.floor(Math.random() * 0x00ffff).toString(16)).slice(
+	return ('000000' + Math.floor(Math.random() * 0xffffff).toString(16)).slice(
 		-6
 	);
 };
@@ -26,7 +26,7 @@ export const generateForeground = (color) => {
 	const b = (rgb >> 0) & 0xff;
 
 	const luma = 0.2126 * r + 0.7152 * g + 0.0722 * b; // ITU-R BT.709
-	return luma > 140 ? '000000' : 'FFFFFF';
+	return luma > 130 ? '000000' : 'FFFFFF';
 };
 
 export default class Logger {
