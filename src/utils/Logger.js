@@ -8,7 +8,7 @@ const namesToColors = {};
  * @returns string
  */
 export const generateColor = () => {
-	return ('000000' + Math.floor(Math.random() * 16777215).toString(16)).slice(
+	return ('000000' + Math.floor(Math.random() * 0x00ffff).toString(16)).slice(
 		-6
 	);
 };
