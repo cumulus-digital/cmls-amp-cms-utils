@@ -28,9 +28,15 @@ module.exports = (env) => {
 	return {
 		mode,
 		target: target,
-		entry: './src/index.js',
+		entry: {
+			bundle: './src/bundle.js',
+			main: './src/main.js',
+			functionality: './src/functionality.js',
+			advertising: './src/advertising.js',
+			analytics: './src/analytics.js',
+		},
 		output: {
-			filename: 'bundle.js',
+			filename: '[name].js',
 			path: resolve(process.cwd(), 'dist'),
 		},
 		resolve: {

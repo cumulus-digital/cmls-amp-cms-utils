@@ -30,20 +30,14 @@ import Logger from './utils/Logger';
 
 	log.info({
 		message: `
-    CMLS LIBRARY LOADED!   .__
-  ____  __ __  _____  __ __|  |  __ __  ______
-_/ ___\\|  |  \\/     \\|  |  \\  | |  |  \\/  ___/
-\\  \\___|  |  /  Y Y  \\  |  /  |_|  |  /\___  \\
- \\___  >____/|__|_|  /____/|____/____//____  >
-     \\/            \\/     Site Scripts     \\/
+                      __
+ ______ ____ _  __ __/ /_ _____
+/ __/ // /  ' \\/ // / / // (_-<
+\\__/\\_,_/_/_/_/\\_,_/_/\\_,_/___/
+          MAIN LIBRARY LOADED
 	`,
 		headerLength: Infinity,
 	});
 })(window, undefined);
 
 require('./functionality');
-require('./advertising');
-require('./analytics');
-
-// Leave GTM sGroup events 'till the end
-require('./analytics/gtm-cms-sgroups');
