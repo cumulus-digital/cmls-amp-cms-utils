@@ -20,7 +20,6 @@ export const generateColor = () => {
 		const red = parseInt('0x' + channels[0]);
 		const green = parseInt('0x' + channels[1]);
 		const blue = parseInt('0x' + channels[2]);
-		console.log(channels, red, green, blue);
 
 		if (red > 0x00 && (red < green * 1.5 || red < blue * 1.5)) {
 			haveColor = true;
@@ -63,8 +62,8 @@ export default class Logger {
 	setupColors() {
 		if (namesToColors[this.defaultHeader]) {
 			//[this.background, this.foreground] = namesToColors[defaultHeader];
-			this.background = namesToColors[defaultHeader]?.background;
-			this.foreground = namesToColors[defaultHeader]?.foreground;
+			this.background = namesToColors[this.defaultHeader]?.background;
+			this.foreground = namesToColors[this.defaultHeader]?.foreground;
 		} else {
 			this.background = generateColor();
 			this.foreground = generateForeground(this.background);
