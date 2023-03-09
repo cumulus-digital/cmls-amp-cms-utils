@@ -8,20 +8,31 @@ const namesToColors = {};
  * @returns string
  */
 export const generateColor = () => {
-	const genC = () => Math.floor(Math.random() * 0xccffff);
-	let color = 0x000000;
+	const genC = () => Math.floor(Math.random() * 0xffffff);
+	const rgb2hsv = (r, g, b) => {
+		r /= 255;
+		g /= 255;
+		b /= 255;
+		const v = Math.max(r, g, b),
+			n = v - Math.min(r, g, b);
+		const h =
+			n === 0
+				? 0
+				: n && v === r
+				? (g - b) / n
+				: v === g
+				? 2 + (b - r) / n
+				: 4 + (r - g) / n;
+		return [60 * (h < 0 ? h + 6 : h), v && (n / v) * 100, v * 100];
+	};
+	let color;
 	let haveColor = false;
 	while (!haveColor) {
 		color = genC();
-		const channels = color
-			.toString(16)
-			.slice(-6)
-			.match(/.{1,2}/g);
-		const red = parseInt('0x' + channels[0]);
-		const green = parseInt('0x' + channels[1]);
-		const blue = parseInt('0x' + channels[2]);
-
-		if (red > 0x00 && (red < green * 1.5 || red < blue * 1.5)) {
+		const rgb = [(color >> 16) & 0xff, (color >> 8) & 0xff, color & 0xff];
+		const hsv = rgb2hsv.apply(this, rgb);
+		console.log(hsv);
+		if (hsv[0] > 25 && hsv[0] < 330) {
 			haveColor = true;
 		}
 	}
