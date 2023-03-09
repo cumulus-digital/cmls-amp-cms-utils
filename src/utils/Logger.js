@@ -45,33 +45,29 @@ export const generateForeground = (color) => {
 };
 
 export default class Logger {
-	background = 'cccccc';
-	foreground = '000000';
+	background = null;
+	foreground = null;
 
 	#header = null;
-	#defaultHeader = null;
 
 	constructor(defaultHeader) {
-		this.defaultHeader = defaultHeader;
-		this.header = [
-			`%c ${defaultHeader} `,
-			`background: #${this.background}; color: #${this.foreground}`,
-		];
-	}
-
-	setupColors() {
-		if (namesToColors[this.defaultHeader]) {
+		if (namesToColors[defaultHeader]) {
 			//[this.background, this.foreground] = namesToColors[defaultHeader];
-			this.background = namesToColors[this.defaultHeader]?.background;
-			this.foreground = namesToColors[this.defaultHeader]?.foreground;
+			this.background = namesToColors[defaultHeader]?.background;
+			this.foreground = namesToColors[defaultHeader]?.foreground;
 		} else {
 			this.background = generateColor();
 			this.foreground = generateForeground(this.background);
-			namesToColors[this.defaultHeader] = {
+			namesToColors[defaultHeader] = {
 				background: this.background,
 				foreground: this.foreground,
 			};
 		}
+
+		this.header = [
+			`%c ${defaultHeader} `,
+			`background: #${this.background}; color: #${this.foreground}`,
+		];
 	}
 
 	timestamp() {
@@ -159,7 +155,6 @@ export default class Logger {
 			}
 		} catch (e) {}
 		if (window?._CMLS?.debug || forceDebug) {
-			this.setupColors();
 			this.displayHeader(type, message, headerLength);
 			if (headerLength !== Infinity) {
 				window.top.console.debug(message);
