@@ -145,4 +145,17 @@ export default class APSInterface extends GPTInterface {
 			return me.pubads().refresh(refreshSlots.noprebid);
 		}
 	}
+
+	/**
+	 * Check if a slot has been requested
+	 * @param {object} slot
+	 * @return {Boolean} Returns true if slot has already been requested
+	 */
+	wasSlotRequested(slot) {
+		return (
+			super.wasSlotRequested(slot) ||
+			// Slots with an amznbid key are queued for refresh on-page already
+			slot.getTargeting('amznbid')?.length
+		);
+	}
 }

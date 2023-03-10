@@ -17,6 +17,8 @@ export default class GPTInterface extends DefaultInterface {
 		}
 	}
 
+	initialRequestKey = 'initial-request-made';
+
 	constructor() {
 		super();
 		this.log = new Logger(`${this.scriptName} v${this.version}`);
@@ -92,6 +94,13 @@ export default class GPTInterface extends DefaultInterface {
 			slot = slot.addService(this.pubads());
 		}
 
+		// Track the initial request so we don't call it again.
+		me.addEventListener('slotRequested', (e) => {
+			if (!e.slot.getTargeting(me.initialRequestKey)) {
+				e.slot.setTargeting(me.initialRequestKey, true);
+			}
+		});
+
 		this.log.info('Defined slot', {
 			slot: this.listSlotData(slot).shift(),
 			settings: settings,
@@ -149,6 +158,23 @@ export default class GPTInterface extends DefaultInterface {
 	}
 
 	/**
+	 * Check if a slot has been requested
+	 * @param {object} slot
+	 * @return {Boolean} Returns true if slot has already been requested
+	 */
+	wasSlotRequested(slot) {
+		const me = this;
+		const slotEl = window.self.document.getElementById(
+			slot.getSlotElementId()
+		);
+		return (
+			slotEl.getAttribute('data-google-query-id') ||
+			slot.getResponseInformation() ||
+			slot.getTargeting(me.initialRequestKey)
+		);
+	}
+
+	/**
 	 * Handle an initial ad load
 	 * @param {object|array} requestSlots
 	 */
@@ -168,17 +194,10 @@ export default class GPTInterface extends DefaultInterface {
 				const notYetLoaded = [],
 					alreadyLoaded = [];
 				requestSlots.forEach((slot) => {
-					const slotEl = window.self.document.getElementById(
-						slot.getSlotElementId()
-					);
-					me.log.info(
-						slot.getSlotElementId(),
-						slotEl.getAttribute('data-google-query-id')
-					);
-					if (!slotEl.getAttribute('data-google-query-id')) {
-						notYetLoaded.push(slot);
-					} else {
+					if (me.wasSlotRequested(slot)) {
 						alreadyLoaded.push(slot);
+					} else {
+						notYetLoaded.push(slot);
 					}
 				});
 				me.log.info('Delayed initial load refresh', {

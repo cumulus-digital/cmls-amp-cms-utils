@@ -105,6 +105,15 @@ export default class DefaultInterface {
 	refresh(requestSlots) {}
 
 	/**
+	 * Check if a slot has been requested
+	 * @param {object} slot
+	 * @return {Boolean} Returns true if slot has already been requested
+	 */
+	wasSlotRequested(slot) {
+		return false;
+	}
+
+	/**
 	 * Handle an initial ad load
 	 * @param {object|array} requestSlots
 	 */
