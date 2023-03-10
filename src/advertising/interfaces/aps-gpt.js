@@ -152,6 +152,7 @@ export default class APSInterface extends GPTInterface {
 	 * @return {Boolean} Returns true if slot has already been requested
 	 */
 	wasSlotRequested(slot) {
+		const me = this;
 		let wasRequested = false;
 		if (super.wasSlotRequested(slot)) {
 			wasRequested = true;
