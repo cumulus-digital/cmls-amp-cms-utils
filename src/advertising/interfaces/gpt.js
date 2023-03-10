@@ -170,12 +170,15 @@ export default class GPTInterface extends DefaultInterface {
 		);
 		let wasRequested = false;
 		if (slot.getTargeting(me.initialRequestKey)) {
+			me.log.info('Has initial request key', me.listSlotData(slot));
 			wasRequested = true;
 		}
 		if (slot.getResponseInformation()) {
+			me.log.info('Has response info', me.listSlotData(slot));
 			wasRequested = true;
 		}
 		if (slotEl.getAttribute('data-google-query-id')) {
+			me.log.info('Has data attribute', me.listSlotData(slot));
 			wasRequested = true;
 		}
 		return wasRequested;
@@ -211,16 +214,18 @@ export default class GPTInterface extends DefaultInterface {
 						notYetRequested.push(slot);
 					}
 				});
-				me.log.info(
-					'Delayed initial load firing',
-					me.listSlotData(notYetRequested)
-				);
-				me.log.info(
-					'Remaining slots were already requested',
-					me.listSlotData(alreadyRequested)
-				);
 				if (notYetRequested.length) {
+					me.log.info(
+						'Delayed initial load firing',
+						me.listSlotData(notYetRequested)
+					);
 					me.refresh(notYetLoaded);
+				}
+				if (alreadyRequested.length) {
+					me.log.info(
+						'Slots were already requested',
+						me.listSlotData(alreadyRequested)
+					);
 				}
 			}, 500);
 		} else {
