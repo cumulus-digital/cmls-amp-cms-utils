@@ -96,7 +96,7 @@ export default class GPTInterface extends DefaultInterface {
 		}
 
 		// Track the initial request so we don't call it again.
-		me.addEventListener('slotRequested', (e) => {
+		me.addListener('slotRequested', (e) => {
 			if (!e.slot.getTargeting(me.initialRequestKey)) {
 				e.slot.setTargeting(me.initialRequestKey, true);
 			}
