@@ -57,6 +57,7 @@ export default class GPTInterface extends DefaultInterface {
 	 * @returns {object|boolean}
 	 */
 	defineSlot(options) {
+		const me = this;
 		const settings = Object.assign(
 			this.defaultDefineSlotOptions(),
 			options
