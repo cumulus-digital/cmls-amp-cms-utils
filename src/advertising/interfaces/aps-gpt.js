@@ -152,10 +152,14 @@ export default class APSInterface extends GPTInterface {
 	 * @return {Boolean} Returns true if slot has already been requested
 	 */
 	wasSlotRequested(slot) {
-		return (
-			super.wasSlotRequested(slot) ||
-			// Slots with an amznbid key are queued for refresh on-page already
-			slot.getTargeting('amznbid')?.length
-		);
+		let wasRequested = false;
+		if (super.wasSlotRequested(slot)) {
+			wasRequested = true;
+		}
+		// Slots with an amznbid key are queued for refresh on-page already
+		if (slot.getTargeting('amznbid')) {
+			wasRequested = true;
+		}
+		return wasRequested;
 	}
 }

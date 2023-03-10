@@ -168,11 +168,17 @@ export default class GPTInterface extends DefaultInterface {
 		const slotEl = window.self.document.getElementById(
 			slot.getSlotElementId()
 		);
-		return (
-			slotEl.getAttribute('data-google-query-id') ||
-			slot.getResponseInformation() ||
-			slot.getTargeting(me.initialRequestKey)
-		);
+		let wasRequested = false;
+		if (slot.getTargeting(me.initialRequestKey)) {
+			wasRequested = true;
+		}
+		if (slot.getResponseInformation()) {
+			wasRequested = true;
+		}
+		if (slotEl.getAttribute('data-google-query-id')) {
+			wasRequested = true;
+		}
+		return wasRequested;
 	}
 
 	/**
@@ -191,24 +197,32 @@ export default class GPTInterface extends DefaultInterface {
 		if (me.isInitialLoadDisabled()) {
 			// We need to delay refresh for a bit in case an on-page refresh
 			// has already handled it our slots...
+			me.log.info(
+				'Initial load requested while initial load is disabled, this will be delayed',
+				me.listSlotData(requestSlots)
+			);
 			setTimeout(() => {
-				const notYetLoaded = [],
-					alreadyLoaded = [];
+				const notYetRequested = [],
+					alreadyRequested = [];
 				requestSlots.forEach((slot) => {
 					if (me.wasSlotRequested(slot)) {
-						alreadyLoaded.push(slot);
+						alreadyRequested.push(slot);
 					} else {
-						notYetLoaded.push(slot);
+						notYetRequested.push(slot);
 					}
 				});
-				me.log.info('Delayed initial load refresh', {
-					notYetLoaded: me.listSlotData(notYetLoaded),
-					alreadyLoaded: me.listSlotData(alreadyLoaded),
-				});
-				if (notYetLoaded.length) {
+				me.log.info(
+					'Delayed initial load firing',
+					me.listSlotData(notYetRequested)
+				);
+				me.log.info(
+					'Remaining slots were already requested',
+					me.listSlotData(alreadyRequested)
+				);
+				if (notYetRequested.length) {
 					me.refresh(notYetLoaded);
 				}
-			}, 1000);
+			}, 500);
 		} else {
 			me.queue(() => {
 				me.log.info(
