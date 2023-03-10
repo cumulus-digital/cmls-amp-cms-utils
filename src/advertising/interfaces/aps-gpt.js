@@ -158,7 +158,7 @@ export default class APSInterface extends GPTInterface {
 			wasRequested = true;
 		}
 		// Slots with an amznbid key are queued for refresh on-page already
-		if (slot.getTargeting('amznbid')) {
+		if (slot.getTargeting('amznbid')?.length) {
 			me.log.info('Has amznbid targeting', me.listSlotData(slot));
 			wasRequested = true;
 		}
