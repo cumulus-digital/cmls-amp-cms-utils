@@ -168,6 +168,10 @@ export default class GPTInterface extends DefaultInterface {
 				const notYetLoaded = [],
 					alreadyLoaded = [];
 				requestSlots.forEach((slot) => {
+					const slotEl = window.self.document.getElementById(
+						slot.getSlotElementId()
+					);
+					me.log.info(slotEl.getAttribute('data-google-query-id'));
 					if (!slot.getResponseInformation()) {
 						notYetLoaded.push(slot);
 					} else {
