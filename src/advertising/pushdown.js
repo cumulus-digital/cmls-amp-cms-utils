@@ -389,7 +389,7 @@ import debounce from 'lodash/debounce';
 					size: [[1020, 574]],
 					div: elementId,
 					collapse: true,
-					targeting: { pos: 'pushdown' },
+					targeting: { pos: 'pushdown', noprebid: 'noprebid' },
 					prebid: false,
 				});
 				window._CMLS.adTag.display(

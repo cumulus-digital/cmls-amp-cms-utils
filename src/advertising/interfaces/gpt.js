@@ -122,11 +122,11 @@ export default class GPTInterface extends DefaultInterface {
 	 */
 	refresh(requestSlots) {
 		if (!requestSlots) {
-			this.log.warn(
-				'Refresh called without slots',
-				this.listSlotData(requestSlots)
-			);
+			this.log.warn('Refresh called without slots');
 			return;
+		}
+		if (!Array.isArray(requestSlots)) {
+			requestSlots = [requestSlots];
 		}
 		const refreshSlots = this.filterSlots(requestSlots);
 		if (!refreshSlots?.length) {
@@ -152,14 +152,16 @@ export default class GPTInterface extends DefaultInterface {
 		const slotData = [];
 		slots.forEach((slot) => {
 			const thisSlot = {
-				adUnitPath: slot.getAdUnitPath(),
-				div: slot.getSlotElementId(),
+				adUnitPath: slot?.getAdUnitPath(),
+				div: slot?.getSlotElementId(),
 				targeting: [],
 			};
-			const targetingKeys = slot.getTargetingKeys();
+			const targetingKeys = slot?.getTargetingKeys();
 			if (targetingKeys?.length) {
 				for (let k of targetingKeys) {
-					thisSlot.targeting.push({ [k]: slot.getTargeting(k) });
+					thisSlot.targeting.push({
+						[k]: slot?.getTargeting(k),
+					});
 				}
 			}
 			slotData.push(thisSlot);

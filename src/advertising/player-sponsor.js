@@ -96,7 +96,10 @@ import domReady from 'Utils/domReady';
 						size: [[120, 60]],
 						div: elementId,
 						collapse: true,
-						targeting: { pos: 'playersponsorlogo' },
+						targeting: {
+							pos: 'playersponsorlogo',
+							noprebid: 'noprebid',
+						},
 						prebid: false,
 					});
 					window._CMLS.adTag.display(

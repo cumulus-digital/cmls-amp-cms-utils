@@ -43,8 +43,8 @@ const registeredDetectors = [APSInterface, GPTInterface];
 				return;
 			}
 		}
-		log.warn('No interface detected, re-running detection in 0.5 seconds');
-		setTimeout(() => runDetectors(), 500);
+		log.warn('No interface detected, re-running detection in 0.25 seconds');
+		setTimeout(() => runDetectors(), 250);
 	};
 
 	domReady(() => {

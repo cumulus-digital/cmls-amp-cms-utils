@@ -42,7 +42,7 @@ import domReady from 'Utils/domReady';
 				size: [[1, 1]],
 				div: elementId,
 				collapse: true,
-				targeting: { pos: 'w7m' },
+				targeting: { pos: 'w7m', noprebid: 'noprebid' },
 				prebid: false,
 			});
 			window._CMLS.adTag.display(elementId);

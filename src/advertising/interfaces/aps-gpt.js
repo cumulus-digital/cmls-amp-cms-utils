@@ -38,12 +38,20 @@ export default class APSInterface extends GPTInterface {
 			options
 		);
 		const slot = super.defineSlot(settings);
-		if (settings.prebid && slot && slot.getSlotElementId()) {
-			if (window.GPT_SITE_SLOTS[slot.getSlotElementId()]) {
-				delete window.GPT_SITE_SLOTS[slot.getSlotElementId()];
+		if (slot && slot.getSlotElementId()) {
+			if (settings?.prebid) {
+				// gpt interface stores slots in GPT_SITE_SLOTS global,
+				// prebid slots need to be removed and added to GPT_PREBID_SLOTS global.
+				if (window?.GPT_SITE_SLOTS?.[slot.getSlotElementId()]) {
+					delete window.GPT_SITE_SLOTS[slot.getSlotElementId()];
+				}
+				window.GPT_PREBID_SLOTS = window.GPT_PREBID_SLOTS || {};
+				window.GPT_PREBID_SLOTS[slot.getSlotElementId()] = slot;
+			} else if (!settings?.targeting?.noprebid) {
+				// Enforce noprebid targeting on generated slots if prebid is false
+				// and a noprebid targeting key has NOT been set.
+				slot.setTargeting('noprebid', 'noprebid');
 			}
-			window.GPT_PREBID_SLOTS = window.GPT_PREBID_SLOTS || {};
-			window.GPT_PREBID_SLOTS[slot.getSlotElementId()] = slot;
 		}
 		return slot;
 	}
@@ -55,11 +63,11 @@ export default class APSInterface extends GPTInterface {
 	refresh(requestSlots) {
 		const me = this;
 		if (!requestSlots) {
-			me.log.warn(
-				'Refresh called without slots',
-				me.listSlotData(requestSlots)
-			);
+			me.log.warn('Refresh called without slots');
 			return;
+		}
+		if (!Array.isArray(requestSlots)) {
+			requestSlots = [requestSlots];
 		}
 		me.log.info(
 			'Refresh requested for slots',
@@ -70,18 +78,40 @@ export default class APSInterface extends GPTInterface {
 			me.log.info('No slots found for refreshing after filtering.');
 			return;
 		}
-		const prebidSlots = [];
+		const prebidSlots = [],
+			noPrebidSlots = [];
+		// Check if slots should refresh bids
 		if (window?.apstag) {
 			refreshSlots.forEach((slot) => {
 				me.log.info('Checking', slot.getSlotElementId());
-				if (window?.GPT_PREBID_SLOTS?.[slot.getSlotElementId()]) {
-					prebidSlots.push(slot);
+				// Exclude any slots with 'noprebid' targeting parameters
+				const noPrebid = slot.getTargeting('noprebid');
+				if (noPrebid?.length && noPrebid[0].toString() !== 'false') {
+					noPrebidSlots.push(slot);
+					return;
 				}
+				// Exclude any slots with a width or height less than 3
+				const sizes = slot.getSizes();
+				sizes.forEach((size) => {
+					if (size?.width < 3 || size?.height < 3) {
+						noPrebidSlots.push(slot);
+						return;
+					}
+				});
+				// Legacy, use the GPT_*_SLOTS globals
+				if (
+					window?.GPT_PREBID_SLOTS?.[slot.getSlotElementId()] ||
+					!window?.GPT_SITE_SLOTS?.[slot.getSlotElementId()]
+				) {
+					prebidSlots.push(slot);
+					return;
+				}
+				noPrebidSlots.push(slot);
 			});
 		}
 		if (prebidSlots.length) {
 			me.log.info(
-				'Found prebid slots for refresh',
+				'🏷 Requesting bids for prebid slots',
 				this.listSlotData(prebidSlots)
 			);
 			window.apstag.fetchBids(
@@ -93,17 +123,21 @@ export default class APSInterface extends GPTInterface {
 					me.queue(() => {
 						window.apstag.setDisplayBids();
 						me.log.info(
-							'Refreshing slots after bids received',
-							me.listSlotData(refreshSlots),
+							'🏷 Refreshing prebid slots after bids received',
+							me.listSlotData(prebidSlots),
 							bids
 						);
-						me.pubads().refresh(refreshSlots);
+						me.pubads().refresh(prebidSlots);
 					});
 				}
 			);
-		} else {
-			me.log.info('Refreshing slots', me.listSlotData(refreshSlots));
-			return me.pubads().refresh(refreshSlots);
+		}
+		if (noPrebidSlots.length) {
+			me.log.info(
+				'Refreshing noprebid slots',
+				me.listSlotData(noPrebidSlots)
+			);
+			return me.pubads().refresh(noPrebidSlots);
 		}
 	}
 }
