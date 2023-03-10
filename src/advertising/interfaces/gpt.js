@@ -154,7 +154,7 @@ export default class GPTInterface extends DefaultInterface {
 	 */
 	doInitialLoad(requestSlots) {
 		const me = this;
-		if (requestSlots) {
+		if (!requestSlots) {
 			me.log.warn('doInitialLoad called without slots');
 			return;
 		}
