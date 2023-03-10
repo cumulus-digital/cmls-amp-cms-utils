@@ -25,6 +25,7 @@ export default class GPTInterface extends DefaultInterface {
 
 		// To prevent doInitialLoad from re-loading an ad that's already loaded,
 		// we'll track all initial loads with a targeting parameter.
+		const me = this;
 		me.addListener('slotRequested', (e) => {
 			if (!e.slot.getTargeting(me.initialRequestKey)?.length) {
 				me.log.info(
