@@ -174,14 +174,22 @@ export default class GPTInterface extends DefaultInterface {
 						alreadyLoaded.push(slot);
 					}
 				});
-				me.log.info('Initial Load', {
+				me.log.info('Delayed initial load refresh', {
 					notYetLoaded: me.listSlotData(notYetLoaded),
 					alreadyLoaded: me.listSlotData(alreadyLoaded),
 				});
 				if (notYetLoaded.length) {
 					me.refresh(notYetLoaded);
 				}
-			}, 500);
+			}, 1000);
+		} else {
+			me.queue(() => {
+				me.log.info(
+					'Instant initial load refresh',
+					me.listSlotData(requestSlots)
+				);
+				me.refresh(requestSlots);
+			});
 		}
 	}
 
