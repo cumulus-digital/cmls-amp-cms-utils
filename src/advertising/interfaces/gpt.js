@@ -171,23 +171,22 @@ export default class GPTInterface extends DefaultInterface {
 	 */
 	wasSlotRequested(slot) {
 		const me = this;
-		const slotEl = window.self.document.getElementById(
-			slot.getSlotElementId()
-		);
-		let wasRequested = false;
 		if (slot.getTargeting(me.initialRequestKey)?.length) {
 			me.log.info('Has initial request key', me.listSlotData(slot));
-			wasRequested = true;
+			return true;
 		}
 		if (slot.getResponseInformation()) {
 			me.log.info('Has response info', me.listSlotData(slot));
-			wasRequested = true;
+			return true;
 		}
-		if (slotEl.getAttribute('data-google-query-id')) {
+		const slotEl = window.self.document.getElementById(
+			slot.getSlotElementId()
+		);
+		if (slotEl?.getAttribute('data-google-query-id')) {
 			me.log.info('Has data attribute', me.listSlotData(slot));
-			wasRequested = true;
+			return true;
 		}
-		return wasRequested;
+		return false;
 	}
 
 	/**

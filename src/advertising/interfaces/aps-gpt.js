@@ -153,15 +153,14 @@ export default class APSInterface extends GPTInterface {
 	 */
 	wasSlotRequested(slot) {
 		const me = this;
-		let wasRequested = false;
 		if (super.wasSlotRequested(slot)) {
-			wasRequested = true;
+			return true;
 		}
 		// Slots with an amznbid key are queued for refresh on-page already
 		if (slot.getTargeting('amznbid')?.length) {
 			me.log.info('Has amznbid targeting', me.listSlotData(slot));
-			wasRequested = true;
+			return true;
 		}
-		return wasRequested;
+		return false;
 	}
 }
