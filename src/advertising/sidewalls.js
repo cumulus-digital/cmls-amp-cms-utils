@@ -205,9 +205,7 @@ import domReady from '../utils/domReady';
 					.defineSizeMapping(sizeMap);
 				window._CMLS.adTag.display('cmls-sidewall-right', false);
 
-				if (window._CMLS.adTag.isInitialLoadDisabled()) {
-					window._CMLS.adTag.refresh([leftSlot, rightSlot]);
-				}
+				window._CMLS.adTag.doInitialLoad([leftSlot, rightSlot]);
 			});
 		}
 

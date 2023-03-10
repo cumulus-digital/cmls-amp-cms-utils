@@ -63,7 +63,7 @@ export default class DefaultInterface {
 	 * @returns {boolean}
 	 */
 	isInitialLoadDisabled() {
-		return this.pubads().isInitialLoadDisabled();
+		return false;
 	}
 
 	/**
@@ -105,6 +105,12 @@ export default class DefaultInterface {
 	refresh(requestSlots) {}
 
 	/**
+	 * Handle an initial ad load
+	 * @param {object|array} requestSlots
+	 */
+	doInitialLoad(requestSlots) {}
+
+	/**
 	 * Filter given slots for those that return element IDs
 	 * @param {array} requestSlots
 	 */
@@ -116,16 +122,7 @@ export default class DefaultInterface {
 		if (!Array.isArray(requestSlots)) {
 			requestSlots = [requestSlots];
 		}
-		const refreshSlots = [];
-		requestSlots.forEach((slot) => {
-			if (slot?.getSlotElementId()) {
-				refreshSlots.push(slot);
-			}
-		});
-		if (refreshSlots.length) {
-			return refreshSlots;
-		}
-		return false;
+		return requestSlots;
 	}
 
 	/**

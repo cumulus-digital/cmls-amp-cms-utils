@@ -42,6 +42,14 @@ export default class GPTInterface extends DefaultInterface {
 	}
 
 	/**
+	 * Detect if initial load is disabled
+	 * @returns {boolean}
+	 */
+	isInitialLoadDisabled() {
+		return this.pubads().isInitialLoadDisabled();
+	}
+
+	/**
 	 * @typedef {import('./DefaultInterface.js').DefineSlotOptions} DefineSlotOptions
 	 * @param {DefineSlotOptions} options
 	 * @returns {object|boolean}
@@ -110,7 +118,7 @@ export default class GPTInterface extends DefaultInterface {
 					.getSlots()
 					.find((slot) => slot.getSlotElementId() === ID);
 				if (slot) {
-					me.refresh(slot);
+					me.doInitialLoad(slot);
 				}
 			}
 		});
@@ -138,6 +146,67 @@ export default class GPTInterface extends DefaultInterface {
 			this.listSlotData(refreshSlots)
 		);
 		return this.pubads().refresh(refreshSlots);
+	}
+
+	/**
+	 * Handle an initial ad load
+	 * @param {object|array} requestSlots
+	 */
+	doInitialLoad(requestSlots) {
+		const me = this;
+		if (requestSlots) {
+			me.log.warn('doInitialLoad called without slots');
+			return;
+		}
+		if (!Array.isArray(requestSlots)) {
+			requestSlots = [requestSlots];
+		}
+		if (me.isInitialLoadDisabled()) {
+			// We need to delay refresh for a bit in case an on-page refresh
+			// has already handled it our slots...
+			setTimeout(() => {
+				const notYetLoaded = [],
+					alreadyLoaded = [];
+				requestSlots.forEach((slot) => {
+					if (!slot.getResponseInformation()) {
+						notYetLoaded.push(slot);
+					} else {
+						alreadyLoaded.push(slot);
+					}
+				});
+				me.log.info('Initial Load', {
+					notYetLoaded: me.listSlotData(notYetLoaded),
+					alreadyLoaded: me.listSlotData(alreadyLoaded),
+				});
+				if (notYetLoaded.length) {
+					me.refresh(notYetLoaded);
+				}
+			}, 500);
+		}
+	}
+
+	/**
+	 * Filter given slots for those that return element IDs
+	 * @param {array} requestSlots
+	 */
+	filterSlots(requestSlots) {
+		if (!requestSlots) {
+			this.log.warn('Filter called without slots', requestSlots);
+			return;
+		}
+		if (!Array.isArray(requestSlots)) {
+			requestSlots = [requestSlots];
+		}
+		const refreshSlots = [];
+		requestSlots.forEach((slot) => {
+			if (slot?.getSlotElementId()) {
+				refreshSlots.push(slot);
+			}
+		});
+		if (refreshSlots.length) {
+			return refreshSlots;
+		}
+		return false;
 	}
 
 	/**

@@ -45,10 +45,10 @@ import domReady from 'Utils/domReady';
 				targeting: { pos: 'w7m', noprebid: 'noprebid' },
 				prebid: false,
 			});
-			window._CMLS.adTag.display(elementId);
-			if (window._CMLS.adTag.isInitialLoadDisabled()) {
-				window._CMLS.adTag.refresh(slot);
-			}
+			window._CMLS.adTag.display(
+				elementId,
+				window._CMLS.adTag.isInitialLoadDisabled()
+			);
 			log.info('Slot initialized');
 		});
 	};
