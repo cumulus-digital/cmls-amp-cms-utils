@@ -192,7 +192,7 @@ import domReady from '../utils/domReady';
 				*/
 				const rightSlot = window._CMLS.adTag
 					.defineSlot({
-						adUnitPath: window._CMLS.adPath + '/sidewallLeft',
+						adUnitPath: window._CMLS.adPath + '/sidewallRight',
 						size: [
 							[160, 600],
 							[300, 600],
