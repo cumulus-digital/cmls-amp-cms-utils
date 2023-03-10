@@ -171,8 +171,11 @@ export default class GPTInterface extends DefaultInterface {
 					const slotEl = window.self.document.getElementById(
 						slot.getSlotElementId()
 					);
-					me.log.info(slotEl.getAttribute('data-google-query-id'));
-					if (!slot.getResponseInformation()) {
+					me.log.info(
+						slot.getSlotElementId(),
+						slotEl.getAttribute('data-google-query-id')
+					);
+					if (!slotEl.getAttribute('data-google-query-id')) {
 						notYetLoaded.push(slot);
 					} else {
 						alreadyLoaded.push(slot);
