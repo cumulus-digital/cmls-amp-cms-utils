@@ -154,6 +154,7 @@ export default class GPTInterface extends DefaultInterface {
 			const thisSlot = {
 				adUnitPath: slot?.getAdUnitPath(),
 				div: slot?.getSlotElementId(),
+				sizes: slot?.getSizes(),
 				targeting: [],
 			};
 			const targetingKeys = slot?.getTargetingKeys();

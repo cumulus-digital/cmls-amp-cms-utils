@@ -28,7 +28,6 @@ export default class APSInterface extends GPTInterface {
 
 	/**
 	 * Define a slot and apply options, targeting, init, etc.
-	 * If slot has prebid enabled, add to GPT_PREBID_SLOTS array
 	 * @param {DefineSlotOptions} options Options for defineSlot
 	 * @return {object}
 	 */
@@ -37,27 +36,60 @@ export default class APSInterface extends GPTInterface {
 			this.defaultDefineSlotOptions(),
 			options
 		);
-		const slot = super.defineSlot(settings);
-		if (slot && slot.getSlotElementId()) {
-			if (settings?.prebid) {
-				// gpt interface stores slots in GPT_SITE_SLOTS global,
-				// prebid slots need to be removed and added to GPT_PREBID_SLOTS global.
-				if (window?.GPT_SITE_SLOTS?.[slot.getSlotElementId()]) {
-					delete window.GPT_SITE_SLOTS[slot.getSlotElementId()];
-				}
-				window.GPT_PREBID_SLOTS = window.GPT_PREBID_SLOTS || {};
-				window.GPT_PREBID_SLOTS[slot.getSlotElementId()] = slot;
-			} else if (!settings?.targeting?.noprebid) {
-				// Enforce noprebid targeting on generated slots if prebid is false
-				// and a noprebid targeting key has NOT been set.
-				slot.setTargeting('noprebid', 'noprebid');
-			}
+		if (settings?.prebid === false && !settings?.targeting?.noprebid) {
+			settings.targeting.noprebid = 'noprebid';
 		}
+		const slot = super.defineSlot(settings);
 		return slot;
 	}
 
+	filterPrebidSlots(slots) {
+		if (!slots) {
+			me.log.warn('filterPrebidSlots called without slots');
+			return;
+		}
+		if (!Array.isArray(slots)) {
+			slots = [slots];
+		}
+		slots = me.filterSlots(slots);
+		const filteredSlots = {
+			prebid: [],
+			noprebid: [],
+			all: slots,
+		};
+		slots.forEach((slot) => {
+			me.log.info('Checking', slot.getSlotElementId());
+			let isPrebid = true;
+
+			// Exclude slots with 'noprebid' targeting parameters
+			if (slot.getTargeting('noprebid')?.length) {
+				isPrebid = false;
+			}
+
+			// Exclude any slots with a width or height less than 3
+			const sizes = slot.getSizes();
+			if (sizes?.length) {
+				sizes.forEach((size) => {
+					if (size?.width < 3 || size?.height < 3) {
+						isPrebid = false;
+					}
+				});
+			} else {
+				isPrebid = false;
+			}
+
+			if (isPrebid) {
+				filteredSlots.prebid.push(slot);
+			} else {
+				filteredSlots.noprebid.push(slot);
+			}
+		});
+
+		return filteredSlots;
+	}
+
 	/**
-	 * Refresh given slots. If slot is in GPT_PREBID_SLOTS, route through prebid for new bids
+	 * Refresh given slots, handling both prebid and noprebid slots
 	 * @param {object|array} requestSlots
 	 */
 	refresh(requestSlots) {
@@ -73,50 +105,21 @@ export default class APSInterface extends GPTInterface {
 			'Refresh requested for slots',
 			me.listSlotData(requestSlots)
 		);
-		const refreshSlots = me.filterSlots(requestSlots);
-		if (!refreshSlots?.length) {
+
+		const refreshSlots = me.filterPrebidSlots(requestSlots);
+		if (!refreshSlots?.all?.length) {
 			me.log.info('No slots found for refreshing after filtering.');
 			return;
 		}
-		const prebidSlots = [],
-			noPrebidSlots = [];
-		// Check if slots should refresh bids
-		if (window?.apstag) {
-			refreshSlots.forEach((slot) => {
-				me.log.info('Checking', slot.getSlotElementId());
-				// Exclude any slots with 'noprebid' targeting parameters
-				const noPrebid = slot.getTargeting('noprebid');
-				if (noPrebid?.length && noPrebid[0].toString() !== 'false') {
-					noPrebidSlots.push(slot);
-					return;
-				}
-				// Exclude any slots with a width or height less than 3
-				const sizes = slot.getSizes();
-				sizes.forEach((size) => {
-					if (size?.width < 3 || size?.height < 3) {
-						noPrebidSlots.push(slot);
-						return;
-					}
-				});
-				// Legacy, use the GPT_*_SLOTS globals
-				if (
-					window?.GPT_PREBID_SLOTS?.[slot.getSlotElementId()] ||
-					!window?.GPT_SITE_SLOTS?.[slot.getSlotElementId()]
-				) {
-					prebidSlots.push(slot);
-					return;
-				}
-				noPrebidSlots.push(slot);
-			});
-		}
-		if (prebidSlots.length) {
+
+		if (refreshSlots?.prebid?.length) {
 			me.log.info(
 				'🏷 Requesting bids for prebid slots',
-				this.listSlotData(prebidSlots)
+				this.listSlotData(refreshSlots.prebid)
 			);
 			window.apstag.fetchBids(
 				{
-					slots: prebidSlots,
+					slots: refreshSlots.prebid,
 					timeout: 2e3,
 				},
 				function (bids) {
@@ -124,20 +127,21 @@ export default class APSInterface extends GPTInterface {
 						window.apstag.setDisplayBids();
 						me.log.info(
 							'🏷 Refreshing prebid slots after bids received',
-							me.listSlotData(prebidSlots),
+							me.listSlotData(refreshSlots.prebid),
 							bids
 						);
-						me.pubads().refresh(prebidSlots);
+						me.pubads().refresh(refreshSlots.prebid);
 					});
 				}
 			);
 		}
-		if (noPrebidSlots.length) {
+
+		if (refreshSlots?.noprebid?.length) {
 			me.log.info(
 				'Refreshing noprebid slots',
-				me.listSlotData(noPrebidSlots)
+				me.listSlotData(refreshSlots.noprebid)
 			);
-			return me.pubads().refresh(noPrebidSlots);
+			return me.pubads().refresh(refreshSlots.noprebid);
 		}
 	}
 }
