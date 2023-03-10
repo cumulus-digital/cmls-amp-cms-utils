@@ -22,6 +22,18 @@ export default class GPTInterface extends DefaultInterface {
 	constructor() {
 		super();
 		this.log = new Logger(`${this.scriptName} v${this.version}`);
+
+		// To prevent doInitialLoad from re-loading an ad that's already loaded,
+		// we'll track all initial loads with a targeting parameter.
+		me.addListener('slotRequested', (e) => {
+			if (!e.slot.getTargeting(me.initialRequestKey)?.length) {
+				me.log.info(
+					'Setting initial request key',
+					me.listSlotData(e.slot)
+				);
+				e.slot.setTargeting(me.initialRequestKey, true);
+			}
+		});
 	}
 
 	rawInterface() {
@@ -94,17 +106,6 @@ export default class GPTInterface extends DefaultInterface {
 		if (settings.init) {
 			slot = slot.addService(this.pubads());
 		}
-
-		// Track the initial request so we don't call it again.
-		me.addListener('slotRequested', (e) => {
-			if (!e.slot.getTargeting(me.initialRequestKey)?.length) {
-				me.log.info(
-					'Setting initial request key',
-					me.listSlotData(e.slot)
-				);
-				e.slot.setTargeting(me.initialRequestKey, true);
-			}
-		});
 
 		this.log.info('Defined slot', {
 			slot: this.listSlotData(slot).shift(),

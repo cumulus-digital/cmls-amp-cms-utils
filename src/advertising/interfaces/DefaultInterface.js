@@ -29,7 +29,7 @@ export default class DefaultInterface {
 	static detectTag() {}
 
 	constructor() {
-		this.logger = new Logger(`${this.scriptName} v${this.version}`);
+		this.log = new Logger(`${this.scriptName} v${this.version}`);
 	}
 
 	/**
