@@ -44,6 +44,7 @@ export default class APSInterface extends GPTInterface {
 	}
 
 	filterPrebidSlots(slots) {
+		const me = this;
 		if (!slots) {
 			me.log.warn('filterPrebidSlots called without slots');
 			return;
