@@ -223,7 +223,7 @@ export default class GPTInterface extends DefaultInterface {
 						'Delayed initial load firing',
 						me.listSlotData(notYetRequested)
 					);
-					me.refresh(notYetLoaded);
+					me.refresh(notYetRequested);
 				}
 				if (alreadyRequested.length) {
 					me.log.info(
