@@ -110,6 +110,8 @@ import domReady from '../utils/domReady';
 				<div id="cmls-sidewall-left" class="cmls-sidewall"></div>
 				<div id="cmls-sidewall-right" class="cmls-sidewall"></div>
 				<style>
+					.wrapper-header .takeover-right, .wrapper-header .takeover-left,
+					.wrapper-header .skyscraper-right, .wrapper-header .skyscraper-left { display: none !important; }
 					.cmls-sidewalls { position: absolute; left: 50%; top: 0; width: ${contentWidth}; height: 100%; transform: translateX(-50%); display: flex; justify-content: space-between; box-sizing: border-box; padding: ${topPad} 10px; }
 					.cmls-sidewall { position: sticky; top: ${topPad}; width: fit-content; height: fit-content; }
 					#cmls-sidewall-left { transform: translateX(-100%); }
