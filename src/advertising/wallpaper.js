@@ -351,6 +351,8 @@ import debounce from 'lodash/debounce';
 		}
 
 		clearObstructions() {
+			const me = this;
+
 			log.info('clearObstructions called', this.cache);
 			// Remove any obstructive nodes
 			if (this.cache?.obstructiveNodes?.length) {
