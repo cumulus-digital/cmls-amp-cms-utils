@@ -498,7 +498,11 @@ import debounce from 'lodash/debounce';
 						  slotLink.getAttribute('target')
 						: '') + slotImage.getAttribute('src')
 				);
-				log.info('Generated request hash.', hash);
+				log.info(
+					'Generated request hash.',
+					hash,
+					container.dataset.hash
+				);
 
 				if (hash === container.dataset.hash) {
 					log.info('Request is already handled.');
@@ -518,13 +522,17 @@ import debounce from 'lodash/debounce';
 							  slotLink.getAttribute('target')
 							: '') + slotImage.getAttribute('src')
 					);
-					log.info('Generated request hash.', hash);
+					log.info(
+						'Generated request hash.',
+						hash,
+						container.dataset.hash
+					);
 
 					if (hash === container.dataset.hash) {
 						log.info('Request is already handled.');
 						return;
 					}
-					container.dataset.hash = hash;
+					container.setAttribute('data-hash', hash);
 
 					let bgColor = 'rgba(0,0,0,1)';
 					container.style.setProperty('background-color', bgColor);
