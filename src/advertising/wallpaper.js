@@ -508,6 +508,8 @@ import debounce from 'lodash/debounce';
 				me.reset().then(() => {
 					me.settings.preDisplayCallback.apply(this);
 
+					const container = me.getContainer();
+
 					// Generate a simple hash of the image url and link
 					// so we don't inject the same background twice
 					const hash = me.checkSum(
