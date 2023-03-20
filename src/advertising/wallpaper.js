@@ -353,6 +353,8 @@ import debounce from 'lodash/debounce';
 		clearObstructions() {
 			const me = this;
 
+			window.NO_SIDEWALLS = true;
+
 			log.info('clearObstructions called', this.cache);
 			// Remove any obstructive nodes
 			if (this.cache?.obstructiveNodes?.length) {
@@ -363,13 +365,19 @@ import debounce from 'lodash/debounce';
 				// Destroy any ad slots in obstructive nodes
 				if (window._CMLS?.adTag) {
 					// get GPT ad slot IDs inside obstructive nodes
-					// by default we include freestar's sidewalls
-					const badSlotIds = ['sidewall_left', 'sidewall_right'];
+					// by default we include freestar's and our sidewalls
+					const badSlotIds = [
+						'sidewall_left',
+						'sidewall_right',
+						'cmls-sidewall-left',
+						'cmls-sidewall-right',
+					];
 					Array.prototype.forEach.call(
 						me.cache.obstructiveNodes,
 						(n) => {
-							const slotId =
-								n.querySelector('[id^="div-gpt-ad"]');
+							const slotId = n.querySelector(
+								'[id^="div-gpt-ad"],[id^="google_ads_iframe"]'
+							);
 							if (slotId?.id) {
 								badSlotIds.push(slotId.id);
 							}
