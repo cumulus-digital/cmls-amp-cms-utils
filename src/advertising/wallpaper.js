@@ -153,7 +153,7 @@ import debounce from 'lodash/debounce';
 			h2 =
 				Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^
 				Math.imul(h1 ^ (h1 >>> 13), 3266489909);
-			return 4294967296 * (2097151 & h2) + (h1 >>> 0);
+			return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString();
 		}
 
 		hasPassedStickPosition() {
@@ -501,10 +501,10 @@ import debounce from 'lodash/debounce';
 				log.info(
 					'Generated request hash.',
 					hash,
-					container.dataset.hash
+					container.getAttribute('data-hash')
 				);
 
-				if (hash === container.dataset.hash) {
+				if (hash === container.getAttribute('data-hash')) {
 					log.info('Request is already handled.');
 					return;
 				}
@@ -528,7 +528,7 @@ import debounce from 'lodash/debounce';
 						container.dataset.hash
 					);
 
-					if (hash === container.dataset.hash) {
+					if (hash === container.getAttribute('data-hash')) {
 						log.info('Request is already handled.');
 						return;
 					}
