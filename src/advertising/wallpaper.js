@@ -41,7 +41,10 @@ import debounce from 'lodash/debounce';
 			obstructiveNode:
 				'.takeover-left, .takeover-right, .skyscraper-left, .skyscraper-right, .fs-sidewall-container, .cmls-sidwalls',
 		};
-		settings = {};
+		settings = {
+			preDisplayCallback: this.clearObstructions,
+			postDisplayCallback: this.clearObstructions,
+		};
 		cache = {};
 
 		constructor(options = {}) {
@@ -341,6 +344,10 @@ import debounce from 'lodash/debounce';
 			// Disable our own sidewalls
 			window.NO_SIDEWALLS = true;
 
+			this.settings.postDisplayCallback();
+		}
+
+		clearObstructions() {
 			// Remove any obstructive nodes
 			if (this.cache?.obstructiveNodes?.length) {
 				log.info(
@@ -468,6 +475,7 @@ import debounce from 'lodash/debounce';
 				}
 
 				me.reset().then(() => {
+					me.settings.preDisplayCallback();
 					const container = me.getContainer();
 
 					// Generate a simple hash of the image url and link

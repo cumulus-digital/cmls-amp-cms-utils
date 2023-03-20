@@ -10,5 +10,5 @@ require('./player-sponsor');
 require('./paid-content');
 require('./pushdown');
 require('./west7-1x1');
-require('./wallpaper');
 require('./sidewalls');
+require('./wallpaper');
