@@ -126,6 +126,11 @@ import domReady from '../utils/domReady';
 
 			// Define slots
 			window._CMLS.adTag.queue(() => {
+				if (window.NO_SIDEWALLS) {
+					log.info('NO_SIDEWALLS set before ads could be generated');
+					return;
+				}
+
 				log.info('Defining sidewalls');
 				var gt = window._CMLS.adTag.rawInterface();
 				if (!gt.sizeMapping) {
@@ -207,7 +212,9 @@ import domReady from '../utils/domReady';
 					.defineSizeMapping(sizeMap);
 				window._CMLS.adTag.display('cmls-sidewall-right', false);
 
-				window._CMLS.adTag.doInitialLoad([leftSlot, rightSlot]);
+				if (!window.NO_SIDEWALLS) {
+					window._CMLS.adTag.doInitialLoad([leftSlot, rightSlot]);
+				}
 			});
 		}
 
