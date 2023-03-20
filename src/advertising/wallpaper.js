@@ -42,12 +42,15 @@ import debounce from 'lodash/debounce';
 				'.takeover-left, .takeover-right, .skyscraper-left, .skyscraper-right, .fs-sidewall-container, .cmls-sidwalls',
 		};
 		settings = {
-			preDisplayCallback: this.clearObstructions,
-			postDisplayCallback: this.clearObstructions,
+			preDisplayCallback: null,
+			postDisplayCallback: null,
 		};
 		cache = {};
 
 		constructor(options = {}) {
+			this.settings.preDisplayCallback = this.clearObstructions;
+			this.settings.postDisplayCallback = this.clearObstructions;
+
 			Object.assign(this.settings, this.defaults, options);
 
 			const styleSheet = `
@@ -348,6 +351,7 @@ import debounce from 'lodash/debounce';
 		}
 
 		clearObstructions() {
+			log.info('clearObstructions called');
 			// Remove any obstructive nodes
 			if (this.cache?.obstructiveNodes?.length) {
 				log.info(
