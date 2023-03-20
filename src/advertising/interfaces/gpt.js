@@ -234,6 +234,7 @@ export default class GPTInterface extends DefaultInterface {
 				}
 			}, 500);
 		} else {
+			/*
 			me.queue(() => {
 				me.log.info(
 					'Instant initial load refresh',
@@ -241,6 +242,7 @@ export default class GPTInterface extends DefaultInterface {
 				);
 				me.refresh(requestSlots);
 			});
+			*/
 		}
 	}
 
