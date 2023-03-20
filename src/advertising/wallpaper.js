@@ -488,10 +488,25 @@ import debounce from 'lodash/debounce';
 					return;
 				}
 
+				const container = me.getContainer();
+
+				// Generate a simple hash of the image url and link
+				// so we don't inject the same background twice
+				const hash = me.checkSum(
+					(slotLink.length
+						? slotLink.getAttribute('href') +
+						  slotLink.getAttribute('target')
+						: '') + slotImage.getAttribute('src')
+				);
+				log.info('Generated request hash.', hash);
+
+				if (hash === container.dataset.hash) {
+					log.info('Request is already handled.');
+					return;
+				}
+
 				me.reset().then(() => {
 					me.settings.preDisplayCallback.apply(this);
-
-					const container = me.getContainer();
 
 					// Generate a simple hash of the image url and link
 					// so we don't inject the same background twice
