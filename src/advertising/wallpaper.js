@@ -347,11 +347,11 @@ import debounce from 'lodash/debounce';
 			// Disable our own sidewalls
 			window.NO_SIDEWALLS = true;
 
-			this.settings.postDisplayCallback();
+			this.settings.postDisplayCallback.apply(this);
 		}
 
 		clearObstructions() {
-			log.info('clearObstructions called');
+			log.info('clearObstructions called', this.cache);
 			// Remove any obstructive nodes
 			if (this.cache?.obstructiveNodes?.length) {
 				log.info(
@@ -479,7 +479,8 @@ import debounce from 'lodash/debounce';
 				}
 
 				me.reset().then(() => {
-					me.settings.preDisplayCallback();
+					me.settings.preDisplayCallback.apply(this);
+
 					const container = me.getContainer();
 
 					// Generate a simple hash of the image url and link
