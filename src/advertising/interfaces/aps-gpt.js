@@ -118,12 +118,14 @@ export default class APSInterface extends GPTInterface {
 				'🏷 Requesting bids for prebid slots',
 				this.listSlotData(refreshSlots.prebid)
 			);
-			window.apstag.fetchBids(
-				{
-					slots: refreshSlots.prebid,
-					timeout: 2e3,
-				},
-				function (bids) {
+
+			const apsconfig = {
+				slots: refreshSlots.prebid,
+			};
+
+			const fetchBids = (apsconfig) => {
+				me.log.info('fetchBids called', apsconfig);
+				window.apstag.fetchBids(apsconfig, (bids) => {
 					me.queue(() => {
 						window.apstag.setDisplayBids();
 						me.log.info(
@@ -133,8 +135,50 @@ export default class APSInterface extends GPTInterface {
 						);
 						me.pubads().refresh(refreshSlots.prebid);
 					});
-				}
-			);
+				});
+			};
+
+			const awaitUSP = (apsconfig) => {
+				me.log.info('Getting USP data');
+
+				window.__uspapi('uspPing', 1, (obj, status) => {
+					if (!status) {
+						setTimeout(() => {
+							awaitUSP(apsconfig);
+						}, 500);
+						return;
+					}
+
+					me.log.info('Received USP ping', obj, status);
+
+					if (
+						obj?.mode?.includes('USP') &&
+						obj?.location &&
+						obj?.jurisdiction?.includes(obj.location.toUpperCase())
+					) {
+						me.log.info('Within USP jurisdiction');
+						window.__uspapi('getUSPData', 1, (uspData, success) => {
+							me.log.info('Received USP data', uspData, success);
+							if (uspData?.uspString) {
+								apsconfig.us_privacy = uspData.uspString;
+							}
+							fetchBids(apsconfig);
+						});
+						return;
+					}
+
+					me.log.info('Not within USP jurisdiction');
+					fetchBids(apsconfig);
+				});
+			};
+
+			if (typeof window.__uspapi === 'function') {
+				me.log.info('Website has USP API, requesting US Privacy data');
+				awaitUSP(apsconfig);
+			} else {
+				me.log.info('No USP API, fetching bids.');
+				fetchBids(apsconfig);
+			}
 		}
 
 		if (refreshSlots?.noprebid?.length) {
