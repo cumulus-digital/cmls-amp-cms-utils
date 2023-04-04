@@ -133,6 +133,7 @@ import domReady from '../utils/domReady';
 
 				log.info('Defining sidewalls');
 				var gt = window._CMLS.adTag.rawInterface();
+				/*
 				if (!gt.sizeMapping) {
 					return;
 				}
@@ -147,7 +148,17 @@ import domReady from '../utils/domReady';
 					)
 					.addSize([0, 0], [])
 					.build();
-
+				*/
+				let sizeMap = [
+					[
+						[parseInt(contentWidth) + sizeMapBuffer, 0],
+						[
+							[160, 600],
+							[300, 600],
+						],
+					],
+					[[0, 0], []],
+				];
 				/*
 				window._CMLS.adTag
 					.defineSlot(
