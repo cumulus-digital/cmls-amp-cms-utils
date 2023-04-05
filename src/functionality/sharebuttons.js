@@ -29,7 +29,7 @@ import { addAfterPageFrame } from 'Utils/playerTools';
 		},
 		twitter: {
 			display_name: 'Twitter',
-			url: 'https://twitter.com/intent/tweet?text={{URL}}&text={{TITLE}}',
+			url: 'https://twitter.com/intent/tweet?text={{TITLE}}&url={{URL}}',
 			icon: `
 			<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 				viewBox="0 0 24.6 20" enable-background="new 0 0 24.6 20" xml:space="preserve" title="Twitter" alt="Twitter">
