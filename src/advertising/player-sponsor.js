@@ -57,29 +57,43 @@ import domReady from 'Utils/domReady';
 				const styleEl = window.document.createElement('style');
 				styleEl.id = `${elementId}Style`;
 				styleEl.innerHTML = `
-						#${elementId} {
+						#${elementId}-wrapper {
+							box-sizing: border-box;
 							position: fixed;
 							z-index: 200000;
-							width: 120px;
-							height: 60px;
-							bottom: 4px;
+							width: 100%;
+							max-width: 1120px;
+							height: 65px;
+							bottom: 0;
 							left: 50%;
-							transform: translateX(+275px);
+							transform: translateX(-50%);
+							padding-right: 175px;
+							padding-bottom: 3px;
+							pointer-events: none;
+							display: flex;
+							align-items: center;
+							justify-content: end;
 						}
-							@media (max-width: 1120px) {
+							#${elementId} {
+								pointer-events: all;
+								width: fit-content;
+								height: fit-content;
+							}
+							@media (max-width: 1000px) {
 								#${elementId} {
-									left: auto;
-									right: 160px;
-									transform: none;
+									padding-right:
 								}
 							}
 					`;
 				injectPoint.appendChild(styleEl);
 
 				// Inject ad slot
+				const wrapper = window.top.document.createElement('div');
+				wrapper.id = `${elementId}-wrapper`;
 				const div = window.top.document.createElement('div');
 				div.id = elementId;
-				injectPoint.appendChild(div);
+				wrapper.appendChild(div);
+				injectPoint.appendChild(wrapper);
 
 				window._CMLS.adTag.queue(() => {
 					log.info('Defining slot', elementId);
@@ -91,17 +105,33 @@ import domReady from 'Utils/domReady';
 						true
 					);
 					*/
-					window._CMLS.adTag.defineSlot({
-						adUnitPath: window._CMLS.adPath,
-						size: [[120, 60]],
-						div: elementId,
-						collapse: true,
-						targeting: {
-							pos: 'playersponsorlogo',
-							noprebid: 'noprebid',
-						},
-						prebid: false,
-					});
+					let sizeMap = [
+						[
+							[800, 0],
+							[
+								[320, 50],
+								[120, 60],
+							],
+						],
+						[[0, 0], []],
+					];
+					window._CMLS.adTag
+						.defineSlot({
+							adUnitPath: window._CMLS.adPath,
+							size: [
+								[320, 50],
+								[120, 60],
+							],
+							div: elementId,
+							collapse: true,
+							targeting: {
+								pos: 'playersponsorlogo',
+								noprebid: 'noprebid',
+							},
+							prebid: false,
+						})
+						.defineSizeMapping(sizeMap);
+
 					window._CMLS.adTag.display(
 						elementId,
 						window._CMLS.adTag.isInitialLoadDisabled()
