@@ -78,6 +78,16 @@ import domReady from 'Utils/domReady';
 								pointer-events: all;
 								width: fit-content;
 								height: fit-content;
+								display: flex;
+								align-items: center;
+								justify-content: end;
+							}
+							#${elementId} > div {
+								width: fit-content;
+								height: fit-content;
+								display: flex;
+								align-items: center;
+								justify-content: end;
 							}
 							@media (max-width: 1000px) {
 								#${elementId} {
@@ -109,8 +119,9 @@ import domReady from 'Utils/domReady';
 						[
 							[800, 0],
 							[
-								[320, 50],
 								[120, 60],
+								[300, 50],
+								[320, 50],
 							],
 						],
 						[[0, 0], []],
@@ -119,8 +130,9 @@ import domReady from 'Utils/domReady';
 						.defineSlot({
 							adUnitPath: window._CMLS.adPath,
 							size: [
-								[320, 50],
 								[120, 60],
+								[300, 50],
+								[320, 50],
 							],
 							div: elementId,
 							collapse: true,
@@ -142,7 +154,7 @@ import domReady from 'Utils/domReady';
 						);
 						if (playerBar) {
 							const slotDiv = window.document.querySelector(
-								`#${elementId}`
+								`#${elementId}-wrapper`
 							);
 							let zIndex =
 								window.getComputedStyle(playerBar).zIndex + 1;
