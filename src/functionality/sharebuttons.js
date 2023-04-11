@@ -62,7 +62,7 @@ import { addAfterPageFrame } from 'Utils/playerTools';
 		}
 
 		if (window.NO_ADDTHIS_HERE) {
-			log.info('addThis prevented by window.NO_ADDTHIS_HERE');
+			log.info('Share buttons prevented by window.NO_ADDTHIS_HERE');
 			return;
 		}
 
@@ -84,44 +84,54 @@ import { addAfterPageFrame } from 'Utils/playerTools';
 			return;
 		}
 
-		const post = getBasicPost();
+		const post = getBasicPost(['page-template-default']);
 		if (!post) {
 			log.info('Not a basic post, exiting.');
 			return;
 		}
+		log.info('got post', post);
 
 		const id = nameSpace + '-' + Math.ceil(Math.random() * 6000000);
 
-		const css = `
-			.cmls-share_buttons {
-				clear: both !important;
-				display: block !important;
-				margin: 1em 0 !important;
-				font-size: 16px !important;
-				line-height: 1 !important;
-			}
-			.cmls-share_buttons--container {
-				display: flex !important;
-				align-items: center !important;
-				gap: .5em !important;
-			}
-			.cmls-share_buttons ul {
-				display: flex !important;
-				align-items: center !important;
-				gap: .75em !important;
-				list-style: none !important;
-			}
-			.cmls-share_buttons a:visited {
-				color: inherit
-			}
-			.cmls-share_buttons svg {
-				height: 1.5em !important;
-				width: 1.5em !important;
-			}
-		`;
-		const style = createElement.el('style');
-		style.innerHTML = css;
-		window.document.body.appendChild(style);
+		if (!window.document.querySelector(`#${id}-style`)) {
+			const css = `
+				.cmls-share_buttons {
+					clear: both !important;
+					display: block !important;
+					margin: 1em 0 !important;
+					font-size: 16px !important;
+					line-height: 1 !important;
+				}
+				.cmls-share_buttons--container {
+					display: flex !important;
+					align-items: center !important;
+					gap: .5em !important;
+				}
+				.cmls-share_buttons ul {
+					display: flex !important;
+					align-items: center !important;
+					gap: .75em !important;
+					list-style: none !important;
+					margin: 0 !important;
+					padding: 0 !important;
+				}
+				.cmls-share_buttons li {
+					margin: 0 !important;
+					padding: 0 !important;
+				}
+				.cmls-share_buttons a:visited {
+					color: inherit
+				}
+				.cmls-share_buttons svg {
+					height: 1.5em !important;
+					width: 1.5em !important;
+				}
+			`;
+			const style = createElement.el('style');
+			style.id = `${id}-style`;
+			style.innerHTML = css;
+			window.document.body.appendChild(style);
+		}
 
 		const shareButtons = `
 			<nav class="cmls-share_buttons--container">
@@ -162,13 +172,16 @@ import { addAfterPageFrame } from 'Utils/playerTools';
 		});
 
 		const share_buttons = createElement.el('div', {
+			id: id,
 			class: 'cmls-share_buttons',
 		});
 		share_buttons.innerHTML = shareButtons.replace(
 			'{{SERVICES}}',
 			icons.join('\n')
 		);
+
 		post.after(share_buttons);
+
 		log.info('Share buttons injected.');
 		const sendShareEvent = (method, type, id) => {
 			if (window.gtag) {
