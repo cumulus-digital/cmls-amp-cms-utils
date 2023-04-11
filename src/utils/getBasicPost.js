@@ -37,12 +37,23 @@ function getBasicPost(additional_classes = []) {
 
 	const entry = doc.querySelector(
 		`.wrapper-content .column-1 #post-${postId},` +
-			`.express-content .wp-block-post-content:has(.themify_builder_content[data-postid="${postId}"]),` +
+			//`.express-content .wp-block-post-content:has(.themify_builder_content[data-postid="${postId}"]),` +
 			'.express-content .wp-block-post-content'
 	);
 	if (!entry) {
 		log.info('Could not discover post content.');
 		return false;
+	}
+	// For FSE, let's try to get the themify block within post content to ensure we get the right post
+	if (entry.classList.contains('wp-block-post-content')) {
+		var themify = doc.querySelector(
+			`.themify_builder_content[data-postid="${postId}"]`
+		);
+		if (
+			themify?.parentElement?.classList.contains('wp-block-post-content')
+		) {
+			entry = themify.parentElement;
+		}
 	}
 
 	const entryBox = entry.getBoundingClientRect();
