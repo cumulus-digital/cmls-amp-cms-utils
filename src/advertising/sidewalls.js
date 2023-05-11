@@ -25,6 +25,11 @@ import domReady from '../utils/domReady';
 			return;
 		}
 
+		if (window?._CMLS?.disabled?.sideWalls) {
+			log.info('_CMLS.disabled.sideWalls configured, exiting.');
+			return;
+		}
+
 		const freestarSidewallsEnabled = () => {
 			if (window?.freestar?.queue) {
 				log.info('Freestar enabled.');
@@ -255,10 +260,12 @@ import domReady from '../utils/domReady';
 			});
 		}
 
-		if (window?._CMLS?.adPath) {
-			init();
-		} else {
-			window.addEventListener('cmls-adpath-discovered', () => init());
-		}
+		setTimeout(() => {
+			if (window?._CMLS?.adPath) {
+				init();
+			} else {
+				window.addEventListener('cmls-adpath-discovered', () => init());
+			}
+		}, 1000);
 	});
 })(window.self);
