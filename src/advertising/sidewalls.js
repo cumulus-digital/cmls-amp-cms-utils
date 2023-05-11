@@ -266,6 +266,6 @@ import domReady from '../utils/domReady';
 			} else {
 				window.addEventListener('cmls-adpath-discovered', () => init());
 			}
-		}, 1000);
+		}, 2000);
 	});
 })(window.self);
