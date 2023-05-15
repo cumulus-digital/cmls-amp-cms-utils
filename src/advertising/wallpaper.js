@@ -311,7 +311,7 @@ import debounce from 'lodash/debounce';
 				log.info('Raising content area above wallpeper container.');
 				this.cache.contentNode.style.setProperty(
 					'z-index',
-					containerStyle.zIndex + 1
+					containerStyle.zIndex + 10
 				);
 			}
 			if (
@@ -323,7 +323,7 @@ import debounce from 'lodash/debounce';
 				this.cache.footerNode.style.setProperty('position', 'relative');
 				this.cache.footerNode.style.setProperty(
 					'z-index',
-					containerStyle.zIndex + 2
+					containerStyle.zIndex + 12
 				);
 			}
 		}

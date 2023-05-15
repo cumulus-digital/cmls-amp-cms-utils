@@ -130,8 +130,11 @@ import domReady from '../utils/domReady';
 						justify-content: space-between;
 						box-sizing: border-box;
 						padding: ${topPad} 10px;
-						z-index: 100;
+						z-index: 2;
 						pointer-events: none
+					}
+					stn-player .player {
+						z-index: 99999
 					}
 					.cmls-sidewall {
 						position: sticky;
