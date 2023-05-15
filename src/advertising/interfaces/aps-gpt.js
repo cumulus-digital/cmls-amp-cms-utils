@@ -61,18 +61,36 @@ export default class APSInterface extends GPTInterface {
 		slots.forEach((slot) => {
 			me.log.info('Checking', slot.getSlotElementId());
 			let isPrebid = false;
-			const allowedWidths = [160, 300, 320, 728, 970];
-			const allowedHeights = [50, 90, 100, 250, 600];
+
+			const allowedSizes = [
+				'120x240',
+				'120x600',
+				'160x600',
+				'250x250',
+				'300x50',
+				'300x100',
+				'300x1050',
+				'300x300',
+				'300x75',
+				'300x250',
+				'300x600',
+				'320x50',
+				'320x100',
+				'336x280',
+				'400x300',
+				'468x60',
+				'728x90',
+				'970x250',
+				'970x90',
+			];
 
 			// Only allow expected sizes in prebid
 			const sizes = slot.getSizes();
 			if (sizes?.length) {
-				sizes.forEach((size) => {
-					if (
-						allowedWidths.includes(size.width) &&
-						allowedHeights.includes(size.height)
-					) {
+				sizes.some((size) => {
+					if (allowedSizes.includes(`${size.width}x${size.height}`)) {
 						isPrebid = true;
+						return true;
 					}
 				});
 			} else {
