@@ -130,7 +130,7 @@ import domReady from '../utils/domReady';
 						justify-content: space-between;
 						box-sizing: border-box;
 						padding: ${topPad} 10px;
-						z-index: 9999;
+						z-index: 100;
 						pointer-events: none
 					}
 					.cmls-sidewall {
@@ -260,12 +260,10 @@ import domReady from '../utils/domReady';
 			});
 		}
 
-		setTimeout(() => {
-			if (window?._CMLS?.adPath) {
-				init();
-			} else {
-				window.addEventListener('cmls-adpath-discovered', () => init());
-			}
-		}, 2000);
+		if (window?._CMLS?.adPath) {
+			init();
+		} else {
+			window.addEventListener('cmls-adpath-discovered', () => init());
+		}
 	});
 })(window.self);
