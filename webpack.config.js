@@ -1,3 +1,4 @@
+const webpack = require('webpack');
 const { basename, dirname, resolve } = require('path');
 const browserslist = require('browserslist');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
@@ -79,8 +80,10 @@ module.exports = (env) => {
 								[
 									'@babel/preset-env',
 									{
+										debug: true,
 										useBuiltIns: 'usage',
-										corejs: 3,
+										corejs: require('core-js/package.json')
+											.version,
 									},
 								],
 							],
@@ -90,6 +93,14 @@ module.exports = (env) => {
 			],
 		},
 		plugins: [
+			new webpack.DefinePlugin({
+				__COMMIT_HASH__: JSON.stringify(
+					require('child_process')
+						.execSync('git rev-parse --short HEAD')
+						.toString()
+						.trim()
+				),
+			}),
 			new CleanWebpackPlugin({
 				cleanAfterEveryBuildPatterns: ['!fonts/**', '!images/**'],
 				// Prevent it from deleting webpack assets during builds that have
