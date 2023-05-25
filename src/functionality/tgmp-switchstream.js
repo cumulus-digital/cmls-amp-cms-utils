@@ -34,8 +34,11 @@ import domReady from '../utils/domReady';
 
 	const selectors = [
 		'.tgmp-switchstream',
+		'.tgmp-switchstream a',
 		'[alt*="tgmp-switchstream"]',
+		'[alt*="tgmp-switchstream"] a',
 		'[href*="tgmp-switchstream"]',
+		'[href*="tgmp-switchstream"] a',
 	];
 
 	/**
