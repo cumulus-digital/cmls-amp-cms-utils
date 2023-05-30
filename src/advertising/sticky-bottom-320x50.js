@@ -153,9 +153,9 @@ import domReady from 'Utils/domReady';
 						],
 					];
 
-					context._CMLS[nameSpace].slot = window._CMLS.adTag
+					context._CMLS[nameSpace].slot = context._CMLS.adTag
 						.defineSlot({
-							adUnitPath: window._CMLS.adPath,
+							adUnitPath: context._CMLS.adPath,
 							size: [
 								[120, 60],
 								[300, 50],
@@ -170,19 +170,19 @@ import domReady from 'Utils/domReady';
 						})
 						.defineSizeMapping(sizeMap);
 
-					window._CMLS.adTag.display(
+					context._CMLS.adTag.display(
 						elementId,
-						window._CMLS.adTag.isInitialLoadDisabled()
+						context._CMLS.adTag.isInitialLoadDisabled()
 					);
 				});
 			},
 			init: () => {
 				domReady(() => {
-					if (window?._CMLS?.adPath) {
-						window._CMLS[nameSpace].inject();
+					if (context?._CMLS?.adPath) {
+						context._CMLS[nameSpace].inject();
 					} else {
-						window.addEventListener('cmls-adpath-discovered', () =>
-							window._CMLS[nameSpace].inject()
+						context.addEventListener('cmls-adpath-discovered', () =>
+							context._CMLS[nameSpace].inject()
 						);
 					}
 				});
