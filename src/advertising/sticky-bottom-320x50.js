@@ -82,6 +82,7 @@ import domReady from 'Utils/domReady';
 					@media (min-width: 800px) {
 						#playerbar ~ #${elementId}-wrapper {
 							background: transparent;
+							backdrop-filter: none;
 							max-width: 1120px;
 							height: 65px;
 							bottom: 0;
