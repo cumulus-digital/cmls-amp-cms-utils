@@ -26,9 +26,16 @@ import domReady from 'Utils/domReady';
 	if (!context._CMLS?.[nameSpace]) {
 		context._CMLS[nameSpace] = {
 			slot: null,
+			refresh: () => {
+				if (context._CMLS[nameSpace].slot) {
+					log.info('Refreshing slot.');
+					context._CMLS.adTag.refresh(context._CMLS[nameSpace].slot);
+				}
+			},
 			inject: () => {
 				if (context.document.getElementById(elementId)) {
 					log.info('Sponsor ad slot already injected');
+					context._CMLS[nameSpace].refresh();
 					return;
 				}
 
@@ -119,8 +126,7 @@ import domReady from 'Utils/domReady';
 				context.document.body.appendChild(wrapper);
 
 				if (context._CMLS[nameSpace].slot) {
-					log.info('Slot exists, refreshing.');
-					context._CMLS.adTag.refresh(context._CMLS[nameSpace].slot);
+					context._CMLS[nameSpace].refresh();
 					return;
 				}
 
