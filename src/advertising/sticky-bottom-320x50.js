@@ -51,6 +51,7 @@ import domReady from 'Utils/domReady';
 					#${elementId}-wrapper {
 						background: rgba(0,0,0,0.5);
 						backdrop-filter: blur(10px);
+						-webkit-backdrop-filter: blur(10px);
 						display: flex;
 						align-items: center;
 						justify-content: center;
