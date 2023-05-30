@@ -16,17 +16,39 @@ import domReady from 'Utils/domReady';
 
 	/**
 	 * If we're not the top window, assume we're on a second click in
-	 * the TuneGenie iframe and activate the sponsor adtag in the parent window.
+	 * the TuneGenie iframe and activate or refresh the sponsor adtag
+	 * in the parent window.
 	 */
 	if (isInIframe()) {
-		log.info('Inside iframe, will assume parent has taken care of this.');
+		log.info('Inside iframe, checking for parent slot');
+		if (!window.top?._CMLS?.[nameSpace]) {
+			log.info(`${nameSpace} does not exist in top window!`);
+			return;
+		}
+		if (!window.top.document.getElementById(elementId)) {
+			log.info('Initializing in parent');
+			window.top._CMLS[nameSpace].init();
+			return;
+		}
+		log.info('Refreshing parent window slot');
+		if (window.top?._CMLS?.adPath) {
+			window.top._CMLS.adPath.refresh(window.top._CMLS[nameSpace].slot);
+		} else {
+			window.top.addEventListener('cmls-adpath-discovered', () => {
+				window.top._CMLS.adPath.refresh(
+					window.top._CMLS[nameSpace].slot
+				);
+			});
+		}
 		//window.parent._CMLS[nameSpace].init();
 		return;
 	}
 
 	window._CMLS = window._CMLS || {};
 	window._CMLS[nameSpace] = {
+		slot: null,
 		inject: () => {
+			const me = this;
 			waitForPlayer().then(() => {
 				if (window.top.document.getElementById(elementId)) {
 					log.info('Sponsor ad is already injected.');
@@ -34,10 +56,12 @@ import domReady from 'Utils/domReady';
 				}
 
 				// Don't inject on smaller screens
+				/*
 				if (window.matchMedia('(max-width: 800px)').matches) {
 					log.info('Device width is too narrow, exiting.');
 					return;
 				}
+				*/
 
 				const playerFrame = window.document.querySelector(
 					'iframe[name="pwm_bar"]'
@@ -89,9 +113,13 @@ import domReady from 'Utils/domReady';
 								align-items: center;
 								justify-content: end;
 							}
-							@media (max-width: 1000px) {
-								#${elementId} {
-									padding-right:
+							@media (max-width: 800px) {
+								#${elementId}-wrapper {
+									bottom: 65px;
+									left: 0;
+									transform: none;
+									padding-right: 0;
+									padding-bottom: 0;
 								}
 							}
 					`;
@@ -124,9 +152,15 @@ import domReady from 'Utils/domReady';
 								[320, 50],
 							],
 						],
-						[[0, 0], []],
+						[
+							[0, 0],
+							[
+								[300, 50],
+								[320, 50],
+							],
+						],
 					];
-					window._CMLS.adTag
+					me.slot = window._CMLS.adTag
 						.defineSlot({
 							adUnitPath: window._CMLS.adPath,
 							size: [
@@ -140,7 +174,7 @@ import domReady from 'Utils/domReady';
 								pos: 'playersponsorlogo',
 								noprebid: 'noprebid',
 							},
-							prebid: false,
+							prebid: true,
 						})
 						.defineSizeMapping(sizeMap);
 
