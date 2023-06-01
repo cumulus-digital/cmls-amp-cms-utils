@@ -17,12 +17,17 @@ export const detectPlayer = () => {
 		) {
 			window.self.document.body.classList.add('cmls-player-tunegenie');
 		}
+		if (
+			!window.top.document.body.classList.contains(
+				'cmls-player-tunegenie'
+			)
+		) {
+			window.top.document.body.classList.add('cmls-player-tunegenie');
+		}
 		return player;
 	}
 	addAfterPageFrame(() => {
-		setTimeout(() => {
-			detectPlayer();
-		}, 200);
+		detectPlayer();
 	});
 };
 
