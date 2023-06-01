@@ -20,7 +20,9 @@ export const detectPlayer = () => {
 		return player;
 	}
 	addAfterPageFrame(() => {
-		detectPlayer();
+		setTimeout(() => {
+			detectPlayer();
+		}, 200);
 	});
 };
 
