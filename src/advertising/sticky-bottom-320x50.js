@@ -148,13 +148,10 @@ import domReady from 'Utils/domReady';
 						],
 						[
 							[0, 0],
-							[],
-							/*
 							[
 								[300, 50],
 								[320, 50],
 							],
-							*/
 						],
 					];
 
