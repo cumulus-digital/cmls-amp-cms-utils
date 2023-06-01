@@ -192,7 +192,7 @@ import domReady from 'Utils/domReady';
 		};
 	}
 
-	waitForPlayer().then(() => {
-		context._CMLS[nameSpace].init();
-	});
+	//waitForPlayer().then(() => {
+	context._CMLS[nameSpace].init();
+	//});
 })(window.self);
