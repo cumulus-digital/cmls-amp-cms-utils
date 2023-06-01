@@ -177,7 +177,6 @@ import { addAfterPageFrame } from 'Utils/playerTools';
 							'.wrapper-content > .grid-container > *:last,.is-fse-theme .wp-block-post-content:first'
 						);
 					}
-					console.log(placement);
 					if (placement.length) {
 						injectInline(placement);
 					}

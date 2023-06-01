@@ -82,13 +82,13 @@ import domReady from 'Utils/domReady';
 							padding: 5px 0 4px;
 						}
 
-					.cmls-player-tunegenie #${elementId}-wrapper {
+					.cmls-player-active #${elementId}-wrapper {
 						bottom: 65px;
 					}
 
 					/* Desktop */
 					@media (min-width: 800px) {
-						.cmls-player-tunegenie #${elementId}-wrapper {
+						.cmls-player-active #${elementId}-wrapper {
 							background: transparent;
 							backdrop-filter: none;
 							max-width: 1120px;
@@ -101,14 +101,14 @@ import domReady from 'Utils/domReady';
 							padding-bottom: 2px;
 							justify-content: end;
 						}
-							.cmls-player-tunegenie #${elementId} {
+							.cmls-player-active #${elementId} {
 								padding: 0;
 							}
-							.cmls-player-tunegenie #${elementId},
-							.cmls-player-tunegenie #${elementId} > div {
+							.cmls-player-active #${elementId},
+							.cmls-player-active #${elementId} > div {
 								justify-content: end;
 							}
-							.cmls-player-tunegenie #${elementId} > div {
+							.cmls-player-active #${elementId} > div {
 								padding: 0;
 							}
 					}

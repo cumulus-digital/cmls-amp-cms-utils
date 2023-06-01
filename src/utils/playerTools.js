@@ -8,22 +8,23 @@ let player = null;
 let counter = 0;
 
 export const detectPlayer = () => {
-	if (window.top.tgmp) {
+	const bodyClass = 'cmls-player-active';
+	let hasPlayer = false,
+		checkingWindow = false;
+	while (checkingWindow !== window.top) {
+		if (!checkingWindow) {
+			checkingWindow = window.self;
+		}
+		if (checkingWindow.tgmp) {
+			hasPlayer = true;
+			if (!checkingWindow.document.body.classList.contains(bodyClass)) {
+				checkingWindow.document.body.classList.add(bodyClass);
+			}
+		}
+		checkingWindow = checkingWindow.parent;
+	}
+	if (hasPlayer) {
 		player = 'tunegenie';
-		if (
-			!window.self.document.body.classList.contains(
-				'cmls-player-tunegenie'
-			)
-		) {
-			window.self.document.body.classList.add('cmls-player-tunegenie');
-		}
-		if (
-			!window.top.document.body.classList.contains(
-				'cmls-player-tunegenie'
-			)
-		) {
-			window.top.document.body.classList.add('cmls-player-tunegenie');
-		}
 		return player;
 	}
 	addAfterPageFrame(() => {
@@ -58,11 +59,18 @@ export const waitForPlayer = () => {
  * window or in TG's iframe
  */
 export const getPageWindow = () => {
-	const pageFrame = window.top.document.querySelector(
-		'iframe[name="pwm_pageFrame"]'
-	);
-	if (pageFrame) {
-		return pageFrame.contentWindow;
+	let checkWindow = false;
+	while (checkWindow !== window.top) {
+		if (!checkWindow) {
+			checkWindow = window.self;
+		}
+		let pageFrame = checkWindow.document.querySelector(
+			'iframe[name="pwm_pageFrame"]'
+		);
+		if (pageFrame) {
+			return pageFrame.contentWindow;
+		}
+		checkWindow = checkWindow.parent;
 	}
 	return window.top;
 };
