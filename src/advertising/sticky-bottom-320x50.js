@@ -97,6 +97,7 @@ import domReady from 'Utils/domReady';
 							bottom: 0;
 							left: 50%;
 							transform: translateX(-50%);
+							z-index: 2147483647;
 							padding-right: 175px;
 							padding-bottom: 2px;
 							justify-content: end;
