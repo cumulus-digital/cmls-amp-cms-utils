@@ -82,14 +82,14 @@ import domReady from 'Utils/domReady';
 							padding: 5px 0 4px;
 						}
 
+					.cmls-player-tunegenie #${elementId}-wrapper,
 					#playerbar ~ #${elementId}-wrapper {
 						bottom: 65px;
 					}
-						#playerbar ~ #${elementId} {
-							padding: 5px;
-						}
+
+					/* Desktop */
 					@media (min-width: 800px) {
-						#playerbar ~ #${elementId}-wrapper {
+						.cmls-player-tunegenie #${elementId}-wrapper {
 							background: transparent;
 							backdrop-filter: none;
 							max-width: 1120px;
@@ -101,14 +101,18 @@ import domReady from 'Utils/domReady';
 							padding-bottom: 2px;
 							justify-content: end;
 						}
-							#playerbar ~ #${elementId} {
+							.cmls-player-tunegenie #${elementId}
+							#playerbar ~ #${elementId}-wrapper #${elementId} {
 								padding: 0;
 							}
-							#playerbar ~ #${elementId},
-							#playerbar ~ #${elementId} > div {
+							.cmls-player-tunegenie #${elementId},
+							.cmls-player-tunegenie #${elementId} > div,
+							#playerbar ~ #${elementId}-wrapper #${elementId},
+							#playerbar ~ #${elementId}-wrapper #${elementId} {
 								justify-content: end;
 							}
-							#playerbar ~ #${elementId} > div {
+							.cmls-player-tunegenie #${elementId} > div,
+							#playerbar ~ #${elementId}-wrapper #${elementId} > div {
 								padding: 0;
 							}
 					}
