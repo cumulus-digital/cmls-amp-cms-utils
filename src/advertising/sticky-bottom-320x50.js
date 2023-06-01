@@ -82,8 +82,7 @@ import domReady from 'Utils/domReady';
 							padding: 5px 0 4px;
 						}
 
-					.cmls-player-tunegenie #${elementId}-wrapper,
-					#playerbar ~ #${elementId}-wrapper {
+					.cmls-player-tunegenie #${elementId}-wrapper {
 						bottom: 65px;
 					}
 
@@ -102,18 +101,14 @@ import domReady from 'Utils/domReady';
 							padding-bottom: 2px;
 							justify-content: end;
 						}
-							.cmls-player-tunegenie #${elementId}
-							#playerbar ~ #${elementId}-wrapper #${elementId} {
+							.cmls-player-tunegenie #${elementId} {
 								padding: 0;
 							}
 							.cmls-player-tunegenie #${elementId},
-							.cmls-player-tunegenie #${elementId} > div,
-							#playerbar ~ #${elementId}-wrapper #${elementId},
-							#playerbar ~ #${elementId}-wrapper #${elementId} {
+							.cmls-player-tunegenie #${elementId} > div {
 								justify-content: end;
 							}
-							.cmls-player-tunegenie #${elementId} > div,
-							#playerbar ~ #${elementId}-wrapper #${elementId} > div {
+							.cmls-player-tunegenie #${elementId} > div {
 								padding: 0;
 							}
 					}

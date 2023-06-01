@@ -19,6 +19,9 @@ export const detectPlayer = () => {
 		}
 		return player;
 	}
+	addAfterPageFrame(() => {
+		detectPlayer();
+	});
 };
 
 export const navigateThroughPlayer = (url) => {
