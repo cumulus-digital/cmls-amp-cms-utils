@@ -11,18 +11,14 @@ export const detectPlayer = () => {
 	const bodyClass = 'cmls-player-active';
 	let hasPlayer = false,
 		checkingWindow = false;
-	while (checkingWindow !== window.top) {
-		if (!checkingWindow) {
-			checkingWindow = window.self;
-		}
-		if (checkingWindow.tgmp) {
+	[window.self, window.parent, window.top].forEach((w) => {
+		if (w.tgmp) {
 			hasPlayer = true;
-			if (!checkingWindow.document.body.classList.contains(bodyClass)) {
-				checkingWindow.document.body.classList.add(bodyClass);
+			if (!w.document.body.classList.contains(bodyClass)) {
+				w.document.body.classList.add(bodyClass);
 			}
 		}
-		checkingWindow = checkingWindow.parent;
-	}
+	});
 	if (hasPlayer) {
 		player = 'tunegenie';
 		return player;
@@ -59,19 +55,14 @@ export const waitForPlayer = () => {
  * window or in TG's iframe
  */
 export const getPageWindow = () => {
-	let checkWindow = false;
-	while (checkWindow !== window.top) {
-		if (!checkWindow) {
-			checkWindow = window.self;
-		}
-		let pageFrame = checkWindow.document.querySelector(
+	[window.self, window.parent, window.top].forEach((w) => {
+		let pageFrame = w.document.querySelector(
 			'iframe[name="pwm_pageFrame"]'
 		);
 		if (pageFrame) {
 			return pageFrame.contentWindow;
 		}
-		checkWindow = checkWindow.parent;
-	}
+	});
 	return window.top;
 };
 

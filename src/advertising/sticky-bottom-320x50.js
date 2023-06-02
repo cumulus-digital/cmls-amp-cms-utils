@@ -14,13 +14,13 @@ import domReady from 'Utils/domReady';
 
 	const log = new Logger(`${scriptName} ${version}`);
 
-	// We need to operate in the top most window
+	// We need to operate in the topmost window with _CMLS lib
 	let context = window.self;
-	while (context !== window.top) {
-		if (context?.parent?._CMLS) {
-			context = context.parent;
+	[window.self, window.parent, window.top].forEach((w) => {
+		if (w?._CMLS) {
+			context = w;
 		}
-	}
+	});
 
 	context._CMLS = context._CMLS || {};
 	if (!context._CMLS?.[nameSpace]) {
