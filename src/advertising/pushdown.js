@@ -271,10 +271,17 @@ import debounce from 'lodash/debounce';
 				let timeout = defaultTimeout * 1000;
 
 				// Check for timeout override
-				const timeoutTest = $img.prop('alt').match(/timeout=(\d+)/i);
-				if (timeoutTest?.length) {
-					timeout = timeoutTest[1] * 1000;
-				}
+				$adFrame
+					.contents()
+					.find('img')
+					.each((img) => {
+						const to = img
+							.getAttribute('alt')
+							?.match(/timeout=(\d+)/i);
+						if (to?.length) {
+							timeout = to[1] * 1000;
+						}
+					});
 
 				// Trigger ad to display
 				$container.trigger('cmls.display', [timeout]);
