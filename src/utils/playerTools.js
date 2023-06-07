@@ -9,8 +9,7 @@ let counter = 0;
 
 export const detectPlayer = () => {
 	const bodyClass = 'cmls-player-active';
-	let hasPlayer = false,
-		checkingWindow = false;
+	let hasPlayer = false;
 	[window.self, window.parent, window.top].forEach((w) => {
 		if (w.tgmp) {
 			hasPlayer = true;
@@ -23,9 +22,7 @@ export const detectPlayer = () => {
 		player = 'tunegenie';
 		return player;
 	}
-	addAfterPageFrame(() => {
-		detectPlayer();
-	});
+	addAfterPageFrame(detectPlayer);
 };
 
 export const navigateThroughPlayer = (url) => {
@@ -51,8 +48,7 @@ export const waitForPlayer = () => {
 };
 
 /**
- * Retrieve the window object of the current document, if it is the top-level
- * window or in TG's iframe
+ * Return the window of the page frame if it exists, else window.self
  */
 export const getPageWindow = () => {
 	[window.self, window.parent, window.top].forEach((w) => {
@@ -63,7 +59,7 @@ export const getPageWindow = () => {
 			return pageFrame.contentWindow;
 		}
 	});
-	return window.top;
+	return window.self;
 };
 
 /**
@@ -85,9 +81,14 @@ let pageFrameCreated = false;
 const bodyWatch = new MutationObserver((mutationsList, observer) => {
 	for (const mutation of mutationsList) {
 		if (mutation.type === 'childList') {
-			const pageFrame = window.top.document.querySelector(
-				'iframe[name="pwm_pageFrame"]'
-			);
+			let pageFrame;
+			// Get top most window with pwm_pageFrame
+			[window.top, window.parent, window.self].some((w) => {
+				if (w?.frames?.pwm_pageFrame) {
+					pageFrame = w;
+					return true;
+				}
+			});
 			if (pageFrame) {
 				pageFrameCreated = true;
 				for (const cb of onAfterPageFrame) {
