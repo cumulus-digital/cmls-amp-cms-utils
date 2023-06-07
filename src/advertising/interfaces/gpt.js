@@ -75,11 +75,19 @@ export default class GPTInterface extends DefaultInterface {
 			this.defaultDefineSlotOptions(),
 			options
 		);
-		let slot = this.rawInterface().defineSlot(
-			settings.adUnitPath,
-			settings.size,
-			settings.div
-		);
+		let slot = false;
+		if (settings.outOfPage) {
+			slot = this.rawInterface().defineOutOfPageSlot(
+				settings.adUnitPage,
+				settings.div
+			);
+		} else {
+			slot = this.rawInterface().defineSlot(
+				settings.adUnitPath,
+				settings.size,
+				settings.div
+			);
+		}
 
 		if (!slot) {
 			this.log.error('Failed to create slot!', settings);

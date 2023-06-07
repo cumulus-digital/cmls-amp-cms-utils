@@ -79,6 +79,7 @@ export default class DefaultInterface {
 			targeting: [],
 			init: true,
 			prebid: false,
+			outOfPage: false,
 		};
 	}
 
