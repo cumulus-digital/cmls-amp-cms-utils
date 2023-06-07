@@ -91,7 +91,7 @@ import debounce from 'lodash/debounce';
 					mix-blend-mode: exclusion;
 					cursor: pointer;
 					position: absolute;
-					top: .75em;
+					top: calc(10px + .75em);
 					right: .3em;
 					z-index: 100000;
 				}
@@ -216,11 +216,17 @@ import debounce from 'lodash/debounce';
 			if ($adFrame.contents().find('#vpContainer').length) {
 				return 'vast';
 			}
+			/*
 			if ($adFrame.contents().find('.img_ad').length) {
 				return 'image';
 			}
+			*/
 			if ($adFrame.contents().find('video').length) {
 				return 'video';
+			}
+
+			if ($adFrame.contents().find('a[href*="doubleclick"] img').length) {
+				return 'image';
 			}
 
 			return false;
@@ -229,6 +235,18 @@ import debounce from 'lodash/debounce';
 		const handleCreative = {
 			image: ($adFrame) => {
 				log.info('Handling Image creative');
+				$adFrame.contents().append(`
+					<style>
+					  img {
+						width: auto;
+						height: auto;
+						max-width: 100%;
+						max-height: 100%;
+						object-fit: cover
+					  }
+					</style>
+				`);
+				/*
 				const $img = $adFrame.contents().find('.img_ad');
 
 				if (!$img.length) {
@@ -240,10 +258,12 @@ import debounce from 'lodash/debounce';
 
 				// Make image responsive
 				$img.css({
-					width: '100%',
+					width: 'auto',
 					height: 'auto',
+					maxWidth: '100%',
 					objectFit: 'cover',
 				});
+				*/
 
 				let timeout = defaultTimeout * 1000;
 

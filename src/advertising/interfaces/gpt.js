@@ -297,6 +297,7 @@ export default class GPTInterface extends DefaultInterface {
 		const slotData = [];
 		slots.forEach((slot) => {
 			const thisSlot = {
+				_displayed: slot?._displayed ? 'yes' : 'no',
 				adUnitPath: slot?.getAdUnitPath(),
 				div: slot?.getSlotElementId(),
 				sizes: slot?.getSizes(),
