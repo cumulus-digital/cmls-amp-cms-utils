@@ -25,7 +25,7 @@ import debounce from 'lodash/debounce';
 (($, window, undefined) => {
 	const scriptName = 'PUSHDOWN AD',
 		nameSpace = 'pushdownInjector',
-		version = '0.1',
+		version = '0.4',
 		elementId = 'gpt-pushdown',
 		injectPoint = '.wrapper-content, body > .wp-site-blocks > header + *',
 		defaultTimeout = 15;
@@ -275,8 +275,8 @@ import debounce from 'lodash/debounce';
 					.contents()
 					.find('img')
 					.each((img) => {
-						const to = img
-							.getAttribute('alt')
+						const to = $(img)
+							.attr('alt')
 							?.match(/timeout=(\d+)/i);
 						if (to?.length) {
 							timeout = to[1] * 1000;
