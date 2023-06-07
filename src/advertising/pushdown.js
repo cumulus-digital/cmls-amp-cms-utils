@@ -236,18 +236,19 @@ import debounce from 'lodash/debounce';
 		const handleCreative = {
 			image: ($adFrame) => {
 				log.info('Handling Image creative');
-				const imgStyle = createElement.el('style');
-				imgStyle.innerHTML = `
-					img	{
-						width: auto;
-						height: auto;
-						max-width: 100%;
-						max-height: 100%;
-						object-fit: cover
-					}
-				`;
-				$adFrame.contents().append(imgStyle);
 
+				$adFrame
+					.contents()
+					.find('a[href*="doubleclick"] img')
+					.each((img) => {
+						$(img).css({
+							width: 'auto',
+							height: 'auto',
+							maxWidth: '100%',
+							maxHeight: '100%',
+							objectFit: 'cover',
+						});
+					});
 				/*
 				const $img = $adFrame.contents().find('.img_ad');
 
