@@ -157,6 +157,7 @@ import debounce from 'lodash/debounce';
 							},
 						]);
 					}
+					$container.find(`${elementId}`).show();
 					$container.stop().clearQueue().slideDown('fast', callback);
 					$container.prop('aria-hidden', false);
 				}
@@ -235,17 +236,18 @@ import debounce from 'lodash/debounce';
 		const handleCreative = {
 			image: ($adFrame) => {
 				log.info('Handling Image creative');
-				$adFrame.contents().append(`
-					<style>
-					  img {
+				const imgStyle = createElement.el('style');
+				imgStyle.innerHTML = `
+					img	{
 						width: auto;
 						height: auto;
 						max-width: 100%;
 						max-height: 100%;
 						object-fit: cover
-					  }
-					</style>
-				`);
+					}
+				`;
+				$adFrame.contents().append(imgStyle);
+
 				/*
 				const $img = $adFrame.contents().find('.img_ad');
 
