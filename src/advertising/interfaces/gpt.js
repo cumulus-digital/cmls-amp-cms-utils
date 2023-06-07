@@ -27,11 +27,15 @@ export default class GPTInterface extends DefaultInterface {
 		// we'll track all initial loads with a targeting parameter.
 		const me = this;
 		me.addListener('slotRequested', (e) => {
-			if (!e.slot.getTargeting(me.initialRequestKey)?.length) {
+			if (
+				!e.slot._displayed ||
+				!e.slot.getTargeting(me.initialRequestKey)?.length
+			) {
 				me.log.info(
 					'Setting initial request key',
 					me.listSlotData(e.slot)
 				);
+				e.slot._displayed = true;
 				e.slot.setTargeting(me.initialRequestKey, true);
 			}
 		});
@@ -78,7 +82,7 @@ export default class GPTInterface extends DefaultInterface {
 		let slot = false;
 		if (settings.outOfPage) {
 			slot = this.rawInterface().defineOutOfPageSlot(
-				settings.adUnitPage,
+				settings.adUnitPath,
 				settings.div
 			);
 		} else {
@@ -179,7 +183,10 @@ export default class GPTInterface extends DefaultInterface {
 	 */
 	wasSlotRequested(slot) {
 		const me = this;
-		if (slot.getTargeting(me.initialRequestKey)?.length) {
+		if (
+			slot?._displayed ||
+			slot.getTargeting(me.initialRequestKey)?.length
+		) {
 			me.log.info('Has initial request key', me.listSlotData(slot));
 			return true;
 		}
