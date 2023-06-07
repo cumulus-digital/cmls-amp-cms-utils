@@ -3,7 +3,7 @@
  */
 import Logger from 'Utils/Logger';
 import createElement from 'Utils/createElement';
-import { waitForPlayer } from 'Utils/playerTools';
+import { waitForPlayer, detectPlayer } from 'Utils/playerTools';
 import domReady from 'Utils/domReady';
 
 ((window) => {
@@ -16,9 +16,10 @@ import domReady from 'Utils/domReady';
 
 	// We need to operate in the topmost window with _CMLS lib
 	let context = window.self;
-	[window.self, window.parent, window.top].forEach((w) => {
+	[window.top, window.parent, window.self].some((w) => {
 		if (w?._CMLS) {
 			context = w;
+			return true;
 		}
 	});
 
@@ -39,13 +40,17 @@ import domReady from 'Utils/domReady';
 					return;
 				}
 
-				// Don't inject on smaller screens
-				/*
-				if (window.matchMedia('(max-width: 800px)').matches) {
-					log.info('Device width is too narrow, exiting.');
+				// Don't inject on desktop if there's no player
+				if (
+					window.matchMedia('(min-width: 800px)').matches &&
+					!detectPlayer()
+				) {
+					log.info(
+						'No player detected on desktop, wait for player before re-injecting'
+					);
+					waitForPlayer().then(context._CMLS[nameSpace].inject);
 					return;
 				}
-				*/
 
 				let css = `
 					#${elementId}-wrapper {
@@ -192,7 +197,7 @@ import domReady from 'Utils/domReady';
 		};
 	}
 
-	waitForPlayer().then(() => {
-		context._CMLS[nameSpace].init();
-	});
+	//waitForPlayer().then(() => {
+	context._CMLS[nameSpace].init();
+	//});
 })(window.self);
