@@ -236,8 +236,9 @@ import debounce from 'lodash/debounce';
 		const handleCreative = {
 			image: ($adFrame) => {
 				log.info('Handling Image creative');
-				const imgStyle = createElement.el('style');
-				imgStyle.innerHTML = `
+
+				$adFrame.contents().find('body').append(`
+					<style>
 					img	{
 						width: auto;
 						height: auto;
@@ -245,8 +246,8 @@ import debounce from 'lodash/debounce';
 						max-height: 100%;
 						object-fit: cover
 					}
-				`;
-				$adFrame.contents().append(imgStyle);
+					</style>
+				`);
 
 				/*
 				const $img = $adFrame.contents().find('.img_ad');
