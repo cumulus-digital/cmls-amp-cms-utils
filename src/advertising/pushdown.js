@@ -68,6 +68,9 @@ import debounce from 'lodash/debounce';
 				}
 				#${elementId} {
 					position: relative;
+					margin: 0 auto 10px;
+				}
+				.is-fse-theme #${elementId} {
 					margin: 10px auto;
 				}
 				#${elementId} div[id*="google_ads"] {
