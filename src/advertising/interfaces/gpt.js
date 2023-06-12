@@ -79,6 +79,8 @@ export default class GPTInterface extends DefaultInterface {
 			this.defaultDefineSlotOptions(),
 			options
 		);
+
+		// Allow defining an out of page slot
 		let slot = false;
 		if (settings.outOfPage) {
 			slot = this.rawInterface().defineOutOfPageSlot(
@@ -86,11 +88,51 @@ export default class GPTInterface extends DefaultInterface {
 				settings.div
 			);
 		} else {
+			const isIframed = window.self !== window.parent;
+
+			// Allow defining sizeMapping here. GPT sizeMapping
+			// does not properly discover viewport size in an
+			// iframe, so we need to map sizeMapping to the
+			// base slot size.
+			let winningMap = settings?.size;
+			if (isIframed && settings?.sizeMap?.length) {
+				let sizeMap = settings.sizeMap;
+				if (!Array.isArray(sizeMap)) {
+					sizeMap = [sizeMap];
+				}
+				sizeMap.some((map) => {
+					if (map.length < 2 || map[0].length < 2) {
+						log.debug('Invalid map', map);
+						return;
+					}
+					if (
+						matchMedia(
+							`(min-width: ${map[0][0]}px) and (min-height: ${map[0][1]}px)`
+						).matches
+					) {
+						winningMap = map[1];
+						return true;
+					}
+				});
+			}
+
+			if (!winningMap) {
+				this.log.error(
+					'defineSlot must be provided with a size property.'
+				);
+				return false;
+			}
+
 			slot = this.rawInterface().defineSlot(
 				settings.adUnitPath,
-				settings.size,
+				winningMap,
 				settings.div
 			);
+
+			//  If we're not in an iframe, use GPT sizeMapping if defined
+			if (slot && !isIframed && settings?.sizeMap?.length) {
+				slot.defineSizeMapping(settings.sizeMap);
+			}
 		}
 
 		if (!slot) {
