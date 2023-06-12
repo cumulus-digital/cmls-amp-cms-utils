@@ -7,6 +7,7 @@ import Logger from 'Utils/Logger';
  * @typedef {object} DefineSlotOptions
  * @property {string} adUnitPath Full ad unit path with network and unit code
  * @property {array} size Slot sizes
+ * @property {array} sizeMap Size mapping array
  * @property {string} div ID of the div that will contain the slot
  * @property {boolean} [collapse = true] Enable collapseEmptyDiv for the slot
  * @property {object=} targeting Set targeting parameters for slot as key: value, may be an array of objects

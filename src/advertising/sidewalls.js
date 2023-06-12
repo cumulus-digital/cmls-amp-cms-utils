@@ -166,23 +166,7 @@ import domReady from '../utils/domReady';
 				}
 
 				log.info('Defining sidewalls');
-				var gt = window._CMLS.adTag.rawInterface();
-				/*
-				if (!gt.sizeMapping) {
-					return;
-				}
-				var sizeMap = gt
-					.sizeMapping()
-					.addSize(
-						[parseInt(contentWidth) + sizeMapBuffer, 0],
-						[
-							[160, 600],
-							[300, 600],
-						]
-					)
-					.addSize([0, 0], [])
-					.build();
-				*/
+
 				let sizeMap = [
 					[
 						[parseInt(contentWidth) + sizeMapBuffer, 0],
@@ -193,73 +177,44 @@ import domReady from '../utils/domReady';
 					],
 					[[0, 0], []],
 				];
-				/*
-				window._CMLS.adTag
-					.defineSlot(
-						[
-							window._CMLS.adPath + '/sidewallLeft',
-							[
-								[160, 600],
-								[300, 600],
-							],
-							'cmls-sidewall-left',
-						],
-						true,
-						{ pos: 'left' },
-						true
-					)
-					.defineSizeMapping(sizeMap);
-				*/
-				const leftSlot = window._CMLS.adTag
-					.defineSlot({
-						adUnitPath: window._CMLS.adPath + '/sidewallLeft',
-						size: [
-							[160, 600],
-							[300, 600],
-						],
-						div: 'cmls-sidewall-left',
-						collapse: true,
-						targeting: { pos: 'left' },
-						prebid: true,
-					})
-					.defineSizeMapping(sizeMap);
-				window._CMLS.adTag.display('cmls-sidewall-left', false);
+				const leftSlot = window._CMLS.adTag.defineSlot({
+					adUnitPath: window._CMLS.adPath + '/sidewallLeft',
+					size: [
+						[160, 600],
+						[300, 600],
+					],
+					sizeMap: sizeMap,
+					div: 'cmls-sidewall-left',
+					collapse: true,
+					targeting: { pos: 'left' },
+					prebid: true,
+				});
+				leftSlot &&
+					window._CMLS.adTag.display('cmls-sidewall-left', false);
 
-				/*
-				window._CMLS.adTag
-					.defineSlot(
-						[
-							window._CMLS.adPath + '/sidewallRight',
-							[
-								[160, 600],
-								[300, 600],
-							],
-							'cmls-sidewall-right',
-						],
-						true,
-						{ pos: 'right' },
-						true
-					)
-					.defineSizeMapping(sizeMap);
-				*/
-				const rightSlot = window._CMLS.adTag
-					.defineSlot({
-						adUnitPath: window._CMLS.adPath + '/sidewallRight',
-						size: [
-							[160, 600],
-							[300, 600],
-						],
-						div: 'cmls-sidewall-right',
-						collapse: true,
-						targeting: { pos: 'right' },
-						prebid: true,
-					})
-					.defineSizeMapping(sizeMap);
-				window._CMLS.adTag.display('cmls-sidewall-right', false);
+				const rightSlot = window._CMLS.adTag.defineSlot({
+					adUnitPath: window._CMLS.adPath + '/sidewallRight',
+					size: [
+						[160, 600],
+						[300, 600],
+					],
+					sizeMap: sizeMap,
+					div: 'cmls-sidewall-right',
+					collapse: true,
+					targeting: { pos: 'right' },
+					prebid: true,
+				});
+				rightSlot &&
+					window._CMLS.adTag.display('cmls-sidewall-right', false);
 
-				if (!window.NO_SIDEWALLS) {
-					window._CMLS.adTag.doInitialLoad([leftSlot, rightSlot]);
+				if (window.NO_SIDEWALLS) {
+					log.warn(
+						'NO_SIDEWALLS set after sidewall slots were defined!'
+					);
+					return;
 				}
+
+				window._CMLS.adTag.doInitialLoad([leftSlot, rightSlot]);
 			});
 		}
 
