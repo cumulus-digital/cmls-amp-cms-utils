@@ -10,7 +10,7 @@ import domReady from '../utils/domReady';
 ((window, undefined) => {
 	const scriptName = 'SIDEWALL ADS',
 		nameSpace = 'sideWallInjector',
-		version = '0.2',
+		version = '0.3',
 		injectPoint = '.wrapper-content, body > .wp-site-blocks > header + *',
 		elementClass = 'cmls-sidewalls',
 		/**
@@ -167,10 +167,10 @@ import domReady from '../utils/domReady';
 				log.info('Defining sidewalls');
 
 				let sizeMap = [
-					// Width can only support 160x600
+					// WidthxHeight can only support 160x600
 					[[contentWidth + 160, 700], [[160, 600]]],
 
-					// Width can support up to 300x600
+					// WidthxHeight can support up to 300x600
 					[
 						[contentWidth + 300, 700],
 						[
@@ -180,9 +180,10 @@ import domReady from '../utils/domReady';
 					],
 
 					// Height can only support 300x250
-					[[contentWidth + 300, 0], [[300, 250]]],
+					// Disabled for now...
+					// [[contentWidth + 300, 0], [[300, 250]]],
 
-					// No sidewalls on mobile.
+					// No sidewalls otherwise.
 					[[0, 0], []],
 				];
 				const leftSlot = window._CMLS.adTag.defineSlot({
