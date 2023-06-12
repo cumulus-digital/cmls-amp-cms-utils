@@ -9,7 +9,7 @@ import domReady from 'Utils/domReady';
 ((window) => {
 	const scriptName = 'STICKY-BOTTOM-320x50',
 		nameSpace = 'stickyBottomAd',
-		version = '0.7',
+		version = '0.8',
 		elementId = 'CmlsStickyBottom';
 
 	const log = new Logger(`${scriptName} ${version}`);
@@ -107,7 +107,7 @@ import domReady from 'Utils/domReady';
 							bottom: 0;
 							left: 50%;
 							transform: translateX(-50%);
-							z-index: 2147483647;
+							z-index: 200000;
 							padding-right: 175px;
 							padding-bottom: 2px;
 							justify-content: end;
