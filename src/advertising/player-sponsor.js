@@ -160,23 +160,26 @@ import domReady from 'Utils/domReady';
 							],
 						],
 					];
-					me.slot = window._CMLS.adTag
-						.defineSlot({
-							adUnitPath: window._CMLS.adPath,
-							size: [
-								[120, 60],
-								[300, 50],
-								[320, 50],
-							],
-							div: elementId,
-							collapse: true,
-							targeting: {
-								pos: 'playersponsorlogo',
-								noprebid: 'noprebid',
-							},
-							prebid: true,
-						})
-						.defineSizeMapping(sizeMap);
+					me.slot = window._CMLS.adTag.defineSlot({
+						adUnitPath: window._CMLS.adPath,
+						size: [
+							[120, 60],
+							[300, 50],
+							[320, 50],
+						],
+						sizeMap: sizeMap,
+						div: elementId,
+						collapse: true,
+						targeting: {
+							pos: 'playersponsorlogo',
+							noprebid: 'noprebid',
+						},
+						prebid: true,
+					});
+
+					if (!me.slot) {
+						log.warn('Error defining slot!');
+					}
 
 					window._CMLS.adTag.display(
 						elementId,

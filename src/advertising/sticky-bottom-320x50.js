@@ -9,7 +9,7 @@ import domReady from 'Utils/domReady';
 ((window) => {
 	const scriptName = 'STICKY-BOTTOM-320x50',
 		nameSpace = 'stickyBottomAd',
-		version = '0.5',
+		version = '0.6',
 		elementId = 'CmlsStickyBottom';
 
 	const log = new Logger(`${scriptName} ${version}`);
@@ -52,6 +52,8 @@ import domReady from 'Utils/domReady';
 					return;
 				}
 
+				log.info('Injecting');
+
 				let css = `
 					#${elementId}-wrapper {
 						background: rgba(0,0,0,0.5);
@@ -87,7 +89,7 @@ import domReady from 'Utils/domReady';
 							padding: 5px 0 4px;
 						}
 
-					.cmls-player-active #${elementId}-wrapper {
+					body.cmls-player-active #${elementId}-wrapper {
 						bottom: 65px;
 					}
 
@@ -160,27 +162,29 @@ import domReady from 'Utils/domReady';
 						],
 					];
 
-					context._CMLS[nameSpace].slot = context._CMLS.adTag
-						.defineSlot({
-							adUnitPath: context._CMLS.adPath,
+					context._CMLS[nameSpace].slot =
+						context._CMLS.adTag.defineSlot({
+							adUnitPath:
+								context._CMLS.adPath + '/stickyBottomAd',
 							size: [
 								[120, 60],
 								[300, 50],
 								[320, 50],
 							],
+							sizeMap: sizeMap,
 							div: elementId,
 							collapse: true,
 							targeting: {
 								pos: 'playersponsorlogo',
 							},
 							prebid: true,
-						})
-						.defineSizeMapping(sizeMap);
+						});
 
-					context._CMLS.adTag.display(
-						elementId,
-						context._CMLS.adTag.isInitialLoadDisabled()
-					);
+					context._CMLS[nameSpace].slot &&
+						context._CMLS.adTag.display(
+							elementId,
+							context._CMLS.adTag.isInitialLoadDisabled()
+						);
 				});
 			},
 			init: () => {

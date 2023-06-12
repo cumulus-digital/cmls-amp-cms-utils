@@ -28,15 +28,6 @@ import domReady from 'Utils/domReady';
 		log.info('Slot injected');
 
 		window._CMLS.adTag.queue(() => {
-			/*
-			const slot = window._CMLS.adTag.defineSlot(
-				[window._CMLS.adPath, [[1, 1]], elementId],
-				true,
-				{ pos: 'w7m' },
-				true,
-				false
-			);
-			*/
 			const slot = window._CMLS.adTag.defineSlot({
 				adUnitPath: window._CMLS.adPath,
 				size: [[1, 1]],
@@ -45,10 +36,11 @@ import domReady from 'Utils/domReady';
 				targeting: { pos: 'w7m', noprebid: 'noprebid' },
 				prebid: false,
 			});
-			window._CMLS.adTag.display(
-				elementId,
-				window._CMLS.adTag.isInitialLoadDisabled()
-			);
+			slot &&
+				window._CMLS.adTag.display(
+					elementId,
+					window._CMLS.adTag.isInitialLoadDisabled()
+				);
 			log.info('Slot initialized');
 		});
 	};

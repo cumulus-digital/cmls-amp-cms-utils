@@ -409,7 +409,7 @@ import debounce from 'lodash/debounce';
 
 			window._CMLS.adTag.queue(() => {
 				log.info('Defining slot', elementId);
-				window._CMLS.adTag.defineSlot({
+				var slot = window._CMLS.adTag.defineSlot({
 					outOfPage: true,
 					adUnitPath: window._CMLS.adPath + '/pushdown',
 					size: [[1020, 574]],
@@ -418,10 +418,12 @@ import debounce from 'lodash/debounce';
 					targeting: { pos: 'pushdown', noprebid: 'noprebid' },
 					prebid: false,
 				});
-				window._CMLS.adTag.display(
-					elementId,
-					window._CMLS.adTag.isInitialLoadDisabled()
-				);
+
+				slot &&
+					window._CMLS.adTag.display(
+						elementId,
+						window._CMLS.adTag.isInitialLoadDisabled()
+					);
 			});
 			log.info('Initialized.');
 		}
