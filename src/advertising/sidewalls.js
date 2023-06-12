@@ -13,10 +13,13 @@ import domReady from '../utils/domReady';
 		version = '0.2',
 		injectPoint = '.wrapper-content, body > .wp-site-blocks > header + *',
 		elementClass = 'cmls-sidewalls',
-		contentWidth = '1100px',
-		sizeMapBuffer = 550,
-		doc = window.document;
+		/**
+		 * Width of content area in pixels
+		 * @type {Number}
+		 */
+		contentWidth = 1100;
 
+	const doc = window.document;
 	const log = new Logger(`${scriptName} ${version}`);
 
 	domReady(() => {
@@ -76,11 +79,7 @@ import domReady from '../utils/domReady';
 			return;
 		}
 
-		if (
-			window.matchMedia(
-				`(max-width: ${parseInt(contentWidth) + sizeMapBuffer}px)`
-			).matches
-		) {
+		if (window.matchMedia(`(max-width: ${contentWidth + 600}px)`).matches) {
 			log.info('Device width is too narrow, exiting.');
 			return;
 		}
@@ -99,7 +98,7 @@ import domReady from '../utils/domReady';
 			// Get padding-top of inject point
 			const injectPointNode = doc.querySelector(injectPoint);
 			const injectPointStyle = window.getComputedStyle(injectPointNode);
-			let topPad = injectPointStyle?.paddingTop;
+			let topPad = injectPointStyle?.getPropertyValue('padding-top');
 			if (!topPad || !parseInt(topPad)) {
 				topPad = '10px';
 			}
@@ -123,7 +122,7 @@ import domReady from '../utils/domReady';
 						position: absolute;
 						left: 50%;
 						top: 0;
-						width: ${contentWidth};
+						width: ${contentWidth}px;
 						height: 100%;
 						transform: translateX(-50%);
 						display: flex;
@@ -168,13 +167,22 @@ import domReady from '../utils/domReady';
 				log.info('Defining sidewalls');
 
 				let sizeMap = [
+					// Width can only support 160x600
+					[[contentWidth + 160, 700], [[160, 600]]],
+
+					// Width can support up to 300x600
 					[
-						[parseInt(contentWidth) + sizeMapBuffer, 0],
+						[contentWidth + 300, 700],
 						[
 							[160, 600],
 							[300, 600],
 						],
 					],
+
+					// Height can only support 300x250
+					[[contentWidth + 300, 0], [[300, 250]]],
+
+					// No sidewalls on mobile.
 					[[0, 0], []],
 				];
 				const leftSlot = window._CMLS.adTag.defineSlot({
