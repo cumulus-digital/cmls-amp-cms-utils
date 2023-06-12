@@ -6,7 +6,7 @@ import Logger from 'Utils/Logger';
 
 export default class GPTInterface extends DefaultInterface {
 	scriptName = 'GPT INTERFACE';
-	version = '0.1';
+	version = '0.2';
 	log = null;
 
 	static identity = 'GPT';
@@ -69,6 +69,12 @@ export default class GPTInterface extends DefaultInterface {
 	}
 
 	/**
+	 * In our GPT-specific defineSlot, we handle sizeMapping a little
+	 * differently. GPT does not properly discover the viewport size
+	 * inside an iframe, so we manually resolve a given sizeMap against
+	 * the real viewport and set the winning map to the base size of the
+	 * slot definition.
+	 *
 	 * @typedef {import('./DefaultInterface.js').DefineSlotOptions} DefineSlotOptions
 	 * @param {DefineSlotOptions} options
 	 * @returns {object|boolean}

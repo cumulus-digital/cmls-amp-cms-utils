@@ -75,6 +75,7 @@ export default class DefaultInterface {
 		return {
 			adUnitPath: null,
 			size: [],
+			sizeMap: null,
 			div: null,
 			collapse: true,
 			targeting: [],
