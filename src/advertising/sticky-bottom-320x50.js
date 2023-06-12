@@ -56,6 +56,9 @@ import domReady from 'Utils/domReady';
 
 				let css = `
 					#${elementId}-wrapper {
+
+					}
+					#${elementId}-wrapper {
 						background: rgba(0,0,0,0.5);
 						backdrop-filter: blur(10px);
 						-webkit-backdrop-filter: blur(10px);
@@ -98,6 +101,7 @@ import domReady from 'Utils/domReady';
 						.cmls-player-active #${elementId}-wrapper {
 							background: transparent;
 							backdrop-filter: none;
+							-webkit-backdrop-filter: none;
 							max-width: 1120px;
 							height: 65px;
 							bottom: 0;
