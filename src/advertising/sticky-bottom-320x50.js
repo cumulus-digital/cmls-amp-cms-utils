@@ -9,7 +9,7 @@ import domReady from 'Utils/domReady';
 ((window) => {
 	const scriptName = 'STICKY-BOTTOM-320x50',
 		nameSpace = 'stickyBottomAd',
-		version = '0.6',
+		version = '0.7',
 		elementId = 'CmlsStickyBottom';
 
 	const log = new Logger(`${scriptName} ${version}`);
@@ -89,7 +89,7 @@ import domReady from 'Utils/domReady';
 							padding: 5px 0 4px;
 						}
 
-					body.cmls-player-active #${elementId}-wrapper {
+					.cmls-player-active #${elementId}-wrapper {
 						bottom: 65px;
 					}
 
