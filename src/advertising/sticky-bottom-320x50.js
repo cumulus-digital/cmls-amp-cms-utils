@@ -62,7 +62,7 @@ import domReady from 'Utils/domReady';
 						justify-content: center;
 						box-sizing: border-box;
 						position: fixed;
-						z-index: 100000000;
+						z-index: 200000;
 						left: 0;
 						bottom: 0;
 						width: 100%;
