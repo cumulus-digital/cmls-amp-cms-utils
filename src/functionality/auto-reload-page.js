@@ -47,6 +47,7 @@ import domReady from 'Utils/domReady';
 			if (detectPlayer()) {
 				win = getPageWindow();
 			}
+			log.info('Checking condition', win, this.settings.condition);
 			return win.document.querySelector(this.settings.condition);
 		}
 

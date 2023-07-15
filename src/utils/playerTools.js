@@ -3,6 +3,7 @@
  */
 import triggerEvent from 'Utils/triggerEvent';
 import domReady from 'Utils/domReady';
+import Logger from 'Utils/Logger';
 
 let player = null;
 let counter = 0;
@@ -51,11 +52,14 @@ export const waitForPlayer = () => {
  * Return the window of the page frame if it exists, else window.self
  */
 export const getPageWindow = () => {
+	const log = new Logger('PlayerTools');
+
 	[window.self, window.parent, window.top].forEach((w) => {
 		let pageFrame = w.document.querySelector(
 			'iframe[name="pwm_pageFrame"]'
 		);
 		if (pageFrame) {
+			log.info('Found page frame', pageFrame, pageFrame.contentWindow);
 			return pageFrame.contentWindow;
 		}
 	});
