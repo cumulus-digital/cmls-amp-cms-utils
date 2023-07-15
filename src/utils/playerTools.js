@@ -7,6 +7,7 @@ import Logger from 'Utils/Logger';
 
 let player = null;
 let counter = 0;
+let page_frame_css_class = 'pwm_pageFrame';
 
 export const detectPlayer = () => {
 	const bodyClass = 'cmls-player-active';
@@ -55,8 +56,11 @@ export const getPageWindow = () => {
 	const log = new Logger('PlayerTools');
 
 	[window.self, window.parent, window.top].forEach((w) => {
+		if (w.name === page_frame_css_class) {
+			return w;
+		}
 		let pageFrame = w.document.querySelector(
-			'iframe[name="pwm_pageFrame"]'
+			`iframe[name="${page_frame_css_class}"]`
 		);
 		if (pageFrame) {
 			log.info('Found page frame', pageFrame.name);
@@ -71,7 +75,9 @@ export const getPageWindow = () => {
  * @returns {boolean}
  */
 export const isInIframe = () => {
-	return window.self !== window.top || window.self.name === 'pwm_pageFrame';
+	return (
+		window.self !== window.top || window.self.name === page_frame_css_class
+	);
 };
 
 /**
@@ -107,7 +113,7 @@ const bodyWatch = new MutationObserver((mutationsList, observer) => {
 });
 domReady(() => {
 	loadedWithPageFrame = !!window.top.document.querySelector(
-		'iframe[name="pwm_pageFrame"]'
+		`iframe[name="${page_frame_css_class}"]`
 	);
 	bodyWatch.observe(window.top.document.body, {
 		childList: true,
