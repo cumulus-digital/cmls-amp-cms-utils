@@ -59,7 +59,7 @@ export const getPageWindow = () => {
 			'iframe[name="pwm_pageFrame"]'
 		);
 		if (pageFrame) {
-			log.info('Found page frame', pageFrame, pageFrame.contentWindow);
+			log.info('Found page frame', pageFrame.name);
 			return pageFrame.contentWindow;
 		}
 	});
