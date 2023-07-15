@@ -142,7 +142,8 @@ export default class Logger {
 			}
 		}
 
-		window.top.console.groupCollapsed.apply(window.top.console, header);
+		//window.top.console.groupCollapsed.apply(window.top.console, header);
+		window.top.console.groupCollapsed(header);
 	}
 
 	displayFooter() {
