@@ -9,6 +9,9 @@ let player = null;
 let counter = 0;
 let page_frame_css_class = 'pwm_pageFrame';
 
+window._CMLS = window._CMLS || {};
+window._CMLS.playerTools = window._CMLS.playerTools || {};
+
 export const detectPlayer = () => {
 	const bodyClass = 'cmls-player-active';
 	let hasPlayer = false;
@@ -26,12 +29,14 @@ export const detectPlayer = () => {
 	}
 	addAfterPageFrame(detectPlayer);
 };
+window._CMLS.playerTools.detectPlayer = detectPlayer;
 
 export const navigateThroughPlayer = (url) => {
 	if (detectPlayer()) {
 		window.tgmp.updateLocation(url);
 	}
 };
+window._CMLS.playerTools.navigateThroughPlayer = navigateThroughPlayer;
 
 export const waitForPlayer = () => {
 	return new Promise(waiting);
@@ -48,6 +53,7 @@ export const waitForPlayer = () => {
 		}
 	}
 };
+window._CMLS.playerTools.waitForPlayer = waitForPlayer;
 
 /**
  * Return the window of the page frame if it exists, else window.self
@@ -69,6 +75,7 @@ export const getPageWindow = () => {
 	});
 	return window.self;
 };
+window._CMLS.playerTools.getPageWindow = getPageWindow;
 
 /**
  * Detects if the current window is in an iframe
@@ -79,6 +86,7 @@ export const isInIframe = () => {
 		window.self !== window.top || window.self.name === page_frame_css_class
 	);
 };
+window._CMLS.playerTools.isInIframe = isInIframe;
 
 /**
  * Runs callback when the TG player generates the pageFrame.
@@ -129,3 +137,4 @@ export const addAfterPageFrame = (cb) => {
 		onAfterPageFrame.push(cb);
 	}
 };
+window._CMLS.playerTools.addAfterPageFrame = addAfterPageFrame;
