@@ -18,7 +18,7 @@ import domReady from 'Utils/domReady';
 ((window, undefined) => {
 	const scriptName = 'AUTO-RELOAD PAGE',
 		nameSpace = 'autoReloadPage',
-		version = '0.1';
+		version = '0.2';
 
 	const log = new Logger(`${scriptName} ${version}`);
 
@@ -45,13 +45,13 @@ import domReady from 'Utils/domReady';
 		checkCondition() {
 			let win = window;
 			if (detectPlayer()) {
+				log.info('Getting page window');
 				win = getPageWindow();
 			}
-			log.info(
-				'Checking condition',
-				this.settings.condition,
-				win.document.querySelector('body')
-			);
+			log.info('Checking condition', this.settings.condition, {
+				win: win.document.querySelector('body'),
+				'window.self': window.self.document.querySelector('body'),
+			});
 			return win.document.querySelector(this.settings.condition);
 		}
 
