@@ -7,7 +7,7 @@ import Logger from 'Utils/Logger';
 
 let player = null;
 let counter = 0;
-let page_frame_css_class = 'pwm_pageFrame';
+let page_frame_name = 'pwm_pageFrame';
 
 window._CMLS = window._CMLS || {};
 window._CMLS.playerTools = window._CMLS.playerTools || {};
@@ -16,7 +16,7 @@ export const detectPlayer = () => {
 	const bodyClass = 'cmls-player-active';
 	let hasPlayer = false;
 	[window.self, window.parent, window.top].forEach((w) => {
-		if (w.tgmp) {
+		if (w.tgmp || w.name === page_frame_name) {
 			hasPlayer = true;
 			if (!w.document.body.classList.contains(bodyClass)) {
 				w.document.body.classList.add(bodyClass);
@@ -28,6 +28,7 @@ export const detectPlayer = () => {
 		return player;
 	}
 	addAfterPageFrame(detectPlayer);
+	return false;
 };
 window._CMLS.playerTools.detectPlayer = detectPlayer;
 
@@ -59,20 +60,26 @@ window._CMLS.playerTools.waitForPlayer = waitForPlayer;
  * Return the window of the page frame if it exists, else window.self
  */
 export const getPageWindow = () => {
-	const log = new Logger('PlayerTools');
+	let pageFrame = false;
+	const check_for_frame = [window.self, window.parent, window.top].some(
+		(w) => {
+			if (w.name === page_frame_name) {
+				pageFrame = w;
+				return w;
+			}
+			let frame_test = w.document.querySelector(
+				`iframe[name="${page_frame_name}"]`
+			);
+			if (frame_test?.contentWindow) {
+				pageFrame = frame_test.contentWindow;
+				return frame_test.contentWindow;
+			}
+		}
+	);
+	if (pageFrame?.document) {
+		return pageFrame;
+	}
 
-	[window.self, window.parent, window.top].forEach((w) => {
-		if (w.name === page_frame_css_class) {
-			return w;
-		}
-		let pageFrame = w.document.querySelector(
-			`iframe[name="${page_frame_css_class}"]`
-		);
-		if (pageFrame) {
-			log.info('Found page frame', pageFrame.name);
-			return pageFrame.contentWindow;
-		}
-	});
 	return window.self;
 };
 window._CMLS.playerTools.getPageWindow = getPageWindow;
@@ -82,9 +89,7 @@ window._CMLS.playerTools.getPageWindow = getPageWindow;
  * @returns {boolean}
  */
 export const isInIframe = () => {
-	return (
-		window.self !== window.top || window.self.name === page_frame_css_class
-	);
+	return window.self !== window.top || window.self.name === page_frame_name;
 };
 window._CMLS.playerTools.isInIframe = isInIframe;
 
@@ -121,7 +126,7 @@ const bodyWatch = new MutationObserver((mutationsList, observer) => {
 });
 domReady(() => {
 	loadedWithPageFrame = !!window.top.document.querySelector(
-		`iframe[name="${page_frame_css_class}"]`
+		`iframe[name="${page_frame_name}"]`
 	);
 	bodyWatch.observe(window.top.document.body, {
 		childList: true,

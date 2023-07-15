@@ -44,12 +44,8 @@ import domReady from 'Utils/domReady';
 		}
 
 		checkCondition() {
-			win = getPageWindow();
-			log.info('Checking condition', this.settings.condition, {
-				win: win.document.querySelector('body'),
-				'window.self': window.self.document.querySelector('body'),
-			});
-			return win.document.querySelector(this.settings.condition);
+			const win = getPageWindow();
+			return !!win?.document?.body?.matches(this.settings.condition);
 		}
 
 		start(options = {}) {
@@ -57,7 +53,11 @@ import domReady from 'Utils/domReady';
 				log.error('Received malformed options');
 				return;
 			}
-			this.settings = Object.assign(this.settings, options);
+			this.settings = Object.assign(
+				this.defaults,
+				this.settings,
+				options
+			);
 
 			this.stop();
 
@@ -87,7 +87,17 @@ import domReady from 'Utils/domReady';
 		}
 
 		tick() {
-			if (Date.now() > this.timeout.getTime()) {
+			const now = new Date();
+			if (Math.random() > 0.95) {
+				log.debug({
+					headerLength: Infinity,
+					message: [
+						'Checking timer (This notice is random to reduce noise)',
+						[now.toLocaleString(), this.timeout.toLocaleString()],
+					],
+				});
+			}
+			if (now.getTime() > this.timeout.getTime()) {
 				this.fire();
 			}
 		}
@@ -128,6 +138,14 @@ import domReady from 'Utils/domReady';
 		}
 	}
 
+	const autoReloadPageInstance = new AutoReloadPage();
+	const autoReload = {
+		push(options) {
+			log.info('Received request', options);
+			autoReloadPageInstance.push(options);
+		},
+	};
+
 	domReady(() => {
 		if (
 			w?._CMLS?.autoReload &&
@@ -137,14 +155,18 @@ import domReady from 'Utils/domReady';
 			w._CMLS.autoReload = new AutoReloadPage(w._CMLS.autoReload.pop());
 		} else {
 			w._CMLS = w._CMLS || {};
-			winwdow._CMLS.autoReload = new AutoReloadPage();
+			w._CMLS.autoReload = new AutoReloadPage();
 		}
 	});
 
 	// Stop timer after TG navigates away
 	addAfterPageFrame(() => {
+		autoReloadPageInstance.stop();
+		/*
 		if (w?._CMLS?.autoReload instanceof AutoReloadPage) {
 			w._CMLS.autoReload.stop();
+			delete w._CMLS.autoReload;
 		}
+		*/
 	});
 })(window.self);
