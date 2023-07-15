@@ -18,11 +18,12 @@ import domReady from 'Utils/domReady';
 ((window, undefined) => {
 	const scriptName = 'AUTO-RELOAD PAGE',
 		nameSpace = 'autoReloadPage',
-		version = '0.2';
+		version = '0.3';
 
 	const log = new Logger(`${scriptName} ${version}`);
 
-	window._CMLS = window._CMLS || {};
+	const w = window;
+	w._CMLS = w._CMLS || {};
 
 	class AutoReloadPage {
 		defaults = {
@@ -43,11 +44,7 @@ import domReady from 'Utils/domReady';
 		}
 
 		checkCondition() {
-			let win = window;
-			if (detectPlayer()) {
-				log.info('Getting page window');
-				win = getPageWindow();
-			}
+			win = getPageWindow();
 			log.info('Checking condition', this.settings.condition, {
 				win: win.document.querySelector('body'),
 				'window.self': window.self.document.querySelector('body'),
@@ -106,12 +103,9 @@ import domReady from 'Utils/domReady';
 			}
 
 			// Generate url
-			const protocol = window.location.protocol;
-			const hostname = window.location.hostname;
-			let url = window.location.href.replace(
-				`${protocol}//${hostname}`,
-				''
-			);
+			const protocol = w.location.protocol;
+			const hostname = w.location.hostname;
+			let url = w.location.href.replace(`${protocol}//${hostname}`, '');
 
 			if (url.length < 1) {
 				url = '/';
@@ -125,7 +119,7 @@ import domReady from 'Utils/domReady';
 					return;
 				}
 			}
-			window.location.href = url;
+			w.location.href = url;
 		}
 
 		push(options) {
@@ -136,23 +130,21 @@ import domReady from 'Utils/domReady';
 
 	domReady(() => {
 		if (
-			window?._CMLS?.autoReload &&
-			window._CMLS.autoReload instanceof Array &&
-			window._CMLS.autoReload.length
+			w?._CMLS?.autoReload &&
+			w._CMLS.autoReload instanceof Array &&
+			w._CMLS.autoReload.length
 		) {
-			window._CMLS.autoReload = new AutoReloadPage(
-				window._CMLS.autoReload.pop()
-			);
+			w._CMLS.autoReload = new AutoReloadPage(w._CMLS.autoReload.pop());
 		} else {
-			window._CMLS = window._CMLS || {};
-			window._CMLS.autoReload = new AutoReloadPage();
+			w._CMLS = w._CMLS || {};
+			winwdow._CMLS.autoReload = new AutoReloadPage();
 		}
 	});
 
 	// Stop timer after TG navigates away
 	addAfterPageFrame(() => {
-		if (window?._CMLS?.autoReload instanceof AutoReloadPage) {
-			window._CMLS.autoReload.stop();
+		if (w?._CMLS?.autoReload instanceof AutoReloadPage) {
+			w._CMLS.autoReload.stop();
 		}
 	});
 })(window.self);
