@@ -90,7 +90,7 @@ import {
 					}
 					if (
 						window.top._CMLS.autoReload.timeout.getTime() <
-						window._CMLS.autoRefreshAdsTimer * 60000
+						window._CMLS.autoRefreshAdsTimer * 60000 + 60000
 					) {
 						log.info(
 							'AutoReloadPAGE will fire before we will, ads will not refresh'
