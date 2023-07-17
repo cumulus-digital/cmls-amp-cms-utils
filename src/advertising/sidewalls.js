@@ -156,7 +156,8 @@ import domReady from '../utils/domReady';
 				wrapper.appendChild(leftDiv);
 				wrapper.appendChild(rightDiv);
 				injectPointNode.appendChild(wrapper);
-
+			},
+			display: () => {
 				// Create slots!
 				window._CMLS.adTag.queue(() => {
 					let sizeMap = [
@@ -207,23 +208,22 @@ import domReady from '../utils/domReady';
 							pos: 'right',
 						},
 					});
+
+					if (window.GPT_SITE_SLOTS['cmls-sidewall-left']) {
+						log.info('Calling display for cmls-sidewall-left');
+						window._CMLS.adTag.display(
+							'cmls-sidewall-left',
+							window._CMLS.adTag.isInitialLoadDisabled()
+						);
+					}
+					if (window.GPT_SITE_SLOTS['cmls-sidewall-right']) {
+						log.info('Calling display for cmls-sidewall-right');
+						window._CMLS.adTag.display(
+							'cmls-sidewall-right',
+							window._CMLS.adTag.isInitialLoadDisabled()
+						);
+					}
 				});
-			},
-			display: () => {
-				if (window.GPT_SITE_SLOTS['cmls-sidewall-left']) {
-					log.info('Calling display for cmls-sidewall-left');
-					window._CMLS.adTag.display(
-						'cmls-sidewall-left',
-						window._CMLS.adTag.isInitialLoadDisabled()
-					);
-				}
-				if (window.GPT_SITE_SLOTS['cmls-sidewall-right']) {
-					log.info('Calling display for cmls-sidewall-right');
-					window._CMLS.adTag.display(
-						'cmls-sidewall-right',
-						window._CMLS.adTag.isInitialLoadDisabled()
-					);
-				}
 			},
 			init: () => {
 				domReady(() => {
