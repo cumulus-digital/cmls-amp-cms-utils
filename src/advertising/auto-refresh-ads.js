@@ -79,6 +79,7 @@ import {
 						);
 						return -1;
 					}
+					// Make sure reload page timer is significant
 					if (
 						window.top._CMLS.autoReload.settings.timeout <
 						window._CMLS.autoRefreshAdsTimer * 2
@@ -88,10 +89,11 @@ import {
 						);
 						return -1;
 					}
+					// Make sure we're not going to refresh the page within window
 					if (
 						window.top._CMLS.autoReload.timeout.getTime() <
 						// Pad this with another 60 seconds to keep it kosher with GPT
-						window._CMLS.autoRefreshAdsTimer * 60000 + 60000
+						this.fireTime.getTime() + 600000
 					) {
 						log.info(
 							'AutoReloadPAGE will fire before we will, ads will not refresh'
