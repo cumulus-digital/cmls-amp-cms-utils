@@ -9,228 +9,239 @@ import domReady from '../utils/domReady';
 
 ((window, undefined) => {
 	const scriptName = 'SIDEWALL ADS',
-		nameSpace = 'sideWallInjector',
-		version = '0.3',
-		injectPoint = '.wrapper-content, body > .wp-site-blocks > header + *',
-		elementClass = 'cmls-sidewalls',
+		nameSpace = 'sidewallAds',
+		version = '2.0';
+
+	const log = new Logger(`${scriptName} ${version}`);
+
+	const injectPoint = '.wrapper-content, body > .wp-site-blocks > header + *',
+		spacingPoint = '.wrapper-content > .grid-container > *:first-child',
+		containerId = 'cmls-sidewalls',
+		containerClass = 'cmls-sidewalls',
+		sidewallClass = 'cmls-sidewall',
 		/**
 		 * Width of content area in pixels
 		 * @type {Number}
 		 */
 		contentWidth = 1100;
 
-	const doc = window.document;
-	const log = new Logger(`${scriptName} ${version}`);
+	let topPad = '0';
 
-	domReady(() => {
-		if (window.NO_SIDEWALLS) {
-			log.info('NO_SIDEWALLS configured, exiting.');
-			return;
-		}
+	window._CMLS = window._CMLS || {};
 
-		if (window?._CMLS?.disabled?.sideWalls) {
-			log.info('_CMLS.disabled.sideWalls configured, exiting.');
-			return;
-		}
-
-		const freestarSidewallsEnabled = () => {
-			if (window?.freestar?.queue) {
-				log.info('Freestar enabled.');
-				if (
-					window?.freestar?.config?.disabledProducts?.sideWall ===
-						true ||
-					window?.freestar?.config?.products?.sideWall?.disabled
-				) {
-					log.info('Freestar sideWall product is disabled.');
-					return true;
-				} else {
-					log.info(
-						'Freestar sideWall product is not explicitly disabled.',
-						window?.freestar?.config?.disabledProducts,
-						window?.freestar?.config?.products?.sideWall
-					);
-					return false;
-				}
-			}
-			return true;
-		};
-
-		if (!freestarSidewallsEnabled()) {
-			log.info('Exiting.');
-			return;
-		}
-
-		if (
-			doc.querySelector(
-				'.takeover-left div[id^="div-gpt"],.takeover-right div[id^="div-gpt"],.skyscraper-left div[id^="div-gpt"],.skyscraper-right div[id^="div-gpt"]'
-			)
-		) {
-			log.info('Legacy skyscrapers exist, exiting.');
-			return;
-		}
-
-		if (doc.querySelector(`.${elementClass}`)) {
-			log.info('Tags already exists, exiting.');
-			return;
-		}
-
-		if (!doc.querySelector(injectPoint)) {
-			log.info('Injection point not found, exiting.');
-			return;
-		}
-
-		if (window.matchMedia(`(max-width: ${contentWidth + 600}px)`).matches) {
-			log.info('Device width is too narrow, exiting.');
-			return;
-		}
-
-		function init() {
-			if (!freestarSidewallsEnabled()) {
-				log.info('Exiting.');
-				return;
-			}
-
-			if (doc.querySelector('.wallpaperInjectorContainer')) {
-				log.info('Wallpaper is visible, exiting');
-				return;
-			}
-
-			// Get padding-top of inject point
-			const injectPointNode = doc.querySelector(injectPoint);
-			const injectPointStyle = window.getComputedStyle(injectPointNode);
-			let topPad = injectPointStyle?.getPropertyValue('padding-top');
-			if (!topPad || !parseInt(topPad)) {
-				topPad = '10px';
-			}
-
-			if (
-				!injectPointStyle?.position ||
-				injectPointStyle.position.toLowerCase() === 'static'
-			) {
-				injectPointNode.style.position = 'relative';
-			}
-
-			const template = `
-				<div id="cmls-sidewall-left" class="cmls-sidewall"></div>
-				<div id="cmls-sidewall-right" class="cmls-sidewall"></div>
-				<style>
-					.wrapper-header .takeover-right, .wrapper-header .takeover-left,
-					.wrapper-header .skyscraper-right, .wrapper-header .skyscraper-left {
-						display: none !important;
-					}
-					.cmls-sidewalls {
-						position: absolute;
-						left: 50%;
-						top: 0;
-						width: ${contentWidth}px;
-						height: 100%;
-						transform: translateX(-50%);
-						display: flex;
-						justify-content: space-between;
-						box-sizing: border-box;
-						padding: ${topPad} 10px;
-						z-index: 2;
-						pointer-events: none
-					}
-					stn-player .player {
-						z-index: 99999
-					}
-					.cmls-sidewall {
-						position: sticky;
-						top: ${topPad};
-						width: fit-content;
-						height: fit-content;
-						pointer-events: all
-					}
-					#cmls-sidewall-left {
-						transform: translateX(-100%);
-					}
-					#cmls-sidewall-right {
-						margin-left: auto;
-						transform: translateX(100%);
-					}
-				</style>
-			`;
-			const container = createElement.el('div', {
-				class: 'cmls-sidewalls',
-			});
-			container.innerHTML = template;
-			injectPointNode.prepend(container);
-
-			// Define slots
-			window._CMLS.adTag.queue(() => {
-				if (window.NO_SIDEWALLS) {
-					log.info('NO_SIDEWALLS set before ads could be generated');
+	if (!window._CMLS?.[nameSpace]) {
+		window._CMLS[nameSpace] = {
+			container: null,
+			slots: [],
+			inject: () => {
+				if (window.document.getElementById(containerId)) {
+					log.info('Sidewall container already injected.');
 					return;
 				}
 
-				log.info('Defining sidewalls');
+				if (window.NO_SIDEWALLS) {
+					log.info('NO_SIDEWALLS configured, exiting.');
+					return;
+				}
 
-				let sizeMap = [
-					// WidthxHeight can only support 160x600
-					[[contentWidth + 160, 700], [[160, 600]]],
+				if (window?._CMLS?.disabled?.sideWalls) {
+					log.info('_CMLS.disabled.sideWalls configured, exiting.');
+					return;
+				}
 
-					// WidthxHeight can support up to 300x600
-					[
-						[contentWidth + 300, 700],
+				if (
+					window.document.querySelector(
+						'.takeover-left div[id^="div-gpt"],.takeover-right div[id^="div-gpt"],.skyscraper-left div[id^="div-gpt"],.skyscraper-right div[id^="div-gpt"]'
+					)
+				) {
+					log.info('Legacy skyscrapers exist, exiting.');
+					return;
+				}
+
+				const injectPointNode =
+						window.document.querySelector(injectPoint),
+					spacingPointNode =
+						window.document.querySelector(spacingPoint);
+
+				if (!injectPointNode) {
+					log.info('Injection point not found, exiting.');
+					return;
+				}
+
+				if (
+					window.matchMedia(`(max-width: ${contentWidth + 600}px)`)
+						.matches
+				) {
+					log.info('Device width is too narrow, exiting.');
+					return;
+				}
+
+				const injectPointStyle =
+					window.getComputedStyle(injectPointNode);
+
+				// Get distance from header on headway sites
+				if (spacingPointNode) {
+					const placeBox = spacingPointNode.getBoundingClientRect(),
+						distanceBox = injectPointNode.getBoundingClientRect();
+					topPad = placeBox.top - distanceBox.top + 'px';
+				}
+
+				log.info('Injecting');
+
+				if (
+					!injectPointStyle?.position ||
+					injectPointStyle.position.toLowerCase() === 'static'
+				) {
+					injectPointNode.style.position = 'relative';
+				}
+
+				let css = `
+						.wrapper-header .takeover-right, .wrapper-header .takeover-left,
+						.wrapper-header .skyscraper-right, .wrapper-header .skyscraper-left {
+							display: none !important;
+						}
+						.${containerClass} {
+							position: absolute;
+							left: 50%;
+							top: 0;
+							width: ${contentWidth}px;
+							height: 100%;
+							transform: translateX(-50%);
+							display: flex;
+							justify-content: space-between;
+							box-sizing: border-box;
+							padding: ${topPad} 10px;
+							z-index: 2;
+							pointer-events: none
+						}
+						stn-player .player {
+							z-index: 99999
+						}
+						.${sidewallClass} {
+							position: sticky;
+							top: ${topPad};
+							width: fit-content;
+							height: fit-content;
+							pointer-events: all
+						}
+						#cmls-sidewall-left {
+							transform: translateX(-100%);
+						}
+						#cmls-sidewall-right {
+							margin-left: auto;
+							transform: translateX(100%);
+						}
+					`;
+
+				if (!window.document.getElementById(`${containerId}Style`)) {
+					const styleEl = createElement.el('style', {
+						id: `${containerId}Style`,
+					});
+					styleEl.innerHTML = css;
+					injectPointNode.appendChild(styleEl);
+				}
+
+				const wrapper = createElement.el('div', {
+					id: containerId,
+					class: containerClass,
+				});
+				const leftDiv = createElement.el('div', {
+					id: 'cmls-sidewall-left',
+					class: sidewallClass,
+				});
+				const rightDiv = createElement.el('div', {
+					id: 'cmls-sidewall-right',
+					class: sidewallClass,
+				});
+				wrapper.appendChild(leftDiv);
+				wrapper.appendChild(rightDiv);
+				injectPointNode.appendChild(wrapper);
+
+				// Create slots!
+				window._CMLS.adTag.queue(() => {
+					let sizeMap = [
+						// WidthxHeight can support up to 300x600
 						[
+							[contentWidth + 300, 0],
+							[
+								[160, 600],
+								[300, 600],
+							],
+						],
+
+						// WidthxHeight can only support 160x600
+						[[contentWidth + 160, 0], [[160, 600]]],
+
+						// Height can only support 300x250
+						// Disabled for now...
+						// [[contentWidth + 300, 0], [[300, 250]]],
+
+						// No sidewalls otherwise.
+						[[0, 0], []],
+					];
+
+					const slotCommon = {
+						adUnitPath: `${window._CMLS.adPath}/sidewallLeft`,
+						size: [
 							[160, 600],
 							[300, 600],
 						],
-					],
+						sizeMap: sizeMap,
+						div: 'cmls-sidewall-left',
+						collapse: true,
+						targeting: {
+							pos: 'left',
+						},
+						prebid: true,
+					};
 
-					// Height can only support 300x250
-					// Disabled for now...
-					// [[contentWidth + 300, 0], [[300, 250]]],
+					log.info('Defining slot cmlsSidewallLeft');
+					window._CMLS.adTag.defineSlot(slotCommon);
 
-					// No sidewalls otherwise.
-					[[0, 0], []],
-				];
-				const leftSlot = window._CMLS.adTag.defineSlot({
-					adUnitPath: window._CMLS.adPath + '/sidewallLeft',
-					size: [
-						[160, 600],
-						[300, 600],
-					],
-					sizeMap: sizeMap,
-					div: 'cmls-sidewall-left',
-					collapse: true,
-					targeting: { pos: 'left' },
-					prebid: true,
+					log.info('Defining slot cmls-sidewall-right');
+					window._CMLS.adTag.defineSlot({
+						...slotCommon,
+						adUnitPath: `${window._CMLS.adPath}/sidewallRight`,
+						div: 'cmls-sidewall-right',
+						targeting: {
+							pos: 'right',
+						},
+					});
 				});
-				leftSlot &&
-					window._CMLS.adTag.display('cmls-sidewall-left', false);
-
-				const rightSlot = window._CMLS.adTag.defineSlot({
-					adUnitPath: window._CMLS.adPath + '/sidewallRight',
-					size: [
-						[160, 600],
-						[300, 600],
-					],
-					sizeMap: sizeMap,
-					div: 'cmls-sidewall-right',
-					collapse: true,
-					targeting: { pos: 'right' },
-					prebid: true,
-				});
-				rightSlot &&
-					window._CMLS.adTag.display('cmls-sidewall-right', false);
-
-				if (window.NO_SIDEWALLS) {
-					log.warn(
-						'NO_SIDEWALLS set after sidewall slots were defined!'
+			},
+			display: () => {
+				if (window.GPT_SITE_SLOTS['cmls-sidewall-left']) {
+					log.info('Calling display for cmls-sidewall-left');
+					window._CMLS.adTag.display(
+						'cmls-sidewall-left',
+						window._CMLS.adTag.isInitialLoadDisabled()
 					);
-					return;
 				}
+				if (window.GPT_SITE_SLOTS['cmls-sidewall-right']) {
+					log.info('Calling display for cmls-sidewall-right');
+					window._CMLS.adTag.display(
+						'cmls-sidewall-right',
+						window._CMLS.adTag.isInitialLoadDisabled()
+					);
+				}
+			},
+			init: () => {
+				domReady(() => {
+					window._CMLS[nameSpace].inject();
+					if (window._CMLS.adPath) {
+						window._CMLS[nameSpace].display();
+					} else {
+						window.addEventListener(
+							'cmls-adpath-discovered',
+							() => {
+								window._CMLS[nameSpace].display();
+							}
+						);
+					}
+				});
+			},
+		};
+	}
 
-				window._CMLS.adTag.doInitialLoad([leftSlot, rightSlot]);
-			});
-		}
-
-		if (window?._CMLS?.adPath) {
-			init();
-		} else {
-			window.addEventListener('cmls-adpath-discovered', () => init());
-		}
-	});
-})(window.self);
+	window._CMLS[nameSpace].init();
+})(window.self, undefined);
