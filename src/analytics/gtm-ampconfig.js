@@ -31,16 +31,19 @@ import { push as gtmPush } from 'Utils/GTM';
 		}
 
 		window._CMLS.adTag.queue(() => {
-			if (!window?._CMLS?.adTag?.pubads()?.getTargeting('cms-sgroup')) {
+			if (!window?._CMLS?.adTag?.isReady()) {
+				log.warn('Adtag interface is not ready!');
+				return;
+			}
+
+			const groups = window?._CMLS?.adTag?.getTargeting('cms-sgroup');
+
+			if (!groups || !groups.length) {
 				log.warn('No relevant page-level targeting found.');
 				return;
 			}
 
 			// Register sgroups in our global container
-			const groups = window._CMLS.adTag
-				.pubads()
-				.getTargeting('cms-sgroup');
-
 			let isWestwood = false;
 			groups.forEach((group) => {
 				fireEvent(group);

@@ -183,7 +183,7 @@ import {
 						me.resetFireTime();
 
 						try {
-							const ads = window._CMLS.adTag.pubads().getSlots();
+							const ads = window._CMLS.adTag.getSlots();
 							const visibleSlots = ads.filter((slot) => {
 								const ID = slot.getSlotElementId();
 								const el = window.document.getElementById(ID);

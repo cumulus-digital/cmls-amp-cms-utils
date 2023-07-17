@@ -386,21 +386,14 @@ import debounce from 'lodash/debounce';
 					log.info('Bad slot IDs', badSlotIds);
 					if (badSlotIds?.length) {
 						const slotsToKill = [];
-						window._CMLS.adTag
-							.pubads()
-							.getSlots()
-							.forEach((slot) => {
-								if (
-									badSlotIds.includes(slot.getSlotElementId())
-								) {
-									slotsToKill.push(slot);
-								}
-							});
+						window._CMLS.adTag.getSlots().forEach((slot) => {
+							if (badSlotIds.includes(slot.getSlotElementId())) {
+								slotsToKill.push(slot);
+							}
+						});
 						log.info('Slots to kill', badSlotIds, slotsToKill);
 						if (slotsToKill?.length) {
-							window._CMLS.adTag
-								.rawInterface()
-								.destroySlots(slotsToKill);
+							window._CMLS.adTag.destroySlots(slotsToKill);
 						}
 					}
 				} else {

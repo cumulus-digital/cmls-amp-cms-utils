@@ -168,8 +168,7 @@ import domReady from 'Utils/domReady';
 
 					context._CMLS[nameSpace].slot =
 						context._CMLS.adTag.defineSlot({
-							adUnitPath:
-								context._CMLS.adPath + '/stickyBottomAd',
+							adUnitPath: `${context._CMLS.adPath}/stickyBottomAd`,
 							size: [
 								[120, 60],
 								[300, 50],

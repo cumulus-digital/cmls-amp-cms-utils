@@ -12,8 +12,7 @@ const log = new Logger(`${scriptName} ${version}`);
 
 function registerAdPath() {
 	log.info('Checking for ad path');
-	const pa = window?._CMLS?.adTag.rawInterface().pubads();
-	const slots = pa?.getSlots();
+	const slots = window?._CMLS?.adTag.getSlots();
 
 	log.info(`Testing ${slots.length} slots`);
 	if (slots.length) {
@@ -37,7 +36,7 @@ function registerAdPath() {
 	}
 }
 
-if (window?._CMLS?.adTag?.rawInterface().pubadsReady) {
+if (window?._CMLS?.adTag?.isReady()) {
 	registerAdPath();
 } else {
 	window.addEventListener('cmls-adtag-loaded', () => registerAdPath());
