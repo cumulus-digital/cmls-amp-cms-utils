@@ -90,6 +90,7 @@ import {
 					}
 					if (
 						window.top._CMLS.autoReload.timeout.getTime() <
+						// Pad this with another 60 seconds to keep it kosher with GPT
 						window._CMLS.autoRefreshAdsTimer * 60000 + 60000
 					) {
 						log.info(
