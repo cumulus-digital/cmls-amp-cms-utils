@@ -121,6 +121,8 @@ module.exports = (env) => {
 			host,
 
 			port: 3000,
+
+			allowedHosts: 'all',
 		},
 	};
 };

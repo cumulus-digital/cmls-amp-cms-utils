@@ -1,7 +1,10 @@
 /**
  * Script includes dealing with advertising and ad content
  */
+
+// Interfaces for discovering and interacting with on-page ad code, such as GAM
 require('./interfaces');
+
 require('./register-adpath');
 require('./auto-refresh-ads');
 require('./local-nav-through-player');

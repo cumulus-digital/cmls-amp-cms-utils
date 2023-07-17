@@ -1,6 +1,9 @@
 /**
  * Adtag interface detection
+ *
+ * All interfaces must inherit from the DefaultInterface
  */
+
 import Logger from 'Utils/Logger';
 import triggerEvent from 'Utils/triggerEvent';
 import domReady from 'Utils/domReady';
@@ -8,6 +11,8 @@ import domReady from 'Utils/domReady';
 import APSInterface from './aps-gpt';
 import GPTInterface from './gpt';
 
+// Detectors must be registered in order for their detection to be run.
+// The first successful detector wins.
 const registeredDetectors = [APSInterface, GPTInterface];
 
 ((window, undefined) => {
