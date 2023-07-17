@@ -40,6 +40,7 @@ export default class DefaultInterface {
 
 	/**
 	 * Adtag's command queue
+	 * @param {function} callback
 	 */
 	queue(callback) {
 		return this.rawInterface().cmd.push(callback);
@@ -53,6 +54,13 @@ export default class DefaultInterface {
 	}
 
 	/**
+	 * Return global targeting parameter
+	 * @param {string} key
+	 * @return {array}
+	 */
+	getTargeting(key) {}
+
+	/**
 	 * Sets global targeting parameters
 	 * @param {string} key
 	 * @param {string} val
@@ -64,6 +72,13 @@ export default class DefaultInterface {
 	 * @returns {boolean}
 	 */
 	isInitialLoadDisabled() {
+		return false;
+	}
+
+	/**
+	 * Returns true if the interface is ready
+	 */
+	isReady() {
 		return false;
 	}
 
@@ -95,6 +110,22 @@ export default class DefaultInterface {
 	}
 
 	/**
+	 * Destroy given slot(s)
+	 * @param {Slot[]} slots
+	 * @return {boolean}
+	 */
+	destroySlots(slots) {}
+
+	/**
+	 * Return all slots as an array. Note: Most code will expect each
+	 * slot to conform to the GPT Slot object API.
+	 * @return {Slot[]}
+	 */
+	getSlots() {
+		return [];
+	}
+
+	/**
 	 * Queues the display of a given slot ID
 	 * @param {string} ID div ID for ad slot
 	 * @param {Boolean} forceLoad force a call to refresh() on the slot
@@ -103,9 +134,10 @@ export default class DefaultInterface {
 
 	/**
 	 * Refresh given slots
-	 * @param {object|array} requestSlots
+	 * @param {null|Slot[]} requestSlots
+	 * @param {object?} options
 	 */
-	refresh(requestSlots) {}
+	refresh(requestSlots, options = {}) {}
 
 	/**
 	 * Check if a slot has been requested
@@ -138,7 +170,7 @@ export default class DefaultInterface {
 	}
 
 	/**
-	 * Return API queried information about slots, good for logging
+	 * Return API queried information about slots as an array, good for logging
 	 * @param {array|object} slots
 	 * @returns {array}
 	 */

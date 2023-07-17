@@ -1,5 +1,7 @@
 /**
  * Amazon UAW/APS header bidder interface
+ *
+ * Based on GPT interface
  */
 import GPTInterface from './gpt';
 import Logger from 'Utils/Logger';
@@ -43,6 +45,18 @@ export default class APSInterface extends GPTInterface {
 		return slot;
 	}
 
+	/**
+	 * @typedef {object} FilteredSlots
+	 * @property {Slot[]} prebid Slots elligible for prebid
+	 * @property {Slot[]} noprebid Slots should not be bidded
+	 */
+
+	/**
+	 * Given an array of slots, return an object containing those
+	 * that should or should not be elligible for prebid
+	 * @param {Slot[]} slots
+	 * @returns {FilteredSlots}
+	 */
 	filterPrebidSlots(slots) {
 		const me = this;
 		if (!slots) {
@@ -103,7 +117,11 @@ export default class APSInterface extends GPTInterface {
 			}
 
 			if (isPrebid) {
-				filteredSlots.prebid.push(slot);
+				try {
+					filteredSlots.prebid.push(slot);
+				} catch (e) {
+					console.log(e);
+				}
 			} else {
 				filteredSlots.noprebid.push(slot);
 			}
@@ -114,9 +132,10 @@ export default class APSInterface extends GPTInterface {
 
 	/**
 	 * Refresh given slots, handling both prebid and noprebid slots
-	 * @param {object|array} requestSlots
+	 * @param {null|Slot[]} requestSlots
+	 * @param {object?} options
 	 */
-	refresh(requestSlots) {
+	refresh(requestSlots, options = {}) {
 		const me = this;
 		if (!requestSlots) {
 			me.log.warn('Refresh called without slots');
@@ -142,15 +161,27 @@ export default class APSInterface extends GPTInterface {
 				this.listSlotData(refreshSlots.prebid)
 			);
 
+			const apsSlots = [];
+			refreshSlots.prebid.forEach((slot) => {
+				apsSlots.push({
+					slotID: slot.getSlotElementId(),
+					slotName: slot.getAdUnitPath(),
+					sizes: slot.getSizes().map((size) => {
+						return [size.width, size.height];
+					}),
+				});
+			});
+
 			const apsconfig = {
-				slots: refreshSlots.prebid,
+				// Reformat GPT slot into what APS really wants
+				slots: apsSlots,
 				params: {
 					adRefresh: '1',
 				},
 			};
 
 			const fetchBids = (apsconfig) => {
-				me.log.info('fetchBids called', apsconfig);
+				me.log.info('fetchBids called', apsconfig, apsconfig.slots);
 				window.apstag.fetchBids(apsconfig, (bids) => {
 					me.queue(() => {
 						window.apstag.setDisplayBids();
@@ -159,7 +190,7 @@ export default class APSInterface extends GPTInterface {
 							me.listSlotData(refreshSlots.prebid),
 							bids
 						);
-						me.pubads().refresh(refreshSlots.prebid);
+						me.pubads().refresh(refreshSlots.prebid, options);
 					});
 				});
 			};

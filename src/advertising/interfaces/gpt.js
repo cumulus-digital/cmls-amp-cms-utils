@@ -37,6 +37,8 @@ export default class GPTInterface extends DefaultInterface {
 				);
 				e.slot._displayed = true;
 				e.slot.setTargeting(me.initialRequestKey, true);
+			} else {
+				me.log.info('Slot already requested', me.listSlotData(e.slot));
 			}
 		});
 	}
@@ -56,6 +58,10 @@ export default class GPTInterface extends DefaultInterface {
 		return this.pubads().removeEventListener(e, func);
 	}
 
+	getTargeting(key) {
+		return this.pubads().getTargeting(key);
+	}
+
 	setTargeting(key, val) {
 		return this.pubads().setTargeting(key, val);
 	}
@@ -66,6 +72,13 @@ export default class GPTInterface extends DefaultInterface {
 	 */
 	isInitialLoadDisabled() {
 		return this.pubads().isInitialLoadDisabled();
+	}
+
+	/**
+	 * Returns true if the interface is ready
+	 */
+	isReady() {
+		return this.rawInterface().pubadsReady;
 	}
 
 	/**
@@ -129,6 +142,8 @@ export default class GPTInterface extends DefaultInterface {
 				return false;
 			}
 
+			this.log.debug('Winning sizemap', settings.div, winningMap);
+
 			slot = this.rawInterface().defineSlot(
 				settings.adUnitPath,
 				winningMap,
@@ -144,9 +159,11 @@ export default class GPTInterface extends DefaultInterface {
 		if (!slot) {
 			this.log.error('Failed to create slot!', settings);
 			return false;
+		} else {
+			this.log.info('Slot created', this.listSlotData(slot));
 		}
 
-		if (settings.collapse) {
+		if (settings.hasOwnProperty('collapse')) {
 			if (!Array.isArray(settings.collapse)) {
 				settings.collapse = [settings.collapse];
 			}
@@ -179,22 +196,64 @@ export default class GPTInterface extends DefaultInterface {
 	}
 
 	/**
+	 * Destroy given slot(s)
+	 * @param {Slot[]} slots
+	 * @return {boolean}
+	 */
+	destroySlots(slots) {
+		return this.rawInterface().destroySlots(slots);
+	}
+
+	/**
+	 * Return an array of all defined Slots
+	 * @return {array}
+	 */
+	getSlots() {
+		return this.pubads().getSlots();
+	}
+
+	/**
 	 * Queues the display of a given slot ID
 	 * @param {string} ID div ID for ad slot
-	 * @param {Boolean} forceLoad force a call to refresh() on the slot
+	 * @param {Boolean|Slot} forceLoad force a call to refresh() on the slot
 	 */
 	display(ID, forceLoad = false) {
 		const me = this;
 		this.queue(() => {
-			this.log.info('Calling display', ID, forceLoad);
+			me.log.info('Calling display', ID, forceLoad);
 			me.rawInterface().display(ID);
 			if (forceLoad) {
-				const slot = me
-					.pubads()
-					.getSlots()
-					.find((slot) => slot.getSlotElementId() === ID);
+				me.log.info('Forceload enabled for this display call');
+				let slot = false;
+				if (window.GPT_SITE_SLOTS?.[ID]?.getSlotElementId) {
+					slot = window.GPT_SITE_SLOTS[ID];
+				} else {
+					const allSlots = me.getSlots();
+					if (!allSlots?.length) {
+						me.log.warn('No slots defined!');
+						return;
+					}
+					allSlots.some((aslot) => {
+						if (aslot.getSlotElementId() === ID) {
+							slot = aslot;
+							return true;
+						}
+					});
+				}
+
 				if (slot) {
+					me.log.info(
+						'Forcing initial load',
+						slot.getSlotElementId()
+					);
 					me.doInitialLoad(slot);
+				} else {
+					me.log.warn(
+						'Attempted to force initial load but slot was not defined!',
+						ID,
+						forceLoad,
+						slot
+					);
 				}
 			}
 		});
@@ -202,9 +261,10 @@ export default class GPTInterface extends DefaultInterface {
 
 	/**
 	 * Refresh given slots
-	 * @param {object|array} requestSlots
+	 * @param {null|Slot[]} requestSlots
+	 * @param {object?} options
 	 */
-	refresh(requestSlots) {
+	refresh(requestSlots, options = {}) {
 		if (!requestSlots) {
 			this.log.warn('Refresh called without slots');
 			return;
@@ -221,7 +281,7 @@ export default class GPTInterface extends DefaultInterface {
 			'Refresh called for slots',
 			this.listSlotData(refreshSlots)
 		);
-		return this.pubads().refresh(refreshSlots);
+		return this.pubads().refresh(refreshSlots, options);
 	}
 
 	/**
