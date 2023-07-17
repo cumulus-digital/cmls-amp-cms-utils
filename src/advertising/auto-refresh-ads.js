@@ -10,7 +10,7 @@ import {
 ((window, undefined) => {
 	const scriptName = 'AUTO REFRESH ADS',
 		nameSpace = 'autoRefreshAds',
-		version = '0.2';
+		version = '0.3';
 
 	const log = new Logger(`${scriptName} ${version}`);
 
@@ -69,12 +69,34 @@ import {
 			}
 
 			checkConditions() {
-				if (
-					window?.top?._CMLS?.autoReload &&
-					window.top._CMLS.autoReload.active
-				) {
-					log.info('AutoReloadPAGE is active, ads will not refresh.');
-					return -1;
+				if (window?.top?._CMLS?.autoReload?.active) {
+					if (
+						!window.top._CMLS.autoReload?.settings?.timeout ||
+						!window.top._CMLS.autoReload?.timeout
+					) {
+						log.info(
+							'Could not determine AutoReloadPAGE settings, ads will not refresh.'
+						);
+						return -1;
+					}
+					if (
+						window.top._CMLS.autoReload.settings.timeout <
+						window._CMLS.autoRefreshAdsTimer * 2
+					) {
+						log.info(
+							'AutoReloadPAGE timer is less than 2x our timer, ads will not refresh.'
+						);
+						return -1;
+					}
+					if (
+						window.top._CMLS.autoReload.timeout.getTime() <
+						window._CMLS.autoRefreshAdsTimer * 60000
+					) {
+						log.info(
+							'AutoReloadPAGE will fire before we will, ads will not refresh'
+						);
+						return -1;
+					}
 				}
 				if (window.DISABLE_AUTO_REFRESH_ADS) {
 					log.info(
