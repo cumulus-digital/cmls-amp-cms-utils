@@ -37,8 +37,6 @@ export default class GPTInterface extends DefaultInterface {
 				);
 				e.slot._displayed = true;
 				e.slot.setTargeting(me.initialRequestKey, true);
-			} else {
-				me.log.info('Slot already requested', me.listSlotData(e.slot));
 			}
 		});
 	}
