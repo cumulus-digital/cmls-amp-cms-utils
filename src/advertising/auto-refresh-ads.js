@@ -89,16 +89,24 @@ import {
 						);
 						return -1;
 					}
-					// Make sure we're not going to refresh the page within window
+					// Make sure we're not going to refresh the page before we can refresh ads
 					if (
-						window.top._CMLS.autoReload.timeout.getTime() <
-						// Pad this with another 60 seconds to keep it kosher with GPT
-						this.fireTime.getTime() + 600000
+						this.fireTime?.getTime &&
+						window.top._CMLS.autoReload.timeout?.getTime
 					) {
-						log.info(
-							'AutoReloadPAGE will fire before we will, ads will not refresh'
-						);
-						return -1;
+						const diffBetweenAdsAndPageReload =
+							window.top._CMLS.autoReload.timeout.getTime() -
+							this.fireTime?.getTime();
+						// Padding the ads timer to ensure an ad refresh doesn't
+						// occur just before a page refresh
+						const buffer =
+							window._CMLS.autoRefreshAdsTimer * 60000 * 1.15;
+						if (diffBetweenAdsAndPageReload < buffer) {
+							log.info(
+								'AutoReloadPAGE will fire before we will, ads will not refresh'
+							);
+							return -1;
+						}
 					}
 				}
 				if (window.DISABLE_AUTO_REFRESH_ADS) {
