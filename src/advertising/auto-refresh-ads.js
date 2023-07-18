@@ -33,6 +33,22 @@ import {
 	window._CMLS.autoRefreshAdsExclusion =
 		window?._CMLS?.autoRefreshAdsExclusion || [];
 
+	// Prevent duplicates being added to the exclusion list
+	window._CMLS.autoRefreshAdsExclusion.push = function () {
+		[...arguments].forEach((item) => {
+			if (!this.includes(item)) {
+				log.info('New ID added to exclusion list', item);
+				Array.prototype.push.apply(this, [item]);
+			} else {
+				log.warn(
+					'Attempt to add duplicate item to autoRefreshAdsExclusion list.',
+					item
+				);
+			}
+		});
+		return this.length;
+	};
+
 	function init() {
 		class AutoRefreshAds {
 			tabVisible = true;

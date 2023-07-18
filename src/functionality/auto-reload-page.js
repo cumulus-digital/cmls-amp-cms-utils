@@ -121,6 +121,11 @@ import domReady from 'Utils/domReady';
 				url = '/';
 			}
 
+			// Force clear the autoRefreshAdsExclusion list
+			if (window._CMLS.autoRefreshAdsExclusion.length) {
+				window._CMLS.autoRefreshAdsExclusion.length = 0;
+			}
+
 			if (detectPlayer()) {
 				const win = getPageWindow();
 				if (win.tgmp) {
