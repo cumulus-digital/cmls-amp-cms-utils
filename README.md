@@ -1,4 +1,4 @@
-# Cumulus Scripts for AMP FSE Sites
+# Scripts for AMP FSE Sites
 
 A collection of front-end scripts which handle custom advertising, analytics, and added functionality specific to AMP CMS FSE websites. At this time, the built code is served from github via the jsdelivr.net CDN using Google Tag Manager.
 
