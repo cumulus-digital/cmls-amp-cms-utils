@@ -6,6 +6,13 @@ A collection of front-end scripts which handle custom advertising, analytics, an
 
 This project is entirely javascript, using npm to install dependencies and webpack to compile the distribution code.
 
+Distribution can be made either through a single bundle.js or through individual categories to enable loading pure functionality code before CMP tools.
+
+advertising.js - Ad support and injected placements
+analytics.js - Analytics code
+functionality.js - Functionality
+main.js - Includes cmlsDebug logging toggle and functionality.js
+
 ## First steps
 
 ```
