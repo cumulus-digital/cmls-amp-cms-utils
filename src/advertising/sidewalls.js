@@ -69,7 +69,7 @@ import domReady from '../utils/domReady';
 				}
 
 				if (
-					window.matchMedia(`(max-width: ${contentWidth + 300}px)`)
+					window.matchMedia(`(max-width: ${contentWidth + 320}px)`)
 						.matches
 				) {
 					log.info('Device width is too narrow, exiting.');
@@ -163,7 +163,7 @@ import domReady from '../utils/domReady';
 					let sizeMap = [
 						// WidthxHeight can support up to 300x600
 						[
-							[contentWidth + 300, 0],
+							[contentWidth + 600, 0],
 							[
 								[160, 600],
 								[300, 600],
@@ -171,7 +171,7 @@ import domReady from '../utils/domReady';
 						],
 
 						// WidthxHeight can only support 160x600
-						[[contentWidth + 160, 0], [[160, 600]]],
+						[[contentWidth + 320, 0], [[160, 600]]],
 
 						// Height can only support 300x250
 						// Disabled for now...
@@ -183,10 +183,7 @@ import domReady from '../utils/domReady';
 
 					const slotCommon = {
 						adUnitPath: `${window._CMLS.adPath}/sidewallLeft`,
-						size: [
-							[160, 600],
-							[300, 600],
-						],
+						size: [[160, 600]],
 						sizeMap: sizeMap,
 						div: 'cmls-sidewall-left',
 						collapse: true,
