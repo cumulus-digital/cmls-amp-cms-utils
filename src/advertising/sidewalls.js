@@ -69,7 +69,7 @@ import domReady from '../utils/domReady';
 				}
 
 				if (
-					window.matchMedia(`(max-width: ${contentWidth + 600}px)`)
+					window.matchMedia(`(max-width: ${contentWidth + 300}px)`)
 						.matches
 				) {
 					log.info('Device width is too narrow, exiting.');
