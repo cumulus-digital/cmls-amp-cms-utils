@@ -23,7 +23,7 @@ import domReady from '../utils/domReady';
 		 * Width of content area in pixels
 		 * @type {Number}
 		 */
-		contentWidth = 1100;
+		contentWidth = 1130;
 
 	let topPad = '0';
 
