@@ -11,7 +11,7 @@ export default class APSInterface extends GPTInterface {
 	version = '0.1';
 	log = null;
 
-	static identity = 'APS-GPT';
+	identity = 'APS-GPT';
 
 	static detectTag() {
 		if (super.detectTag() && window?.apstag) {

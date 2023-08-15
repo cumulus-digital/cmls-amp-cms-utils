@@ -27,29 +27,32 @@ const registeredDetectors = [APSInterface, GPTInterface];
 		registeredDetectors: registeredDetectors,
 	};
 
-	let detectLoop = 0;
-	const runDetectors = () => {
-		detectLoop++;
+	const runDetectors = (detectLoop = 0) => {
 		if (window._CMLS.adTag || detectLoop > 60) {
 			return;
 		}
 		log.info(`Running registered detectors (Loop: ${detectLoop})`);
+		let detected = false;
 		for (const TagInterface of window._CMLS[nameSpace]
 			.registeredDetectors) {
 			if (!TagInterface.identity || !TagInterface.detectTag) {
 				log.error('Invalid interface', TagInterface);
-				return false;
+				break;
 			}
 			log.info('Checking registered detector', TagInterface.identity);
 			if (TagInterface.detectTag()) {
-				log.info('Interface detected', TagInterface.identity);
+				detected = true;
 				window._CMLS.adTag = new TagInterface();
-				triggerEvent(window, 'cmls-adtag-loaded', true);
-				return;
+				break;
 			}
 		}
-		log.warn('No interface detected, re-running detection in 0.25 seconds');
-		setTimeout(() => runDetectors(), 250);
+		if (detected) {
+			log.info('Interface detected', window._CMLS.adTag.identity);
+			triggerEvent(window, 'cmls-adtag-loaded', true);
+			return;
+		}
+		log.warn('No interface detected, re-running detection in 0.15 seconds');
+		setTimeout(() => runDetectors(detectLoop + 1), 150);
 	};
 
 	domReady(() => {
