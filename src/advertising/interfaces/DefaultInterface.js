@@ -21,7 +21,7 @@ export default class DefaultInterface {
 	parentNameSpace = 'adTagDetection';
 	version = 'x';
 
-	identity = 'DEFAULT';
+	static identity = 'DEFAULT';
 
 	/**
 	 * The interface defines the method by which it detects if it

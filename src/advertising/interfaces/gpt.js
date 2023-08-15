@@ -9,7 +9,7 @@ export default class GPTInterface extends DefaultInterface {
 	version = '0.2';
 	log = null;
 
-	identity = 'GPT';
+	static identity = 'GPT';
 
 	static detectTag() {
 		if (window.self.googletag?.pubadsReady) {

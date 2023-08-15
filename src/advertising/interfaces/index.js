@@ -43,11 +43,16 @@ const registeredDetectors = [APSInterface, GPTInterface];
 			if (TagInterface.detectTag()) {
 				detected = true;
 				window._CMLS.adTag = new TagInterface();
+				window._CMLS.adTag.identity = TagInterface.identity;
 				break;
 			}
 		}
 		if (detected) {
-			log.info('Interface detected', window._CMLS.adTag.identity);
+			log.info(
+				'Interface detected',
+				window._CMLS.adTag.identity,
+				window._CMLS.adTag
+			);
 			triggerEvent(window, 'cmls-adtag-loaded', true);
 			return;
 		}
