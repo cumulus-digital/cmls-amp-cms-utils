@@ -33,20 +33,15 @@ import domReady from '../utils/domReady';
 		window._CMLS[nameSpace] = {
 			container: null,
 			slots: [],
-			inject: () => {
-				if (window.document.getElementById(containerId)) {
-					log.info('Sidewall container already injected.');
-					return;
-				}
-
+			isDisabled: () => {
 				if (window.NO_SIDEWALLS) {
 					log.info('NO_SIDEWALLS configured, exiting.');
-					return;
+					return true;
 				}
 
 				if (window?._CMLS?.disabled?.sideWalls) {
 					log.info('_CMLS.disabled.sideWalls configured, exiting.');
-					return;
+					return true;
 				}
 
 				if (
@@ -55,17 +50,15 @@ import domReady from '../utils/domReady';
 					)
 				) {
 					log.info('Legacy skyscrapers exist, exiting.');
-					return;
+					return true;
 				}
 
 				const injectPointNode =
-						window.document.querySelector(injectPoint),
-					spacingPointNode =
-						window.document.querySelector(spacingPoint);
+					window.document.querySelector(injectPoint);
 
 				if (!injectPointNode) {
 					log.info('Injection point not found, exiting.');
-					return;
+					return true;
 				}
 
 				if (
@@ -73,11 +66,26 @@ import domReady from '../utils/domReady';
 						.matches
 				) {
 					log.info('Device width is too narrow, exiting.');
+					return true;
+				}
+
+				return false;
+			},
+			inject: () => {
+				if (window.document.getElementById(containerId)) {
+					log.info('Sidewall container already injected.');
 					return;
 				}
 
-				const injectPointStyle =
-					window.getComputedStyle(injectPointNode);
+				if (this.isDisabled()) {
+					return;
+				}
+
+				const injectPointNode =
+						window.document.querySelector(injectPoint),
+					spacingPointNode =
+						window.document.querySelector(spacingPoint),
+					injectPointStyle = window.getComputedStyle(injectPointNode);
 
 				// Get distance from header on headway sites
 				if (spacingPointNode) {
@@ -158,6 +166,10 @@ import domReady from '../utils/domReady';
 				injectPointNode.appendChild(wrapper);
 			},
 			display: () => {
+				if (this.isDisabled()) {
+					return;
+				}
+
 				// Create slots!
 				window._CMLS.adTag.queue(() => {
 					let sizeMap = [
@@ -224,16 +236,18 @@ import domReady from '../utils/domReady';
 			},
 			init: () => {
 				domReady(() => {
-					window._CMLS[nameSpace].inject();
-					if (window._CMLS.adPath) {
-						window._CMLS[nameSpace].display();
-					} else {
-						window.addEventListener(
-							'cmls-adpath-discovered',
-							() => {
-								window._CMLS[nameSpace].display();
-							}
-						);
+					if (!window._CMLS[nameSpace].isDisabled()) {
+						window._CMLS[nameSpace].inject();
+						if (window._CMLS.adPath) {
+							window._CMLS[nameSpace].display();
+						} else {
+							window.addEventListener(
+								'cmls-adpath-discovered',
+								() => {
+									window._CMLS[nameSpace].display();
+								}
+							);
+						}
 					}
 				});
 			},
