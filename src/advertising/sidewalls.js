@@ -77,7 +77,7 @@ import domReady from '../utils/domReady';
 					return;
 				}
 
-				if (this.isDisabled()) {
+				if (window._CMLS[nameSpace].isDisabled()) {
 					return;
 				}
 
@@ -166,7 +166,7 @@ import domReady from '../utils/domReady';
 				injectPointNode.appendChild(wrapper);
 			},
 			display: () => {
-				if (this.isDisabled()) {
+				if (window._CMLS[nameSpace].isDisabled()) {
 					return;
 				}
 
