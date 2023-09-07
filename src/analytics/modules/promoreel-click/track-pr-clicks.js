@@ -38,6 +38,7 @@
 			if (url?.length) {
 				gtmPush({
 					event: 'promoreel-click',
+					promoreel_click_hostname: window.location.hostname,
 					promoreel_click_url: url,
 				});
 			}
