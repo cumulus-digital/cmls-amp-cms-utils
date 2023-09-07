@@ -1,14 +1,14 @@
 /**
  * Returns the DOM node of a generic, regular post
  */
-import Logger from 'Utils/Logger';
+//import Logger from 'Utils/Logger';
 
 function getBasicPost(additional_classes = []) {
 	const scriptName = 'GET BASIC POST',
 		nameSpace = 'getBasicPost',
 		version = '0.1';
 
-	const log = new Logger(`${scriptName} ${version}`);
+	const log = new window._CMLS.Logger(`${scriptName} ${version}`);
 
 	const doc = window.self.document;
 

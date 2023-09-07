@@ -1,0 +1,51 @@
+.cmls-share_buttons {
+	clear: both !important;
+	display: block !important;
+	margin: 1em 0 !important;
+	font-size: 16px !important;
+	line-height: 1 !important;
+
+	.container {
+		all: initial;
+		font: inherit;
+		display: flex;
+		align-items: center;
+		gap: 0.5em;
+	}
+
+	ul {
+		all: initial;
+		display: flex;
+		align-items: center;
+		gap: 1em;
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+	li {
+		all: initial;
+		margin: 0;
+		padding: 0;
+	}
+	a {
+		all: initial;
+		color: inherit;
+		font: inherit;
+		cursor: pointer;
+		display: inline-block;
+		width: 1.75em;
+		height: 1.75em;
+		img,
+		svg:not(:root) {
+			all: initial;
+			color: inherit;
+			cursor: inherit;
+			display: block;
+			width: 100%;
+			height: 100%;
+		}
+	}
+	a:visited {
+		all: initial;
+	}
+}

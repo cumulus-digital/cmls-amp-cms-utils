@@ -1,0 +1,24 @@
+#cmls-wallpaper-container {
+	display: block !important;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 0;
+	width: 100vw !important;
+	height: 0 !important;
+	transition: height 0.5s, opacity 0.5s;
+	opacity: 0;
+
+	~ .grid-container {
+		transition: box-shadow 1.25s 0.75s;
+	}
+
+	&.cmls-wallpaper-open {
+		height: 100% !important;
+		opacity: 1;
+
+		~ .grid-container {
+			box-shadow: 0 0 25px rgba(0, 0, 0, 0.3);
+		}
+	}
+}

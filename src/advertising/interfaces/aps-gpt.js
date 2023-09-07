@@ -4,7 +4,7 @@
  * Based on GPT interface
  */
 import GPTInterface from './gpt';
-import Logger from 'Utils/Logger';
+//import Logger from 'Utils/Logger';
 
 export default class APSInterface extends GPTInterface {
 	scriptName = 'APS-GPT INTERFACE';
@@ -21,7 +21,9 @@ export default class APSInterface extends GPTInterface {
 
 	constructor() {
 		super();
-		this.log = new Logger(`${this.scriptName} v${this.version}`);
+		this.log = new window._CMLS.Logger(
+			`${this.scriptName} v${this.version}`
+		);
 	}
 
 	/**

@@ -1,7 +1,5 @@
-import Logger from './utils/Logger';
-
 ((window) => {
-	const log = new Logger('ADVERTISING');
+	const log = new window._CMLS.Logger('ADVERTISING');
 
 	log.info({
 		message: `

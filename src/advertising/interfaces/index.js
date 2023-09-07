@@ -4,9 +4,9 @@
  * All interfaces must inherit from the DefaultInterface
  */
 
-import Logger from 'Utils/Logger';
-import triggerEvent from 'Utils/triggerEvent';
-import domReady from 'Utils/domReady';
+//import Logger from 'Utils/Logger';
+//import triggerEvent from 'Utils/triggerEvent';
+//import domReady from 'Utils/domReady';
 
 import APSInterface from './aps-gpt';
 import GPTInterface from './gpt';
@@ -20,7 +20,8 @@ const registeredDetectors = [APSInterface, GPTInterface];
 		nameSpace = 'adTagDetection',
 		version = '0.1';
 
-	const log = new Logger(`${scriptName} ${version}`);
+	const { triggerEvent, domReady } = window._CMLS.libs;
+	const log = new window._CMLS.Logger(`${scriptName} ${version}`);
 
 	window._CMLS = window._CMLS || {};
 	window._CMLS[nameSpace] = {

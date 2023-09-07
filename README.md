@@ -2,16 +2,31 @@
 
 A collection of front-end scripts which handle custom advertising, analytics, and added functionality specific to AMP CMS FSE websites. At this time, the built code is served from github via the jsdelivr.net CDN using Google Tag Manager.
 
+# Deployment
+
+Distribution scripts are located in `./dist`. Distribution can be made either through the single bundle.js file or through individual categories to enable loading pure functionality code before CMP tools.
+
+- `main.js` Must be loaded before any other bundle (except bundle.js, which already includes this).
+  - Includes vendor.js and functionality.js bundles.
+  - Initializes window._CMLS and associated libraries.
+- `advertising.js` Advertising support, custom slots and injected placements.
+- `analytics.js` Analytics support and events.
+- `functionality.js` - Pure functionality support.
+- `vendor.js` Vendor libraries and webpack runtime.
+
+Each category under `./src` contains an `index.js` file to manage the decision-making and importing code within `modules` subdirectories. Modules which may be imported remotely during runtime contain a `shouldImport.js` file exporting a function to determine if the full library is required. shouldImport functions may return a function or Promise which may then import the rest of the library. Remote modules are asyncronously loaded, automatically, using webpack lazy imports.
+
+Note that remote modules in `dist` are named using content hashes which *will* change. Mapping is maintained by webpack. Do not attempt to import or include them directly.
+
+## Runtime logging
+
+Processes, state, and debugging are logged at runtime with a console wrapper function to distinguish modules with distinct header tags and colors. Logging is available in both development and production builds, but is disabled by default. Logging may be enabled by appending `cmlsDebug` to any URL where this package is included, or persistently by setting a `cmlsDebug` cookie for the domain.
+
 # Development
 
-This project is entirely javascript, using npm to install dependencies and webpack to compile the distribution code.
+This project consists of javascript and SASS. Dependencies are managed with npm. Compilation is handled with webpack+babel. Modules are imported at runtime using dynamic import() and webpack lazy loading.
 
-Distribution can be made either through a single bundle.js or through individual categories to enable loading pure functionality code before CMP tools.
-
-advertising.js - Ad support and injected placements
-analytics.js - Analytics code
-functionality.js - Functionality
-main.js - Includes cmlsDebug logging toggle and functionality.js
+JSX note: Several modules contain code which looks like JSX, but this project does not use react/preact. JSX compilation is handled by a custom pragma `h` exported by `./src/utils/createElement.js`.
 
 ## First steps
 
@@ -23,14 +38,16 @@ npm install
 
 ## Development server
 
-`npm start` will launch a local http server at `http://localhost:3000` serving the contents of the `dist` folder.
+`npm start` will launch a local http server at `http://localhost:3000` serving *development* env bundles.
 
-Be aware the deve server will allow communication from ANYWHERE. This helps with interception and redirection of the live scripts on a production site. The Chrome extension [Requestly](https://chrome.google.com/webstore/detail/requestly-open-source-htt/mdnleldcmiljblolnjhpnblkcekpdkpa) is useful for testing local changes on the fly by intercepting the live script includes from the CDN and redirecting them to the local node server.
+Be aware the dev server will allow connections from **ANYWHERE**. This helps with interception and redirection of the live scripts on a production site. The Chrome extension [Requestly](https://chrome.google.com/webstore/detail/requestly-open-source-htt/mdnleldcmiljblolnjhpnblkcekpdkpa) is useful for testing local changes on the fly by intercepting the live script includes from the CDN and redirecting them to the local node server.
 
-# Deployment
+`npm run serve-prod` launches the dev server serving *production* env bundles.
 
-`npm run build` will compile all scripts into the `dist` dir.
+## Production build
 
-# Upgrading
+`npm run build` compiles all scripts and styles into the `dist` dir.
 
-`npm run full-upgrade`
+## Updating packages
+
+`npm run full-upgrade` performs an update and upgrade of npm packages in one. It *does not* rebuild `dist`.

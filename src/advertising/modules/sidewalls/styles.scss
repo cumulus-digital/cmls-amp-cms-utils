@@ -1,0 +1,44 @@
+@import "./sass-transform-config.js";
+
+.wrapper-header [class*="takeover-"],
+.wrapper-header [class*="skyscraper-"] {
+	display: none !important;
+}
+.stn-player .player {
+	z-index: 99999;
+}
+
+##{$containerId} {
+	display: flex;
+	justify-content: space-between;
+	box-sizing: border-box;
+
+	position: absolute;
+	left: 50%;
+	top: 0;
+	transform: translateX(-50%);
+	z-index: 2;
+
+	width: #{$contentWidth}px;
+	height: 100%;
+
+	padding: var(--top_pad, 15px) 0;
+
+	pointer-events: none;
+
+	> div {
+		position: sticky;
+		top: 10px;
+		width: fit-content;
+		height: fit-content;
+		pointer-events: all;
+
+		&:first-child {
+			transform: translateX(-100%);
+		}
+		&:last-child {
+			margin-left: auto;
+			transform: translateX(100%);
+		}
+	}
+}

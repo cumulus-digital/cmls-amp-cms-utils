@@ -1,10 +1,15 @@
 const webpack = require('webpack');
+const { ModuleFederationPlugin } = require('webpack').container;
 const { basename, dirname, resolve } = require('path');
 const browserslist = require('browserslist');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
+const MiniCSSExtractPlugin = require('mini-css-extract-plugin');
+const postCSSPlugins = require('@wordpress/postcss-plugins-preset');
+const jsonInSassImporter = require('node-sass-json-importer');
 const path = require('path');
 const fs = require('fs');
+const glob = require('glob');
 
 module.exports = (env) => {
 	const isProduction = env.NODE_ENV === 'production';
@@ -26,22 +31,99 @@ module.exports = (env) => {
 
 	const host = process.env.HOST || 'localhost';
 
+	const cssLoaders = [
+		/*
+		{
+			loader: MiniCSSExtractPlugin.loader,
+		},
+		*/
+		{
+			loader: require.resolve('style-loader'),
+			options: {
+				injectType: 'lazyAutoStyleTag',
+				insert: function insertIntoTarget(element, options) {
+					var parent = options.target || document.head;
+					parent.appendChild(element);
+				},
+			},
+		},
+		{
+			loader: require.resolve('css-loader'),
+			options: {
+				sourceMap: !isProduction,
+				modules: {
+					auto: true,
+				},
+			},
+		},
+		{
+			loader: require.resolve('postcss-loader'),
+			options: {
+				postcssOptions: {
+					ident: 'postcss',
+					sourceMap: !isProduction,
+					plugins: isProduction
+						? [
+								...postCSSPlugins,
+								require('cssnano')({
+									preset: [
+										'default',
+										{
+											discardComments: {
+												removeAll: true,
+											},
+										},
+									],
+								}),
+						  ]
+						: postCSSPlugins,
+				},
+			},
+		},
+	];
+
 	return {
 		mode,
 		target: target,
-		entry: {
-			bundle: './src/bundle.js',
-			main: './src/main.js',
-			functionality: './src/functionality.js',
-			advertising: './src/advertising.js',
-			analytics: './src/analytics.js',
+		entry: () => {
+			const entries = {
+				bundle: './src/bundle.js',
+				main: './src/main.js',
+				functionality: './src/functionality.js',
+				advertising: './src/advertising.js',
+				analytics: './src/analytics.js',
+			};
+
+			// const modules = glob
+			// 	.sync('./src/*/modules/*/export*.js')
+			// 	.reduce((pre, cur) => {
+			// 		const key = cur
+			// 			.replace(/\.\/src\/([^\/]+)\/modules/, '$1')
+			// 			.replace(/\/export(-[^\.]+)?\.js/, '$1');
+			// 		//.replace('/export.js', '');
+			// 		pre[key] = cur;
+			// 		return pre;
+			// 	}, {});
+
+			// console.log(modules);
+
+			// return {
+			// 	...entries,
+			// 	...modules,
+			// };
+			return { ...entries };
 		},
 		output: {
 			filename: '[name].js',
+			chunkFilename: '[name].[chunkhash].js',
 			path: resolve(process.cwd(), 'dist'),
+			chunkLoadingGlobal: 'cmlsAmpUtils',
 		},
 		resolve: {
 			alias: {
+				react: 'h',
+				'react-dom': 'h',
+				'react/jsx-runtime': 'h',
 				'lodash-es': 'lodash',
 				Utils: path.resolve(__dirname, 'src/utils'),
 			},
@@ -55,16 +137,33 @@ module.exports = (env) => {
 				new TerserPlugin({
 					parallel: true,
 					terserOptions: {
-						output: {
-							comments: /translators:/i,
-						},
 						compress: {
-							passes: 3,
+							passes: 5,
 						},
 					},
 					extractComments: false,
 				}),
 			],
+			//runtimeChunk: 'single',
+			concatenateModules: true,
+			splitChunks: {
+				chunks: 'async',
+				cacheGroups: {
+					vendors: {
+						name: 'vendors',
+						test: /[\\/]node_modules[\\/]/,
+						priority: -10,
+						chunks: (chunk) =>
+							![
+								'main',
+								'advertising',
+								'analytics',
+								'functionality',
+							].includes(chunk.name),
+						reuseExistingChunk: true,
+					},
+				},
+			},
 		},
 		module: {
 			rules: [
@@ -77,9 +176,11 @@ module.exports = (env) => {
 							babelrc: true,
 							configFile: true,
 							presets: [
+								'@babel/preset-react',
 								[
 									'@babel/preset-env',
 									{
+										loose: true,
 										debug: true,
 										useBuiltIns: 'usage',
 										corejs: require('core-js/package.json')
@@ -87,19 +188,44 @@ module.exports = (env) => {
 									},
 								],
 							],
+							plugins: [
+								['@babel/plugin-transform-runtime'],
+								[
+									'@babel/plugin-transform-react-jsx',
+									{
+										pragma: 'h',
+										pragmaFrag: 'Fragment',
+									},
+								],
+							],
 						},
 					},
+				},
+				{
+					test: /\.css$/,
+					use: cssLoaders,
+				},
+				{
+					test: /\.(sc|sa)ss$/,
+					use: [
+						...cssLoaders,
+						{
+							loader: require.resolve('sass-loader'),
+							options: {
+								sourceMap: !isProduction,
+								sassOptions: {
+									importer: jsonInSassImporter(),
+								},
+							},
+						},
+					],
 				},
 			],
 		},
 		plugins: [
-			new webpack.DefinePlugin({
-				__COMMIT_HASH__: JSON.stringify(
-					require('child_process')
-						.execSync('git rev-parse --short HEAD')
-						.toString()
-						.trim()
-				),
+			new ModuleFederationPlugin({
+				runtime: 'cmls-amp-utils',
+				shared: ['core-js', 'lodash', 'style-loader', 'css-loader'],
 			}),
 			new CleanWebpackPlugin({
 				cleanAfterEveryBuildPatterns: ['!fonts/**', '!images/**'],
@@ -107,22 +233,49 @@ module.exports = (env) => {
 				// multiple configurations returned in the webpack config.
 				cleanStaleWebpackAssets: false,
 			}),
+			/*
+			isProduction &&
+				new MiniCSSExtractPlugin({
+					filename: '[name].css',
+					chunkFilename: (pathData) => {
+						return '[name].[chunkhash].css';
+					},
+					insert: function (linkTag) {
+						//console.log('WTF', arguments);
+						return {
+							default: {
+								use: ({ target }) => {
+									console.log('WTF', target);
+								},
+							},
+						};
+					},
+				}),
+			*/
 		],
 		devServer: {
 			// Serve index.html as the base
 			static: resolveAppPath('./'),
 
 			// Enable compression
-			compress: false,
+			compress: true,
 
 			// Enable hot reloading
-			hot: true,
+			hot: false,
 
 			host,
 
 			port: 3000,
 
 			allowedHosts: 'all',
+
+			headers: {
+				'Access-Control-Allow-Origin': '*',
+				'Access-Control-Allow-Methods':
+					'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+				'Access-Control-Allow-Headers':
+					'X-Requested-With, content-type, Authorization',
+			},
 		},
 	};
 };

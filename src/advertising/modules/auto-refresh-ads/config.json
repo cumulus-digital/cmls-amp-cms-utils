@@ -1,0 +1,10 @@
+{
+	"scriptName": "AUTO REFRESH ADS",
+	"nameSpace": "autoRefreshAds",
+	"version": "0.4",
+
+	"viewablePercent": 50,
+	"defaultRefreshInMinutes": 1,
+
+	"ALWAYS_REFRESH_POS": ["wallpaper-ad"]
+}

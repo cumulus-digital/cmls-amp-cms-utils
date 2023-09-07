@@ -2,7 +2,7 @@
  * Googletag interface
  */
 import DefaultInterface from './DefaultInterface';
-import Logger from 'Utils/Logger';
+//import Logger from 'Utils/Logger';
 
 export default class GPTInterface extends DefaultInterface {
 	scriptName = 'GPT INTERFACE';
@@ -18,26 +18,49 @@ export default class GPTInterface extends DefaultInterface {
 	}
 
 	initialRequestKey = 'initial-request-made';
+	inViewPercentage = 50;
 
 	constructor() {
 		super();
-		this.log = new Logger(`${this.scriptName} v${this.version}`);
+		this.log = new window._CMLS.Logger(
+			`${this.scriptName} v${this.version}`
+		);
 
 		// To prevent doInitialLoad from re-loading an ad that's already loaded,
 		// we'll track all initial loads with a targeting parameter.
 		const me = this;
 		me.addListener('slotRequested', (e) => {
 			if (
-				!e.slot._displayed ||
+				!e.slot._cm_displayed ||
 				!e.slot.getTargeting(me.initialRequestKey)?.length
 			) {
-				me.log.info(
+				me.log.debug(
 					'Setting initial request key',
-					me.listSlotData(e.slot)
+					me.listSlotData(e.slot),
+					e
 				);
-				e.slot._displayed = true;
+				e.slot._cm_displayed = true;
 				e.slot.setTargeting(me.initialRequestKey, true);
 			}
+		});
+
+		me.addListener('slotRenderEnded', (e) => {
+			me.log.debug('Rendered', e);
+		});
+
+		// Track slot visbility
+		me.addListener('slotVisibilityChanged', (e) => {
+			const perc = e.inViewPercentage || 0;
+			e.slot._cm_visiblePercent = perc;
+			e.slot._cm_visible = perc >= this.inViewPercentage;
+			me.log.debug(
+				e.slot._cm_visible ? 'Slot is VIEWABLE' : 'Slot is HIDDEN',
+				me.listSlotData(e.slot)
+			);
+		});
+		me.addListener('impressionViewable', (e) => {
+			me.log.debug('Slot is VIEWABLE', me.listSlotData(e.slot));
+			e.slot._cm_visible = true;
 		});
 	}
 
@@ -168,7 +191,7 @@ export default class GPTInterface extends DefaultInterface {
 			slot = slot.setCollapseEmptyDiv.apply(slot, settings.collapse);
 		}
 
-		settings.targeting = Array.isArray(settings.targetting)
+		settings.targeting = Array.isArray(settings.targeting)
 			? settings.targeting
 			: [settings.targeting];
 		settings.targeting.forEach((target) => {
@@ -403,9 +426,10 @@ export default class GPTInterface extends DefaultInterface {
 		const slotData = [];
 		slots.forEach((slot) => {
 			const thisSlot = {
-				_displayed: slot?._displayed ? 'yes' : 'no',
-				adUnitPath: slot?.getAdUnitPath(),
+				_cm_displayed: slot?._displayed ? 'yes' : 'no',
 				div: slot?.getSlotElementId(),
+				pos: slot?.getTargeting('pos'),
+				adUnitPath: slot?.getAdUnitPath(),
 				sizes: slot?.getSizes(),
 				targeting: [],
 			};

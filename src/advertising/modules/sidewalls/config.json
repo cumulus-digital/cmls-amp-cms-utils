@@ -1,0 +1,23 @@
+{
+	"scriptName": "SIDEWALL ADS",
+	"nameSpace": "sidewallAds",
+	"version": "2.0",
+
+	"_c": "Node where sidewalls will be injected",
+	"injectPoint": ".wrapper-content, body > .wp-site-blocks > header + *",
+
+	"_c": "Node used to determine the top spacing for sidewalls",
+	"spacingPoint": ".wrapper-content > .grid-container > *:first-child",
+
+	"_c": "Id for the sidewall container",
+	"containerId": "cmls-sidewalls",
+
+	"_c": "Class name for individual sidewalls",
+	"sidewallClass": "cmls-sidewall",
+
+	"_c": "Content area width",
+	"contentWidth": 1130,
+
+	"_c": "Default top sticky position",
+	"topPad": 10
+}

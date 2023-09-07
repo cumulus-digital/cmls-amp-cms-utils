@@ -1,7 +1,7 @@
 /**
  * Default adtag interface for others to inherit from
  */
-import Logger from 'Utils/Logger';
+//import Logger from 'Utils/Logger';
 
 /**
  * @typedef {object} DefineSlotOptions
@@ -30,7 +30,9 @@ export default class DefaultInterface {
 	static detectTag() {}
 
 	constructor() {
-		this.log = new Logger(`${this.scriptName} v${this.version}`);
+		this.log = new window._CMLS.Logger(
+			`${this.scriptName} v${this.version}`
+		);
 	}
 
 	/**
