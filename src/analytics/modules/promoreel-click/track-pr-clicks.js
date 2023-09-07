@@ -16,10 +16,14 @@
 	}
 
 	window.document.body.addEventListener('click', (e) => {
-		if (e.target.matches('.sliderBody .sliderItem')) {
-			let url = e.target.getAttribute('data-href');
+		if (!e.target.matches('.sliderBody *')) {
+			return;
+		}
+		const sliderItem = e.target.closest('.sliderItem');
+		if (sliderItem) {
+			let url = sliderItem.getAttribute('data-href');
 			if (!url) {
-				const onclick = e.target.getAttribute('onclick');
+				const onclick = sliderItem.getAttribute('onclick');
 				if (onclick.contains('window.location=')) {
 					let oUrl = onclick.match(
 						/window\.location=['"]?(^['"]+)['"]?/
