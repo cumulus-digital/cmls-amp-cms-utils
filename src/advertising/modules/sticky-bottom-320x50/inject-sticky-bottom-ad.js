@@ -67,9 +67,28 @@ import config from './config.json';
 
 				const adDiv = <div id={this.elementId} />;
 
-				waitForPlayer().then(() =>
-					adDiv.classList.add('player-active')
-				);
+				waitForPlayer().then(() => {
+					adDiv.classList.add('player-active');
+					if (
+						window.matchMedia('(min-width: 800px)').matches &&
+						detectPlayer() === 'tunegenie'
+					) {
+						const playerbar =
+							this.context.document.getElementById('playerbar');
+						if (playerbar) {
+							const computedStyle =
+								this.context.getComputedStyle(playerbar);
+							if (computedStyle?.zIndex) {
+								log.info('Raising ad div z-index above player');
+								adDiv.style.setProperty(
+									'z-index',
+									parseInt(computedStyle.zIndex) + 1,
+									'important'
+								);
+							}
+						}
+					}
+				});
 
 				/*
 				const style = createElement.el('link', {
