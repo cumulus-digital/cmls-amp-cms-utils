@@ -67,8 +67,14 @@ import config from './config.json';
 
 				const adDiv = <div id={this.elementId} />;
 
-				waitForPlayer().then(() => {
-					adDiv.classList.add('player-active');
+				let raiseDivCount = 0,
+					raiseDivInterval;
+				const raiseAdDiv = () => {
+					if (raiseDivCount > 15) {
+						clearInterval(raiseDivInterval);
+						raiseDivInterval = null;
+						return;
+					}
 					if (
 						window.matchMedia('(min-width: 800px)').matches &&
 						detectPlayer() === 'tunegenie'
@@ -87,6 +93,20 @@ import config from './config.json';
 								);
 							}
 						}
+					}
+					raiseDivCount += 1;
+				};
+
+				waitForPlayer().then(() => {
+					adDiv.classList.add('player-active');
+					if (
+						window.matchMedia('(min-width: 800px)').matches &&
+						detectPlayer() === 'tunegenie'
+					) {
+						raiseAdDiv();
+						raiseDivInterval = setInterval(() => {
+							raiseAdDiv();
+						}, 1000);
 					}
 				});
 
