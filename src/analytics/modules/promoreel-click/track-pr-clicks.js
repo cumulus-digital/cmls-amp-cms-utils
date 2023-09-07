@@ -38,7 +38,7 @@
 			if (url?.length) {
 				gtmPush({
 					event: 'promoreel-click',
-					url: null,
+					promoreel_click_url: url,
 				});
 			}
 		}
