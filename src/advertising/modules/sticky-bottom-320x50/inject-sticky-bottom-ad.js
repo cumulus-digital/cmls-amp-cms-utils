@@ -85,12 +85,22 @@ import config from './config.json';
 							const computedStyle =
 								this.context.getComputedStyle(playerbar);
 							if (computedStyle?.zIndex) {
-								log.info('Raising ad div z-index above player');
-								adDiv.style.setProperty(
-									'z-index',
-									parseInt(computedStyle.zIndex) + 1,
-									'important'
-								);
+								const newZ = parseInt(computedStyle.zIndex) + 1;
+								if (
+									!adDiv.style.zIndex ||
+									adDiv.style.zIndex < newZ
+								) {
+									log.info(
+										'Raising ad div z-index above player',
+										newZ,
+										adDiv.style.zIndex
+									);
+									adDiv.style.setProperty(
+										'z-index',
+										newZ,
+										'important'
+									);
+								}
 							}
 						}
 					}

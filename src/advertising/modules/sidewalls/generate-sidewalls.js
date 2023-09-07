@@ -90,7 +90,8 @@ import config from './config.json';
 				}
 
 				const style = import(
-					/* webpackPreload: true, webpackChunkName: 'advertising/sidewalls/style' */ './styles.scss'
+					/* webpackPreload: true, webpackChunkName: 'advertising/sidewalls/style' */
+					'./styles.scss'
 				).then((style) => {
 					if (style?.default?.use)
 						style.default.use({ target: injectPointNode });

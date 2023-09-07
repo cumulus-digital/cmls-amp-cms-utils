@@ -42,7 +42,10 @@ module.exports = (env) => {
 			options: {
 				injectType: 'lazyAutoStyleTag',
 				insert: function insertIntoTarget(element, options) {
-					var parent = options.target || document.head;
+					var parent =
+						options && options.target
+							? options.target
+							: document.head;
 					parent.appendChild(element);
 				},
 			},
