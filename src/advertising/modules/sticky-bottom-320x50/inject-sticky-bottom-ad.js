@@ -38,11 +38,37 @@ import config from './config.json';
 		refresh() {
 			if (this.slot && this.adTag) {
 				this.adTag.refresh(this.slot);
+				this.updateZindex();
 			}
 		}
 
 		hasDiv() {
 			return this.context.document.getElementById(this.elementId);
+		}
+
+		updateZindex() {
+			const adDiv = this.context.document.getElementById(this.elementId);
+			const playerbar = this.context.document.getElementById('playerbar');
+			const pageframe = this.context.document.querySelector(
+				'iframe[name="pwm_pageFrame"]'
+			);
+
+			const playerbarZ = playerbar
+				? this.context.getComputedStyle(playerbar)?.zIndex || 0
+				: 0;
+			const pageframeZ = pageframe
+				? this.context.getComputedStyle(pageframe)?.zIndex || 0
+				: 0;
+
+			const currentZ = this.context.getComputedStyle(adDiv)?.zIndex || 0;
+
+			const newZ = playerbarZ - 1;
+			//Math.max(currentZ, playerbarZ - 1);
+
+			if (currentZ != newZ) {
+				log.info('Adjusting ad div z-index', currentZ, newZ);
+				adDiv.style.setProperty('z-index', newZ, 'important');
+			}
 		}
 
 		inject() {
@@ -67,55 +93,14 @@ import config from './config.json';
 
 				const adDiv = <div id={this.elementId} />;
 
-				let raiseDivCount = 0,
-					raiseDivInterval;
-				const raiseAdDiv = () => {
-					if (raiseDivCount > 15) {
-						clearInterval(raiseDivInterval);
-						raiseDivInterval = null;
-						return;
-					}
-					if (
-						window.matchMedia('(min-width: 800px)').matches &&
-						detectPlayer() === 'tunegenie'
-					) {
-						const playerbar =
-							this.context.document.getElementById('playerbar');
-						if (playerbar) {
-							const computedStyle =
-								this.context.getComputedStyle(playerbar);
-							if (computedStyle?.zIndex) {
-								const newZ = parseInt(computedStyle.zIndex) + 1;
-								if (
-									!adDiv.style.zIndex ||
-									adDiv.style.zIndex < newZ
-								) {
-									log.info(
-										'Raising ad div z-index above player',
-										newZ,
-										adDiv.style.zIndex
-									);
-									adDiv.style.setProperty(
-										'z-index',
-										newZ,
-										'important'
-									);
-								}
-							}
-						}
-					}
-					raiseDivCount += 1;
-				};
-
 				waitForPlayer().then(() => {
-					adDiv.classList.add('player-active');
-					if (
-						window.matchMedia('(min-width: 800px)').matches &&
-						detectPlayer() === 'tunegenie'
-					) {
-						raiseAdDiv();
-						raiseDivInterval = setInterval(() => {
-							raiseAdDiv();
+					adDiv.classList.add(
+						'player-active',
+						`player-${detectPlayer()}`
+					);
+					if (detectPlayer() === 'tunegenie') {
+						setInterval(() => {
+							this.updateZindex();
 						}, 1000);
 					}
 				});

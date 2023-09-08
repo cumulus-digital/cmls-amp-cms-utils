@@ -279,6 +279,8 @@ module.exports = (env) => {
 				'Access-Control-Allow-Headers':
 					'X-Requested-With, content-type, Authorization',
 			},
+
+			client: { overlay: false },
 		},
 	};
 };

@@ -1,175 +1,85 @@
 @import "./config.json";
 
-##{$elementId} {
-	all: unset;
-	display: flex;
-	box-sizing: border-box !important;
-	align-items: center !important;
-	justify-content: right !important;
-
-	background: rgba(0, 0, 0, 0.5) !important;
-	backdrop-filter: blur(10px) !important;
-	pointer-events: none !important;
-
-	position: fixed !important;
-	z-index: 200000000 !important;
-	left: 50% !important;
-	bottom: 0 !important;
-	transform: translateX(-50%) !important;
-
-	max-width: 1120px !important;
-	width: 100% !important;
-	height: fit-content !important;
-
-	padding: 2px !important;
-
-	> div {
-		pointer-events: all !important;
-		margin: 0 !important;
-	}
-
-	@media (max-width: 800px) {
-		padding: 4px !important;
-		justify-content: center !important;
-	}
-
-	&.player-active {
-		background: transparent !important;
-		backdrop-filter: none !important;
-		height: 65px !important;
-		padding-right: 180px !important;
-
-		@media (max-width: 800px) {
-			background: rgba(0, 0, 0, 0.5) !important;
-			backdrop-filter: blur(10px) !important;
-			bottom: 65px !important;
-			height: fit-content !important;
-			padding: 4px !important;
-		}
-	}
-}
-
-/*
-##{$elementId}-wrapper {
-	&,
-	& > div {
-		all: initial;
-		box-sizing: border-box !important;
-		display: flex !important;
-		align-items: center !important;
-	}
-
-	background: transparent !important;
-	backdrop-filter: none !important;
-	pointer-events: none !important;
-	position: fixed !important;
-	z-index: 200000 !important;
-	left: 50% !important;
-	bottom: 0 !important;
-	transform: translateX(-50%) !important;
-	width: 100% !important;
-	max-width: 1120px !important;
-	height: fit-content !important;
-	padding: 0 0 2px !important;
-	justify-content: right !important;
-
-	@media (max-width: 800px) {
-		background: rgba(0, 0, 0, 0.5) !important;
-		backdrop-filter: blur(10px) !important;
-		left: 0 !important;
-		padding: 0 !important;
-		transform: none !important;
-		justify-content: center !important;
-	}
-
-	&.player-active {
-		height: 65px !important;
-		padding-right: 180px !important;
-
-		@media (max-width: 800px) {
-			bottom: 65px !important;
-			height: fit-content !important;
-			padding-right: 0 !important;
-		}
-	}
-}
-##{$elementId} {
-	pointer-events: all !important;
-	padding: 0 !important;
-	width: fit-content !important;
-	height: fit-content !important;
-	justify-content: center !important;
-
-	@media (max-width: 800px) {
-		padding: 4px !important;
-	}
-}
-
-/*
-:host {
-	&,
-	& * {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		&,
-		&::after,
-		&::before {
-			box-sizing: border-box;
-		}
-	}
-}
-:host {
+##{$elementId},
+##{$elementId}-stub {
 	all: initial;
+	box-sizing: border-box;
+}
+
+##{$elementId} {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
 	position: fixed;
-	z-index: 200000;
+	z-index: 200;
 	left: 0;
 	bottom: 0;
+
+	max-width: 1120px;
 	width: 100%;
-	height: auto;
-	overflow: hidden;
-	pointer-events: none;
-	background: rgba(0, 0, 0, 0.5);
-	backdrop-filter: blur(10px);
-}
-:host(.player-active) {
-	bottom: 65px;
 
-	@media (min-width: 800px) {
-		background: transparent;
-		backdrop-filter: none;
-		max-width: 1120px;
-		height: 65px;
-		bottom: 0;
-		left: 50%;
-		transform: translateX(calc(-50% - 170px));
-		padding-bottom: 2px;
-		justify-content: right;
+	> div {
+		position: relative;
+		padding: 2px;
+		pointer-events: auto;
+		margin: 0;
 	}
-}
 
-##{$elementId} {
-	pointer-events: all;
-	padding: 4px;
+	@media (max-width: 800px) {
+		justify-content: center;
+		background-color: rgba(0, 0, 0, 0.6);
+		backdrop-filter: blur(8px);
 
-	@media (min-width: 800px) {
-		:host(.player-active) & {
-			width: fit-content;
-			margin-left: auto;
+		> div {
+			padding: 4px;
+		}
+	}
+
+	&.player-tunegenie {
+		pointer-events: none;
+		justify-content: right;
+		left: 50%;
+		transform: translateX(-50%);
+		padding-right: 180px;
+		height: 65px;
+
+		& > div {
+			padding: 2px;
+		}
+
+		@media (max-width: 800px) {
+			justify-content: center;
+			left: 0;
+			transform: none;
+			bottom: 65px;
+			height: fit-content;
 			padding: 0;
+
+			& > div {
+				padding: 4px;
+			}
 		}
 	}
 }
-*/
 
 ##{$elementId} + ##{$elementId}-stub {
+	clear: both;
+	display: block;
+	background-color: #000;
 	width: 100%;
-	height: 55px;
+	height: 58px;
+}
+// hide stub on desktop with tunegenie
+##{$elementId}.player-tunegenie + ##{$elementId}-stub {
+	display: none;
 
-	@media (min-width: 800px) {
-		display: none;
+	// show on mobile
+	@media (max-width: 800px) {
+		display: block;
 	}
 }
+// if no creative is delivered, hide the stub
 ##{$elementId}[style*="display: none"] + ##{$elementId}-stub {
-	display: none;
+	display: none !important;
 }
