@@ -62,7 +62,13 @@ import config from './config.json';
 
 			const currentZ = this.context.getComputedStyle(adDiv)?.zIndex || 0;
 
-			const newZ = playerbarZ - 1;
+			let newZ = playerbarZ - 1;
+			if (
+				this.context.matchMedia('(min-width: 800px)').matches &&
+				detectPlayer() === 'tunegenie'
+			) {
+				newZ = playerbarZ + 1;
+			}
 			//Math.max(currentZ, playerbarZ - 1);
 
 			if (currentZ != newZ) {
