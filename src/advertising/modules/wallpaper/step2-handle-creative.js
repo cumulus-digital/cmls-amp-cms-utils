@@ -326,7 +326,7 @@
 				<a
 					href={slotLink.getAttribute('href')}
 					target={target}
-					rel={taret === '_blank' ? 'noopener' : ''}
+					rel={target === '_blank' ? 'noopener' : ''}
 				/>
 			) : (
 				<span />
@@ -336,6 +336,20 @@
 			if (link.href && window._CMLS?.navThroughPlayer) {
 				window._CMLS.navThroughPlayer.updateLink(link);
 			}
+
+			log.info('Building wallpaper into container', slotLink, slotImage);
+
+			const wrapper = <div class="wrap">{link}</div>;
+			container.shadowRoot.append(wrapper);
+
+			if (slotImage.getAttribute('alt')?.includes('contain')) {
+				container.style.setProperty('--background-size: 100%');
+			}
+
+			container.style.setProperty(
+				'--background-image',
+				`url(${slotImage.getAttribute('src')})`
+			);
 
 			// Background color may come from creative itself
 			const colorRegexp = new RegExp(
@@ -355,28 +369,16 @@
 						bgColorTest[1]
 					);
 				}
+
+				this.showContainer();
 			} else {
 				this.getBackgroundColorFromImage(slotImage).then((color) => {
 					log.debug('Setting background color from image', color);
 					container.style.setProperty('--background-color', color);
+
+					this.showContainer();
 				});
 			}
-
-			log.info('Building wallpaper into container', slotLink, slotImage);
-
-			const wrapper = <div class="wrap">{link}</div>;
-			container.shadowRoot.append(wrapper);
-
-			if (slotImage.getAttribute('alt')?.contains('contain')) {
-				container.style.setProperty('--background-size: 100%');
-			}
-
-			container.style.setProperty(
-				'--background-image',
-				`url(${slotImage.getAttribute('src')})`
-			);
-
-			this.showContainer();
 		};
 
 		this.getBackgroundColorFromImage = (img) => {
@@ -426,7 +428,7 @@
 								);
 								if (colorData?.data) {
 									log.debug('Got color!', colorData.data);
-									const newColor = colorData.data.slice(0, 2);
+									const newColor = colorData.data.slice(0, 3);
 									return resolve(
 										`rgba(${newColor.join(',')}, 1)`
 									);
@@ -474,7 +476,9 @@
 		import(
 			/* webpackPreload: true, webpackChunkName: 'advertising/wallpaper/style-outer' */
 			'./styles.scss'
-		);
+		).then((style) => {
+			if (style?.default?.use) style.default.use();
+		});
 
 		this.refreshNodeCache();
 	}
