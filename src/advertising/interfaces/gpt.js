@@ -53,10 +53,12 @@ export default class GPTInterface extends DefaultInterface {
 			const perc = e.inViewPercentage || 0;
 			e.slot._cm_visiblePercent = perc;
 			e.slot._cm_visible = perc >= this.inViewPercentage;
+			/*
 			me.log.debug(
 				e.slot._cm_visible ? 'Slot is VIEWABLE' : 'Slot is HIDDEN',
 				me.listSlotData(e.slot)
 			);
+			*/
 		});
 		me.addListener('impressionViewable', (e) => {
 			me.log.debug('Slot is VIEWABLE', me.listSlotData(e.slot));
