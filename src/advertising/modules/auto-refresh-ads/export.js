@@ -1,8 +1,9 @@
 /**
  * Auto-refresh ads.
  *
- * Refresh timer is only set on two conditions:
- * 1) impressionViewable is fired on the slot
+ * Each slot has its own refresh fire time, set if one or both of
+ * the following conditions are met:
+ * 1) impressionViewable event has previously fired on the slot
  * 2) Slot's pos targeting value is in the ALWAYS_REFRESH_POS list
  */
 
@@ -196,9 +197,12 @@ import config from './config.json';
 			initSlotTimer(slot) {
 				const id = slot.getSlotElementId();
 				const pos = slot.getTargeting('pos');
-				const fireTime = new Date(
-					new Date().getTime() + this.every * 60000
+				const now = new Date();
+				// Round timer to seconds
+				now.setSeconds(
+					now.getSeconds() + Math.max(now.getMilliseconds() / 1000)
 				);
+				const fireTime = new Date(now.getTime() + this.every * 60000);
 				const hasTimer = this.timers.has(slot);
 
 				if (hasTimer) {
@@ -226,18 +230,27 @@ import config from './config.json';
 					log.debug('Tick', now.toLocaleString());
 				}
 
+				const refreshSlots = [];
 				this.timers.forEach((fireTime, slot) => {
 					const id = slot.getSlotElementId();
 					const pos = slot.getTargeting('pos');
 					if (now >= fireTime) {
-						log.info('FIRING', { pos, id });
+						log.debug('Queueing for refresh', { pos, id });
 						this.deleteTimer(slot);
 						if (slot.getTargeting(this.TARGET_REFRESH_KEY)) {
 							slot.clearTargeting(this.TARGET_REFRESH_KEY);
 						}
-						window._CMLS.adTag.refresh(slot);
+						refreshSlots.push(slot);
+						//window._CMLS.adTag.refresh(slot);
 					}
 				});
+				if (refreshSlots.length) {
+					log.info(
+						`Refreshing ${refreshSlots.length} slots.`,
+						window._CMLS.adTag.listSlotData(refreshSlots)
+					);
+					window._CMLS.adTag.refresh(refreshSlots);
+				}
 			}
 
 			destroy() {
