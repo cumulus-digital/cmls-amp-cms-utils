@@ -1,0 +1,12 @@
+{
+	"scriptName": "DISABLE COLLAPSE EMPTY DIV",
+	"version": "0.1",
+
+	"divIds": [],
+	"pos": [
+		"top",
+		"contest1",
+		"contest2",
+		"contest3"
+	]
+}

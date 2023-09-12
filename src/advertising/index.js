@@ -5,6 +5,7 @@ require('./modules/west7-1x1/no-export.js');
 
 //import domReady from 'Utils/domReady';
 //import doDynamicImports from 'Utils/doDynamicImports';
+import shouldDisableCollapse from './modules/disable-collapse-before-fetch/shouldImport';
 import shouldImportStickyBottom from './modules/sticky-bottom-320x50/shouldImport';
 import shouldImportAutoRefreshAds from './modules/auto-refresh-ads/shouldImport';
 import shouldImportLocalNavThroughPlayer from './modules/local-nav-through-player/shouldImport';
@@ -15,6 +16,10 @@ import shouldImportSidewalls from './modules/sidewalls/shouldImport';
 import shouldImportWallpaper from './modules/wallpaper/shouldImport';
 
 const imports = [
+	{
+		name: 'advertising/disable-collapse-before-fetch',
+		check: shouldDisableCollapse,
+	},
 	{
 		name: 'advertising/sticky-bottom-320x50',
 		check: shouldImportStickyBottom,
