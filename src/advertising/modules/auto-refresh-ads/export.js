@@ -95,6 +95,9 @@ import config from './config.json';
 
 				const adTag = window._CMLS.adTag;
 
+				log.debug(
+					'Adding impressionViewable listener. Refresh timer will be set per-slot once an impression is delivered.'
+				);
 				adTag.addListener('impressionViewable', (e) => {
 					const slot = e.slot;
 					log.info(
@@ -262,6 +265,7 @@ import config from './config.json';
 		}
 
 		window._CMLS[nameSpace] = new adRefresher();
+		log.debug('Initialized.');
 	};
 
 	if (window._CMLS.adTag) {
