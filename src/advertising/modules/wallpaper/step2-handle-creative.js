@@ -159,7 +159,13 @@
 
 		this.clearObstructions = () => {
 			log.debug('Clearing obstructions.', this.nodeCache.obstructions);
+
+			// Handle our sidewalls
 			window.NO_SIDEWALLS = true;
+			if (window._CMLS?.sidewallAds?.destroy) {
+				window._CMLS?.sidewallAds?.destroy();
+			}
+
 			if (this.nodeCache.obstructions?.length) {
 				this.nodeCache.obstructions.forEach((obstruction) => {
 					// Destroy any ad slots in obstructions

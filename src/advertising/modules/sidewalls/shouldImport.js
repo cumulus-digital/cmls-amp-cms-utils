@@ -1,3 +1,5 @@
+import config from './config.json';
+
 const scriptName = 'SIDEWALL ADS IMPORTER';
 const nameSpace = 'sidewallAdsImporter';
 const version = '2.1';
@@ -16,11 +18,7 @@ export function areSidewallsAllowed() {
 		return false;
 	}
 
-	if (
-		w.document.querySelector(
-			'.takeover-left div[id^="div-gpt"],.takeover-right div[id^="div-gpt"],.skyscraper-left div[id^="div-gpt"],.skyscraper-right div[id^="div-gpt"]'
-		)
-	) {
+	if (w.document.querySelector(config.legacySelector)) {
 		log.info('Legacy skyscrapers exist');
 		return false;
 	}
@@ -42,7 +40,7 @@ export default () => {
 					'./generate-sidewalls.js'
 				);
 			});
-		}, 1500);
+		}, config.timeToWait);
 	};
 	return new Promise(waiting);
 };

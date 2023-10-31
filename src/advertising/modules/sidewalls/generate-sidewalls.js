@@ -140,6 +140,10 @@ import config from './config.json';
 
 				// Create slots!
 				window._CMLS.adTag.queue(() => {
+					if (window._CMLS[nameSpace].isDisabled()) {
+						return;
+					}
+
 					let sizeMap = [
 						// WidthxHeight can support up to 300x600
 						[
@@ -174,17 +178,21 @@ import config from './config.json';
 					};
 
 					log.info('Defining slot cmlsSidewallLeft');
-					window._CMLS.adTag.defineSlot(slotCommon);
+					window._CMLS[nameSpace].slots.push(
+						window._CMLS.adTag.defineSlot(slotCommon)
+					);
 
 					log.info('Defining slot cmls-sidewall-right');
-					window._CMLS.adTag.defineSlot({
-						...slotCommon,
-						adUnitPath: `${window._CMLS.adPath}/sidewallRight`,
-						div: 'cmls-sidewall-right',
-						targeting: {
-							pos: 'right',
-						},
-					});
+					window._CMLS[nameSpace].slots.push(
+						window._CMLS.adTag.defineSlot({
+							...slotCommon,
+							adUnitPath: `${window._CMLS.adPath}/sidewallRight`,
+							div: 'cmls-sidewall-right',
+							targeting: {
+								pos: 'right',
+							},
+						})
+					);
 
 					if (window.GPT_SITE_SLOTS['cmls-sidewall-left']) {
 						log.info('Calling display for cmls-sidewall-left');
@@ -202,16 +210,30 @@ import config from './config.json';
 					}
 				});
 			},
+			destroy: () => {
+				window._CMLS.adTag.queue(() => {
+					if (window._CMLS[nameSpace]?.slots?.length) {
+						log.info(
+							'Destroying slots by request',
+							window._CMLS[nameSpace].slots
+						);
+						window._CMLS.adTag.destroySlots(
+							window._CMLS[nameSpace].slots
+						);
+					}
+				});
+			},
 			init: () => {
 				domReady(() => {
 					if (!window._CMLS[nameSpace].isDisabled()) {
-						window._CMLS[nameSpace].inject();
 						if (window._CMLS.adPath) {
+							window._CMLS[nameSpace].inject();
 							window._CMLS[nameSpace].display();
 						} else {
 							window.addEventListener(
 								'cmls-adpath-discovered',
 								() => {
+									window._CMLS[nameSpace].inject();
 									window._CMLS[nameSpace].display();
 								}
 							);
