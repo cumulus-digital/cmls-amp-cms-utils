@@ -3,7 +3,7 @@
  * Generates and injects two ad units which flank the content area when
  * the device width is large enough to display them.
  */
-import areSidewallsAllowed from './shouldImport';
+import { areSidewallsAllowed } from './shouldImport';
 import config from './config.json';
 //import './styles.scss';
 

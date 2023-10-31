@@ -158,7 +158,7 @@
 		};
 
 		this.clearObstructions = () => {
-			log.debug('Clearing obstructions.');
+			log.debug('Clearing obstructions.', this.nodeCache.obstructions);
 			window.NO_SIDEWALLS = true;
 			if (this.nodeCache.obstructions?.length) {
 				this.nodeCache.obstructions.forEach((obstruction) => {
