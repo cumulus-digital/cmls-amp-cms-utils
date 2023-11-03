@@ -1,8 +1,6 @@
-const { getPageWindow } = window._CMLS.libs.playerTools;
-
 export default () => {
 	return new Promise((resolve) => {
-		const w = getPageWindow();
+		const w = window.self;
 		const condition = 'body.home';
 
 		if (

@@ -3,8 +3,9 @@
  */
 import triggerEvent from 'Utils/triggerEvent';
 import domReady from 'Utils/domReady';
-//import Logger from 'Utils/Logger';
+import Logger from 'Utils/Logger';
 
+const log = new Logger('PlayerTools');
 let player = null;
 let counter = 0;
 let page_frame_name = 'pwm_pageFrame';
@@ -16,32 +17,33 @@ let page_frame_names = {
 window._CMLS = window._CMLS || {};
 window._CMLS.playerTools = window._CMLS.playerTools || {};
 
+/**
+ * Select the first iframe that matches our page_frame_names
+ */
+const querySelectorPageFrames = (w) =>
+	w.document.querySelector(
+		Object.values(page_frame_names)
+			.map((name) => `iframe[name="${name}"]`)
+			.join(',')
+	);
+
 export const detectPlayer = () => {
-	const bodyClass = 'cmls-player-active';
+	const bodyClass = 'has-detected-player';
 	if (player) {
 		return player;
 	}
 	let hasPlayer = false;
-	let w = window.self;
-	while (w !== false || hasPlayer !== false) {
+	[window.self, window.parent, window.top].some((w) => {
 		if (w?.tgmp || window.frames[page_frame_names.tunegenie]) {
 			hasPlayer = 'tunegenie';
-			break;
+			return true;
 		}
 		if (window.frames[page_frame_names.cumulus]) {
 			hasPlayer = 'cumulus';
-			break;
+			return true;
 		}
-		if (w === window.top) {
-			w = false;
-			break;
-		}
-		if (!w.parent) {
-			break;
-		}
-		w = w.parent;
-	}
-	window._CMLS.commonLog.debug('HASPLAYER?', hasPlayer);
+	});
+	log.debug('HASPLAYER?', hasPlayer);
 	/*
 	[window.self, window.parent, window.top].forEach((w) => {
 		if (w.tgmp || Object.values(page_frame_names).includes(w.name)) {
@@ -53,6 +55,8 @@ export const detectPlayer = () => {
 	});
 	*/
 	if (hasPlayer) {
+		document.body.classList.add(bodyClass);
+		document.body.classList.add(`player-${hasPlayer}`);
 		player = hasPlayer;
 		return player;
 	}
@@ -67,9 +71,7 @@ export const navigateThroughPlayer = (url) => {
 		window.tgmp.updateLocation(url);
 	}
 	if (player === 'cumulus') {
-		if (window.self !== window.parent) {
-			window.parent.location.href = url;
-		}
+		window.cmls_player.updateLocation(url);
 	}
 };
 window._CMLS.playerTools.navigateThroughPlayer = navigateThroughPlayer;
@@ -95,30 +97,26 @@ window._CMLS.playerTools.waitForPlayer = waitForPlayer;
 /**
  * Return the window of the page frame if it exists, else window.self
  */
-export const getPageWindow = () => {
+export const getPlayerFrame = () => {
 	let pageFrame = false;
-	const check_for_frame = [window.self, window.parent, window.top].some(
-		(w) => {
-			if (w.name === page_frame_name) {
-				pageFrame = w;
-				return w;
-			}
-			let frame_test = w.document.querySelector(
-				`iframe[name="${page_frame_name}"]`
-			);
-			if (frame_test?.contentWindow) {
-				pageFrame = frame_test.contentWindow;
-				return frame_test.contentWindow;
-			}
+	[window.self, window.parent, window.top].some((w) => {
+		if (Object.values(page_frame_names).includes(w.name)) {
+			pageFrame = w;
+			return w;
 		}
-	);
+		let frame_test = querySelectorPageFrames(w);
+		if (frame_test?.contentWindow) {
+			pageFrame = frame_test.contentWindow;
+			return frame_test.contentWindow;
+		}
+	});
 	if (pageFrame?.document) {
 		return pageFrame;
 	}
 
 	return window.self;
 };
-window._CMLS.playerTools.getPageWindow = getPageWindow;
+window._CMLS.playerTools.getPlayerFrame = getPlayerFrame;
 
 /**
  * Detects if the current window is in an iframe
@@ -138,32 +136,67 @@ const onAfterPageFrame = [];
 let loadedWithPageFrame = false;
 let pageFrameCreated = false;
 const bodyWatch = new MutationObserver((mutationsList, observer) => {
+	const runCallbacks = () => {
+		for (const cb of onAfterPageFrame) {
+			if (typeof cb === 'function') {
+				cb();
+			}
+		}
+		bodyWatch.disconnect();
+	};
 	for (const mutation of mutationsList) {
 		if (mutation.type === 'childList') {
 			let pageFrame;
-			// Get top most window with pwm_pageFrame
+			// Get top most window that contains a page_frame_name
 			[window.top, window.parent, window.self].some((w) => {
-				if (w?.frames?.pwm_pageFrame) {
+				if (
+					Object.values(page_frame_names).some(
+						(name) => w?.frames?.[name]
+					)
+				) {
 					pageFrame = w;
 					return true;
 				}
 			});
 			if (pageFrame) {
-				pageFrameCreated = true;
-				for (const cb of onAfterPageFrame) {
-					if (typeof cb === 'function') {
-						cb();
-					}
+				const detectedPlayer = detectPlayer();
+				if (detectedPlayer === 'tunegenie') {
+					pageFrameCreated = true;
 				}
-				bodyWatch.disconnect();
+				if (
+					detectedPlayer === 'cumulus' &&
+					document.body.classList.contains('iframe-loaded')
+				) {
+					pageFrameCreated = true;
+				}
+				if (pageFrameCreated) {
+					runCallbacks();
+				}
 			}
 		}
 	}
 });
 domReady(() => {
-	loadedWithPageFrame = !!window.top.document.querySelector(
-		`iframe[name="${page_frame_name}"]`
-	);
+	let hasFrame = false;
+	[window.self, window.parent, window.top].some((w) => {
+		if (w?.tgmp || window.frames[page_frame_names.tunegenie]) {
+			hasFrame = 'tunegenie';
+			return true;
+		}
+		if (window.frames[page_frame_names.cumulus]) {
+			hasFrame = 'cumulus';
+			return true;
+		}
+	});
+	if (
+		hasFrame &&
+		(hasFrame === 'tunegenie' ||
+			(hasFrame === 'cumulus' &&
+				document.body.classList.contains('iframe-loaded')))
+	) {
+		log.debug('Page loaded with active page frame');
+		loadedWithPageFrame = true;
+	}
 	bodyWatch.observe(window.top.document.body, {
 		childList: true,
 	});

@@ -1,5 +1,6 @@
-const { detectPlayer, getPageWindow, addAfterPageFrame } =
-	window._CMLS.libs.playerTools;
+const { navigateThroughPlayer } = require('../../../utils/playerTools');
+
+const { detectPlayer, addAfterPageFrame } = window._CMLS.libs.playerTools;
 
 const scriptName = 'AUTO-RELOAD PAGE';
 const nameSpace = 'autoReloadPage';
@@ -29,7 +30,7 @@ const log = new window._CMLS.Logger(`${scriptName} ${version}`);
 		}
 
 		checkCondition() {
-			const win = getPageWindow();
+			const win = window.self;
 			return !!win?.document?.body?.matches(this.settings.condition);
 		}
 
@@ -112,12 +113,9 @@ const log = new window._CMLS.Logger(`${scriptName} ${version}`);
 			}
 
 			if (detectPlayer()) {
-				const win = getPageWindow();
-				if (win.tgmp) {
-					log.info('Reloading page through TuneGenie Player.');
-					win.tgmp.updateLocation(url);
-					return;
-				}
+				log.info('Reloading page through player.');
+				navigateThroughPlayer(url);
+				return;
 			}
 			w.location.href = url;
 		}
