@@ -21,23 +21,36 @@ import config from './config.json';
 	const log = new window._CMLS.Logger(`${scriptName} ${version}`);
 
 	// Public access exclusion from refresh
-	window._CMLS.autoRefreshAdsExclusion =
-		window._CMLS?.autoRefreshAdsExclusion || [];
+	if (!window._CMLS.initAutoRefreshAdsExclusion) {
+		window._CMLS.initAutoRefreshAdsExclusion = () => {
+			window._CMLS.autoRefreshAdsExclusion =
+				window._CMLS?.autoRefreshAdsExclusion || [];
 
-	// Prevent duplicates from being added to the public exclusion list
-	window._CMLS.autoRefreshAdsExclusion.push = (...args) => {
-		args.forEach((item) => {
-			if (!this.includes(item)) {
-				log.info('New ID added to exclusion list', item);
-				Array.prototype.push.apply(this, [item]);
-			} else {
-				log.warn(
-					'Attempted to add duplicate item to autoRefreshAdsExclusion list.',
-					item
-				);
+			// Prevent duplicates from being added to the public exclusion list
+			if (!window._CMLS.autoRefreshAdsExclusion?._push) {
+				window._CMLS.autoRefreshAdsExclusion._push =
+					window._CMLS.autoRefreshAdsExclusion.push;
+				window._CMLS.autoRefreshAdsExclusion.push = (...args) => {
+					args.forEach((item) => {
+						if (!this.includes(item)) {
+							log.info('New ID added to exclusion list', item);
+							Array.prototype.push.apply(this, [item]);
+						} else {
+							log.warn(
+								'Attempted to add duplicate item to autoRefreshAdsExclusion list.',
+								item
+							);
+						}
+					});
+					return this.length;
+				};
 			}
-		});
-		return this.length;
+		};
+	}
+	window._CMLS.initAutoRefreshAdsExclusion();
+	window._CMLS.clearAutoRefreshAdsExclusion = () => {
+		delete window._CMLS.autoRefreshAdsExclusion;
+		window._CMLS.initAutoRefreshAdsExclusion();
 	};
 
 	const init = () => {
@@ -170,6 +183,11 @@ import config from './config.json';
 			}
 
 			slotIsExcluded(slot) {
+				if (
+					typeof window._CMLS.autoRefreshAdsExclusion === 'undefined'
+				) {
+					window._CMLS?.initAutoRefreshAdsExclusion();
+				}
 				return window._CMLS.autoRefreshAdsExclusion.includes(
 					slot.getSlotElementId()
 				)

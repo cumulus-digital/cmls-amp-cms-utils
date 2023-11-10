@@ -108,8 +108,10 @@ const log = new window._CMLS.Logger(`${scriptName} ${version}`);
 			}
 
 			// Force clear the autoRefreshAdsExclusion list
-			if (window._CMLS.autoRefreshAdsExclusion.length) {
-				window._CMLS.autoRefreshAdsExclusion.length = 0;
+			if (
+				typeof window._CMLS?.clearAutoRefreshAdsExclusion === 'function'
+			) {
+				window._CMLS.clearAutoRefreshAdsExclusion();
 			}
 
 			if (detectPlayer()) {
