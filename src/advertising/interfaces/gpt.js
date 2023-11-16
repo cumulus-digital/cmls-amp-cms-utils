@@ -183,7 +183,7 @@ export default class GPTInterface extends DefaultInterface {
 			this.log.error('Failed to create slot!', settings);
 			return false;
 		} else {
-			this.log.info('Slot created', this.listSlotData(slot));
+			this.log.debug('Slot created', this.listSlotData(slot));
 		}
 
 		if (settings.hasOwnProperty('collapse')) {
@@ -208,7 +208,7 @@ export default class GPTInterface extends DefaultInterface {
 			slot = slot.addService(this.pubads());
 		}
 
-		this.log.info('Defined slot', {
+		this.log.debug('Defined slot', {
 			slot: this.listSlotData(slot).shift(),
 			settings: settings,
 		});
@@ -237,19 +237,42 @@ export default class GPTInterface extends DefaultInterface {
 
 	/**
 	 * Queues the display of a given slot ID
-	 * @param {string} ID div ID for ad slot
+	 * @param {string|Node|object} ID div ID for ad slot, a DOM node, or the slot itself
 	 * @param {Boolean|Slot} forceLoad force a call to refresh() on the slot
 	 */
 	display(ID, forceLoad = false) {
 		const me = this;
 		this.queue(() => {
-			me.log.info('Calling display', ID, forceLoad);
+			me.log.debug('Calling display', ID, forceLoad);
 			me.rawInterface().display(ID);
 			if (forceLoad) {
-				me.log.info('Forceload enabled for this display call');
+				me.log.debug('Forceload enabled for this display call');
+
+				// Handle when ID is a DOM node for shadow DOM
+				let elId = null;
+				if (typeof ID === 'string') {
+					elId = ID;
+				} else if (ID instanceof Node) {
+					elId = ID.id;
+				} else if (
+					typeof ID === 'object' &&
+					ID?.getSlotElementId &&
+					ID !== null
+				) {
+					elId = ID.getSlotElementId();
+				}
+
+				if (!elId) {
+					me.log.warn(
+						'Attempted to force initial load, but ID could not be discovered',
+						{ ID, forceLoad }
+					);
+					return;
+				}
+
 				let slot = false;
-				if (window.GPT_SITE_SLOTS?.[ID]?.getSlotElementId) {
-					slot = window.GPT_SITE_SLOTS[ID];
+				if (window.GPT_SITE_SLOTS?.[elId]?.getSlotElementId) {
+					slot = window.GPT_SITE_SLOTS[elId];
 				} else {
 					const allSlots = me.getSlots();
 					if (!allSlots?.length) {
@@ -257,7 +280,7 @@ export default class GPTInterface extends DefaultInterface {
 						return;
 					}
 					allSlots.some((aslot) => {
-						if (aslot.getSlotElementId() === ID) {
+						if (aslot.getSlotElementId() === elId) {
 							slot = aslot;
 							return true;
 						}
@@ -265,17 +288,21 @@ export default class GPTInterface extends DefaultInterface {
 				}
 
 				if (slot) {
-					me.log.info(
-						'Forcing initial load',
-						slot.getSlotElementId()
-					);
+					me.log.debug('Forcing initial load', {
+						id: slot?.getSlotElementId
+							? slot.getSlotElementId()
+							: 'unknown!',
+						slot,
+					});
 					me.doInitialLoad(slot);
 				} else {
 					me.log.warn(
 						'Attempted to force initial load but slot was not defined!',
-						ID,
-						forceLoad,
-						slot
+						{
+							ID,
+							forceLoad,
+							slot,
+						}
 					);
 				}
 			}
@@ -297,10 +324,10 @@ export default class GPTInterface extends DefaultInterface {
 		}
 		const refreshSlots = this.filterSlots(requestSlots);
 		if (!refreshSlots?.length) {
-			this.log.info('No slots found for refreshing after filtering.');
+			this.log.debug('No slots found for refreshing after filtering.');
 			return;
 		}
-		this.log.info(
+		this.log.debug(
 			'Refresh called for slots',
 			this.listSlotData(refreshSlots)
 		);
@@ -318,18 +345,18 @@ export default class GPTInterface extends DefaultInterface {
 			slot?._displayed ||
 			slot.getTargeting(me.initialRequestKey)?.length
 		) {
-			me.log.info('Has initial request key', me.listSlotData(slot));
+			me.log.debug('Has initial request key', me.listSlotData(slot));
 			return true;
 		}
 		if (slot.getResponseInformation()) {
-			me.log.info('Has response info', me.listSlotData(slot));
+			me.log.debug('Has response info', me.listSlotData(slot));
 			return true;
 		}
 		const slotEl = window.self.document.getElementById(
 			slot.getSlotElementId()
 		);
 		if (slotEl?.getAttribute('data-google-query-id')) {
-			me.log.info('Has data attribute', me.listSlotData(slot));
+			me.log.debug('Has data attribute', me.listSlotData(slot));
 			return true;
 		}
 		return false;
@@ -351,7 +378,7 @@ export default class GPTInterface extends DefaultInterface {
 		if (me.isInitialLoadDisabled()) {
 			// We need to delay refresh for a bit in case an on-page refresh
 			// has already handled it our slots...
-			me.log.info(
+			me.log.debug(
 				'Initial load requested while initial load is disabled, this will be delayed',
 				me.listSlotData(requestSlots)
 			);
@@ -366,14 +393,14 @@ export default class GPTInterface extends DefaultInterface {
 					}
 				});
 				if (notYetRequested.length) {
-					me.log.info(
+					me.log.debug(
 						'Delayed initial load firing',
 						me.listSlotData(notYetRequested)
 					);
 					me.refresh(notYetRequested);
 				}
 				if (alreadyRequested.length) {
-					me.log.info(
+					me.log.debug(
 						'Slots were already requested',
 						me.listSlotData(alreadyRequested)
 					);
@@ -382,7 +409,7 @@ export default class GPTInterface extends DefaultInterface {
 		} else {
 			/*
 			me.queue(() => {
-				me.log.info(
+				me.log.debug(
 					'Instant initial load refresh',
 					me.listSlotData(requestSlots)
 				);
@@ -429,11 +456,16 @@ export default class GPTInterface extends DefaultInterface {
 		slots.forEach((slot) => {
 			const thisSlot = {
 				_cm_displayed: slot?._displayed ? 'yes' : 'no',
-				div: slot?.getSlotElementId(),
-				pos: slot?.getTargeting('pos'),
-				adUnitPath: slot?.getAdUnitPath(),
-				sizes: slot?.getSizes(),
+				div: slot?.getSlotElementId
+					? slot.getSlotElementId()
+					: 'unknown!',
+				pos: slot?.getTargeting ? slot.getTargeting('pos') : 'unknown!',
+				adUnitPath: slot?.getAdUnitPath
+					? slot.getAdUnitPath()
+					: 'unknown!',
+				sizes: slot?.getSizes ? slot.getSizes() : 'unknown!',
 				targeting: [],
+				slot,
 			};
 			const targetingKeys = slot?.getTargetingKeys();
 			if (targetingKeys?.length) {

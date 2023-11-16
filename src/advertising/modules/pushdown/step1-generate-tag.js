@@ -121,7 +121,7 @@
 				prebid: false,
 			});
 
-			slot && adTag.display(elementId, adTag.isInitialLoadDisabled());
+			slot && adTag.display(slotDiv, adTag.isInitialLoadDisabled());
 		});
 
 		log.info('Initialized');
