@@ -125,7 +125,7 @@ export default class Logger {
 		const colors = {
 			debug: '#777777',
 			info: 'darkblue',
-			warn: 'darkyellow',
+			warn: 'darkgoldenrod',
 			error: 'darkred',
 		};
 
