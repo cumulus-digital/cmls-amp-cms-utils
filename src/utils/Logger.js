@@ -79,7 +79,7 @@ export default class Logger {
 		}
 
 		this.header = [
-			`%c ${defaultHeader} `,
+			`%c ${defaultHeader} %c`,
 			`background: #${this.background}; color: #${this.foreground}`,
 		];
 	}
@@ -120,16 +120,40 @@ export default class Logger {
 			warn: '🚸',
 			error: '🚨',
 		};
-		let header = [...this.header, icons?.[type]];
+
+		// Add colors to message type
+		const colors = {
+			debug: '#777777',
+			info: 'darkblue',
+			warn: 'darkyellow',
+			error: 'darkred',
+		};
+
+		//let header = [...this.header, '', icons?.[type]];
+		let msg = [icons?.[type]];
 
 		if (message) {
 			if (Array.isArray(message)) {
-				header.push(
+				msg.push(
 					this.smallString(
 						message
 							.map((i) => {
 								if (typeof i !== 'string') {
-									return JSON.stringify(i);
+									//return JSON.stringify(i);
+									const seen = new WeakSet();
+									return JSON.stringify(i, (key, value) => {
+										if (
+											typeof value === 'object' &&
+											value !== null
+										) {
+											if (seen.has(value)) {
+												// Prevent circular reference
+												return undefined;
+											}
+											seen.add(value);
+										}
+										return value;
+									});
 								}
 								return i;
 							})
@@ -138,11 +162,24 @@ export default class Logger {
 					)
 				);
 			} else {
-				header.push(this.smallString(message, headerLength));
+				msg.push(this.smallString(message, headerLength));
 			}
 		}
 
-		window.top.console.groupCollapsed.apply(window.top.console, header);
+		if (this.header.length > 1) {
+			window.top.console.groupCollapsed.apply(window.top.console, [
+				`${this.header[0]} %c${msg.join(' ')}`,
+				this.header[1],
+				'',
+				`color: ${colors?.[type]}`,
+				'',
+			]);
+		} else {
+			window.top.console.groupCollapsed.apply(window.top.console, [
+				...this.header,
+				...msg,
+			]);
+		}
 	}
 
 	displayFooter() {
@@ -159,6 +196,7 @@ export default class Logger {
 		// Only display if debug flag is set
 		let forceDebug = false;
 		try {
+			// support cmlsDebug in session storage or cookie
 			if (
 				/(1|true|yes)/i.test(
 					window.sessionStorage.getItem('cmlsDebug')
@@ -167,8 +205,12 @@ export default class Logger {
 			) {
 				forceDebug = true;
 			}
+			// support cmlsDebug in window.location.search
+			if (window.location.search.indexOf('cmlsDebug') >= 0) {
+				forceDebug = true;
+			}
 		} catch (e) {}
-		if (window?._CMLS?.debug || forceDebug) {
+		if (type !== 'debug' || window?._CMLS?.debug || forceDebug) {
 			this.displayHeader(type, message, headerLength);
 			//if (headerLength !== Infinity) {
 			window.top.console.debug(message);
