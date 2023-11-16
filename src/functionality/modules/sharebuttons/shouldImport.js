@@ -17,7 +17,7 @@ export default () => {
 	}
 
 	if (window.document.body.classList.contains('home')) {
-		log.info('Homepage detected.');
+		log.info('Share buttons prevented on homepage');
 		return;
 	}
 

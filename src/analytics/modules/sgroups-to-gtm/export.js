@@ -16,14 +16,14 @@
 	}
 
 	function fireEvent(e) {
-		log.info('Firing event', e);
+		log.debug('Firing event', e);
 		gtmPush({ event: e });
 		triggerEvent(window, 'cms-sgroup', e);
 	}
 
 	let hasRun = false;
 	function globalizeGroups() {
-		log.info('running sgroups');
+		log.debug('running sgroups');
 		if (hasRun) {
 			return;
 		}

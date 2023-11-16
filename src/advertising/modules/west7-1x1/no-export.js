@@ -21,7 +21,7 @@
 			/>
 		);
 		doc.body.appendChild(tag);
-		log.info('Slot injected');
+		log.debug('Slot injected');
 
 		window._CMLS.adTag.queue(() => {
 			const slot = window._CMLS.adTag.defineSlot({

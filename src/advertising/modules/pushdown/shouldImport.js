@@ -14,7 +14,8 @@ export default () => {
 
 		resolve(() => {
 			import(
-				/* webpackChunkName: "advertising/pushdown/pushdown-1-generate-tag" */ './step1-generate-tag.js'
+				/* webpackChunkName: "advertising/pushdown/pushdown-1-generate-tag" */
+				'./step1-generate-tag.js'
 			);
 		});
 	};

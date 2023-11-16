@@ -41,7 +41,7 @@
 	window._CMLS.autoRefreshAdsExclusion.push = function () {
 		[...arguments].forEach((item) => {
 			if (!this.includes(item)) {
-				log.info('New ID added to exclusion list', item);
+				log.debug('New ID added to exclusion list', item);
 				Array.prototype.push.apply(this, [item]);
 			} else {
 				log.warn(
@@ -71,7 +71,7 @@
 					if (isTabVisible() === -1) {
 						me.tabVisible = false;
 					}
-					log.info(
+					log.debug(
 						'Caught visibility change',
 						me.tabVisible,
 						isTabVisible()
@@ -94,7 +94,7 @@
 						!window.top._CMLS.autoReload?.settings?.timeout ||
 						!window.top._CMLS.autoReload?.timeout
 					) {
-						log.info(
+						log.warn(
 							'Could not determine AutoReloadPAGE settings, ads will not refresh.'
 						);
 						return -1;
@@ -104,7 +104,7 @@
 						window.top._CMLS.autoReload.settings.timeout <
 						window._CMLS.autoRefreshAdsTimer * 2
 					) {
-						log.info(
+						log.warn(
 							'AutoReloadPAGE timer is less than 2x our timer, ads will not refresh.'
 						);
 						return -1;
@@ -131,12 +131,12 @@
 				}
 				if (window.DISABLE_AUTO_REFRESH_ADS) {
 					log.info(
-						'DISABLE_AUTO_REFRESH_ADS has been set, ads will not refresh.'
+						'window.DISABLE_AUTO_REFRESH_ADS has been set, ads will not refresh.'
 					);
 					return -1;
 				}
 				if (!this.tabVisible) {
-					log.info('Tab is hidden.');
+					log.debug('Tab is hidden.');
 					return 0;
 				}
 				return 1;
@@ -290,7 +290,7 @@
 
 							if (visibleSlots.length) {
 								visibleSlots.forEach((slot) => {
-									log.info({
+									log.debug({
 										pos: slot.getTargeting('pos'),
 										element: slot.getSlotElementId(),
 										ad_id: slot.getSlotId(),
@@ -312,7 +312,7 @@
 					return;
 				}
 
-				log.info('Conditions not met, skipping this cycle.');
+				log.debug('Conditions not met, skipping this cycle.');
 				me.start();
 			}
 
@@ -321,7 +321,7 @@
 			}
 
 			stop() {
-				log.info('Stopping timer.');
+				log.debug('Stopping timer.');
 				clearTimeout(this.timer);
 				this.timer = null;
 				this.fireTime = null;
@@ -329,13 +329,13 @@
 			}
 
 			pause() {
-				log.info('Pausing timer.', this.fireTime);
+				log.debug('Pausing timer.', this.fireTime);
 				clearTimeout(this.timer);
 				this.timer = null;
 			}
 
 			restart() {
-				log.info('Restarting timer', this.fireTime);
+				log.debug('Restarting timer', this.fireTime);
 				this.checkTimer();
 			}
 
@@ -344,7 +344,7 @@
 
 				if (this.checkConditions() === 1) {
 					if (fireTime && fireTime instanceof Date) {
-						log.info(
+						log.debug(
 							'Start called with an initial fire time',
 							fireTime
 						);

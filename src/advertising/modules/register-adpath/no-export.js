@@ -6,15 +6,15 @@ import config from './config.json';
 	const log = new window._CMLS.Logger(`${scriptName} ${version}`);
 
 	function registerAdPath() {
-		log.info('Checking for ad path');
+		log.debug('Checking for ad path');
 		const slots = window?._CMLS?.adTag.getSlots();
 
-		log.info(`Testing ${slots.length} slots`);
+		log.debug(`Testing ${slots.length} slots`);
 		if (slots.length) {
 			slots.some((slot) => {
 				const p = slot?.getAdUnitPath();
 				if (p && p.indexOf(`/${networkId}/`) > -1) {
-					log.info(
+					log.debug(
 						'Found in-network slot',
 						slot.getSlotElementId(),
 						p

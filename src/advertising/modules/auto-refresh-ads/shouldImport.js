@@ -9,7 +9,7 @@ export default () => {
 			window.self.location.search.includes('cmlsDisableAdRefresh') ||
 			window.self.DISABLE_AUTO_REFRESH_ADS
 		) {
-			log.info('Disabled for this site. Expand to view disablers.', {
+			log.warn('Disabled for this site.', {
 				'window.DISABLE_AUTO_REFRESH_ADS set':
 					!!window.self.DISABLE_AUTO_REFRESH_ADS,
 				'cmlsDisableAdRefresh in URL':

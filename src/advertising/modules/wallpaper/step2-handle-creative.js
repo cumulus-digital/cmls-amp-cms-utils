@@ -81,7 +81,7 @@
 			if (doNotBuild) {
 				return false;
 			}
-			log.info('Generating new container');
+			log.debug('Generating new container');
 			this.refreshNodeCache();
 			const container = <div id={id} class={className} />;
 			container.attachShadow({ mode: 'open' });
@@ -210,7 +210,7 @@
 		};
 
 		this.reset = () => {
-			log.info('Resetting.');
+			log.debug('Resetting.');
 			const container = this.getContainer(true);
 			if (container) {
 				container.style.setProperty(
@@ -224,7 +224,7 @@
 		};
 
 		this.showContainer = () => {
-			log.info('Displaying wallpaper');
+			log.debug('Displaying wallpaper');
 			this.getContainer().classList.add(`${classBase}-open`);
 			if (typeof settings.postDisplay === 'function') {
 				settings.postDisplay.call(this);
@@ -233,7 +233,7 @@
 
 		// Process a slot
 		this.process = (slot) => {
-			log.info('Processing request');
+			log.debug('Processing request');
 
 			const container = this.getContainer();
 
@@ -253,7 +253,7 @@
 			log.debug('Generated hash', hash);
 
 			if (hash === container.getAttribute('data-hash')) {
-				log.info('Returned creative is already displaying');
+				log.info('Received creative which is already displaying.');
 				return;
 			}
 
@@ -343,7 +343,7 @@
 				window._CMLS.navThroughPlayer.updateLink(link);
 			}
 
-			log.info('Building wallpaper into container', slotLink, slotImage);
+			log.debug('Building wallpaper into container', slotLink, slotImage);
 
 			const wrapper = <div class="wrap">{link}</div>;
 			container.shadowRoot.append(wrapper);

@@ -9,17 +9,19 @@ const w = window.self;
 
 export function areSidewallsAllowed() {
 	if (w.NO_SIDEWALLS || w.NO_SIDE_WALLS) {
-		log.info('NO_SIDEWALLS configured.');
+		log.info('window.NO_SIDEWALLS is set. Sidewalls will not be created.');
 		return false;
 	}
 
 	if (w._CMLS?.disabled?.sideWalls) {
-		log.info('_CMLS.disabled.sideWalls configured.');
+		log.info(
+			'_CMLS.disabled.sideWalls is set. Sidewalls will not be created.'
+		);
 		return false;
 	}
 
 	if (w.document.querySelector(config.legacySelector)) {
-		log.info('Legacy skyscrapers exist');
+		log.info('Legacy skyscrapers exist. Sidewalls will not be created.');
 		return false;
 	}
 

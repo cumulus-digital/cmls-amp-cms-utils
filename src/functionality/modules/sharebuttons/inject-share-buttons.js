@@ -73,7 +73,7 @@ const log = new window._CMLS.Logger(`${scriptName} ${version}`);
 				content_type: window?.express_dimensions?.page_type || 'post',
 				item_id: window.location.href,
 			};
-			log.info('Share click!', data);
+			log.debug('Share click!', data);
 			window.gtag('event', 'share', data);
 		}
 	};

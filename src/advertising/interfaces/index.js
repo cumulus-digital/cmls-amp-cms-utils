@@ -32,7 +32,7 @@ const registeredDetectors = [APSInterface, GPTInterface];
 		if (window._CMLS.adTag || detectLoop > 60) {
 			return;
 		}
-		log.info(`Running registered detectors (Loop: ${detectLoop})`);
+		log.debug(`Running registered detectors (Loop: ${detectLoop})`);
 		let detected = false;
 		for (const TagInterface of window._CMLS[nameSpace]
 			.registeredDetectors) {
@@ -40,7 +40,7 @@ const registeredDetectors = [APSInterface, GPTInterface];
 				log.error('Invalid interface', TagInterface);
 				break;
 			}
-			log.info('Checking registered detector', TagInterface.identity);
+			log.debug('Checking registered detector', TagInterface.identity);
 			if (TagInterface.detectTag()) {
 				detected = true;
 				window._CMLS.adTag = new TagInterface();

@@ -253,7 +253,7 @@ import config from './config.json';
 						// Ensure an ad refresh doesn't occur just before a page refresh
 						const buffer = this.every * 60000 + 30000;
 						if (diff < buffer) {
-							log.warn(
+							log.info(
 								'Auto-Reload-Page will fire before we will. Ads will not refresh.'
 							);
 							return DISABLED;
@@ -262,12 +262,12 @@ import config from './config.json';
 				}
 				if (window.DISABLE_AUTO_REFRESH_ADS) {
 					log.info(
-						'DISABLE_AUTO_REFRESH_ADS is set. Ads will not refresh.'
+						'window.DISABLE_AUTO_REFRESH_ADS is set. Ads will not refresh.'
 					);
 					return DISABLED;
 				}
 				if (!isTabVisible()) {
-					log.info('Tab is hidden. Ad refresh is paused.');
+					log.debug('Tab is hidden. Ad refresh is paused.');
 					return PAUSED;
 				}
 

@@ -78,7 +78,7 @@
 		};
 
 		this.handleVast = (slotIframe) => {
-			log.info('Handling VAST creative.');
+			log.debug('Handling VAST creative.');
 			const iWin = slotIframe.contentWindow;
 			const iDoc = iWin.document;
 			const vpContainer = iDoc.getElementById('vpContainer');
@@ -98,7 +98,7 @@
 		};
 
 		this.handleVideo = (slotIframe) => {
-			log.info('Handling basic video creative.');
+			log.debug('Handling basic video creative.');
 			const iDoc = slotIframe.contentWindow.document;
 			const video = iDoc.querySelector('video');
 			const sources = video.querySelector('source');
@@ -147,20 +147,21 @@
 		};
 
 		this.handleImage = (slotIframe) => {
-			log.info('Handling image creative');
+			log.debug('Handling image creative');
 			const iDoc = slotIframe.contentWindow.document;
 
-			const imageStyle = <style />;
-			imageStyle.innerHTML = `
-			a { display: block; }
-			img[src]:not([width="1"]):not([width="0"]) {
-				display: block;
-				width: auto !important;
-				height: auto !important;
-				max-width: 100%;
-				object-fit: cover;
-			}
-			`;
+			const imageStyle = (
+				<style>{`
+				a { display: block; }
+				img[src]:not([width="1"]):not([width="0"]) {
+					display: block;
+					width: auto !important;
+					height: auto !important;
+					max-width: 100%;
+					object-fit: cover;
+				}
+			`}</style>
+			);
 			iDoc.body.append(imageStyle);
 
 			const image = iDoc.querySelector(
@@ -169,7 +170,7 @@
 
 			// Get the image height
 			const computedStyle = window.getComputedStyle(image);
-			log.info(
+			log.debug(
 				window.getComputedStyle(iDoc.body).height,
 				computedStyle.height
 			);

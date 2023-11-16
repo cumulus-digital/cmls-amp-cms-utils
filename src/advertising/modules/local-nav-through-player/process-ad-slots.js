@@ -47,7 +47,7 @@
 					),
 				];
 				if (!links?.length) {
-					log.info('No relevant links in iframe.', iframe);
+					log.debug('No relevant links in iframe.', iframe);
 					return;
 				}
 				links.forEach((link) => {
@@ -60,7 +60,7 @@
 
 		this.updateLink = (link, force = false) => {
 			if (!link?.href) {
-				log.info('updateLink called without a link.', link);
+				log.warn('updateLink called without a link.', link);
 				return;
 			}
 
@@ -82,7 +82,7 @@
 			if (testOrigin === hostOrigin) {
 				// link is local
 				isLocal = true;
-				log.info('Updating local link', link, link.href, testUrl.href);
+				log.debug('Updating local link', link, link.href, testUrl.href);
 				link.setAttribute('href', testUrl.href);
 			}
 
@@ -102,7 +102,7 @@
 				if (trackedUrl.origin === hostOrigin) {
 					// adurl is local
 					testUrl.searchParams.set('adurl', trackedUrl.href);
-					log.info(
+					log.debug(
 						'Updating local, tracked link',
 						link,
 						link.href,
@@ -114,7 +114,7 @@
 
 			if (isLocal) {
 				if (!target) {
-					log.info('Setting target of local link to "_top"');
+					log.debug('Setting target of local link to "_top"');
 					link.setAttribute('target', '_top');
 				}
 				$(link).on(`click.${nameSpace}`, this.handleClick.bind(this));
@@ -127,7 +127,7 @@
 				return;
 			}
 			if (detectPlayer()) {
-				log.info('Intercepting click.');
+				log.debug('Intercepting click.');
 				e.preventDefault();
 				navigateThroughPlayer(e.currentTarget.href);
 			}
@@ -148,7 +148,7 @@
 				src?.includes('/safeframe/') ||
 				src?.getAttribute('data-is-safeframe') === 'true'
 			) {
-				log.warn(
+				log.debug(
 					'Could not access iframe content, this is a safeframe we cannot process.',
 					iframe
 				);
@@ -180,7 +180,7 @@
 				}
 			}
 
-			log.info('Caught render event', elId, slot);
+			log.debug('Caught render event', elId, slot);
 			this.updateAdIframe(el);
 		};
 

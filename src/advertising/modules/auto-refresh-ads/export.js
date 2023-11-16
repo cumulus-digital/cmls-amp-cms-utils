@@ -113,7 +113,7 @@ import config from './config.json';
 				);
 				adTag.addListener('impressionViewable', (e) => {
 					const slot = e.slot;
-					log.info(
+					log.debug(
 						'Impression viewable',
 						slot.getTargeting('pos'),
 						slot.getSlotElementId(),
@@ -164,8 +164,8 @@ import config from './config.json';
 				const { DISABLED, PAUSED, RUNNING } = this.globalConditions;
 				const autoReloadPage = window._CMLS?.autoReload;
 				if (window.DISABLE_AUTO_REFRESH_ADS) {
-					log.info(
-						'DISABLE_AUTO_REFRESH_ADS is set. Ads will not refresh.'
+					log.warn(
+						'window.DISABLE_AUTO_REFRESH_ADS is set. Ads will not refresh.'
 					);
 					return DISABLED;
 				}
@@ -230,7 +230,7 @@ import config from './config.json';
 					return;
 				}
 
-				log.info(
+				log.debug(
 					'Setting refresh timer on slot.',
 					{ pos, id },
 					fireTime.toLocaleString()

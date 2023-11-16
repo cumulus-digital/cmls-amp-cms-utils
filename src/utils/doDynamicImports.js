@@ -43,7 +43,7 @@ export default (imports) => {
 		if (im.hasOwnProperty('check')) {
 			const checked = await im.check();
 			if (checked) {
-				log.info('Loading', im?.name || im.check?.name || im);
+				log.debug('Loading', im?.name || im.check?.name || im);
 				checked();
 			}
 		}
@@ -55,7 +55,7 @@ export default (imports) => {
 				if (im.hasOwnProperty('check')) {
 					const checked = await im.check();
 					if (checked) {
-						log.info(
+						log.debug(
 							'Loading (DR)',
 							im?.name || im.check?.name || im
 						);

@@ -72,7 +72,7 @@ import config from './config.json';
 			//Math.max(currentZ, playerbarZ - 1);
 
 			if (currentZ != newZ) {
-				log.info('Adjusting ad div z-index', currentZ, newZ);
+				log.debug('Adjusting ad div z-index', currentZ, newZ);
 				adDiv.style.setProperty('z-index', newZ, 'important');
 			}
 		}
@@ -83,7 +83,7 @@ import config from './config.json';
 				window.matchMedia('(min-width: 800px)').matches &&
 				detectPlayer() !== 'tunegenie'
 			) {
-				log.info(
+				log.debug(
 					'No TuneGenie player detected on desktop, wait for player before re-injecting.'
 				);
 				waitForPlayer().then(() => {
@@ -95,7 +95,7 @@ import config from './config.json';
 			}
 
 			if (!this.hasDiv()) {
-				log.info('Injecting...');
+				log.debug('Injecting');
 
 				const adDiv = <div id={this.elementId} />;
 
@@ -137,6 +137,8 @@ import config from './config.json';
 
 				this.context.document.body.append(adDiv, stub);
 				this.context.document.body.classList.add('has-sticky-320x50');
+
+				log.info('Injected');
 			}
 
 			this.adTag.queue(() => {
@@ -148,7 +150,7 @@ import config from './config.json';
 					}
 				});
 
-				log.info('Defining ad slot', this.elementId);
+				log.debug('Defining ad slot', this.elementId);
 				const sizeMap = [
 					[
 						[800, 0],

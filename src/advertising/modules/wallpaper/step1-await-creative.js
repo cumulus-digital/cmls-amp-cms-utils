@@ -55,9 +55,7 @@
 		}
 
 		buildSlot() {
-			log.info(
-				'Wallpaper tag does not exist, need to build an OOP slot.'
-			);
+			log.info('Wallpaper tag does not exist!');
 			return;
 			/*
 			const adTag = window._CMLS.adTag;
@@ -87,7 +85,7 @@
 			}
 
 			if (!slot.getResponseInformation()) {
-				log.info('Slot was empty.');
+				log.debug('Slot was empty.');
 				window._CMLS?.wallpaperHandler?.reset();
 				return false;
 			}
@@ -96,7 +94,7 @@
 		}
 
 		handleCreative(slot) {
-			log.info('Slot has creative, passing to handler.');
+			log.debug('Slot has creative, passing to handler.');
 			window.NO_SIDEWALLS = true;
 
 			if (!window._CMLS.wallpaperHandler) {

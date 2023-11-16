@@ -21,7 +21,7 @@ const log = new window._CMLS.Logger(`${scriptName} ${version}`);
 	];
 
 	waitForPlayer().then(() => {
-		log.info('Attaching click listener to our selectors', selectors);
+		log.debug('Attaching click listener to our selectors', selectors);
 		$(window.document.body)
 			.off(`click.${nameSpace}`)
 			.on(`click.${nameSpace}`, selectors.join(','), (e) => {

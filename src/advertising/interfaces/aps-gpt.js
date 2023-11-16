@@ -75,7 +75,7 @@ export default class APSInterface extends GPTInterface {
 			all: slots,
 		};
 		slots.forEach((slot) => {
-			me.log.info('Checking', slot.getSlotElementId());
+			me.log.debug('Checking', slot.getSlotElementId());
 			let isPrebid = false;
 
 			const allowedSizes = [
@@ -146,19 +146,19 @@ export default class APSInterface extends GPTInterface {
 		if (!Array.isArray(requestSlots)) {
 			requestSlots = [requestSlots];
 		}
-		me.log.info(
+		me.log.debug(
 			'Refresh requested for slots',
 			me.listSlotData(requestSlots)
 		);
 
 		const refreshSlots = me.filterPrebidSlots(requestSlots);
 		if (!refreshSlots?.all?.length) {
-			me.log.info('No slots found for refreshing after filtering.');
+			me.log.debug('No slots found for refreshing after filtering.');
 			return;
 		}
 
 		if (refreshSlots?.prebid?.length) {
-			me.log.info(
+			me.log.debug(
 				`🏷 Requesting bids for ${refreshSlots.prebid.length} prebid slots`,
 				this.listSlotData(refreshSlots.prebid)
 			);
@@ -183,11 +183,11 @@ export default class APSInterface extends GPTInterface {
 			};
 
 			const fetchBids = (apsconfig) => {
-				me.log.info('fetchBids called', apsconfig, apsconfig.slots);
+				me.log.debug('fetchBids called', apsconfig, apsconfig.slots);
 				window.apstag.fetchBids(apsconfig, (bids) => {
 					me.queue(() => {
 						window.apstag.setDisplayBids();
-						me.log.info(
+						me.log.debug(
 							'🏷 Refreshing prebid slots after bids received',
 							me.listSlotData(refreshSlots.prebid),
 							bids
@@ -201,7 +201,7 @@ export default class APSInterface extends GPTInterface {
 		}
 
 		if (refreshSlots?.noprebid?.length) {
-			me.log.info(
+			me.log.debug(
 				'Refreshing noprebid slots',
 				me.listSlotData(refreshSlots.noprebid)
 			);
@@ -221,7 +221,7 @@ export default class APSInterface extends GPTInterface {
 		}
 		// Slots with an amznbid key are queued for refresh on-page already
 		if (slot.getTargeting('amznbid')?.length) {
-			me.log.info('Has amznbid targeting', me.listSlotData(slot));
+			me.log.debug('Has amznbid targeting', me.listSlotData(slot));
 			return true;
 		}
 		return false;

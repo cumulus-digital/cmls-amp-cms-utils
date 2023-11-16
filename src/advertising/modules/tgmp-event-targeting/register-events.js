@@ -96,7 +96,7 @@ import config from './config.json';
 				adTag.queue(() => {
 					this.lastTrack.title = track.title;
 					const validTitle = this.sanitizeForGPT(track.title);
-					log.info(
+					log.debug(
 						'Setting webplayer-title target',
 						track.title,
 						validTitle
@@ -109,7 +109,7 @@ import config from './config.json';
 					) {
 						this.lastTrack.artist = track.artist;
 						const validArtist = this.sanitizeForGPT(track.artist);
-						log.info(
+						log.debug(
 							'Setting webplayer-artist target',
 							track.artist,
 							validArtist

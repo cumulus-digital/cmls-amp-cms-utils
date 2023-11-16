@@ -80,7 +80,7 @@ import config from './config.json';
 					}
 				}
 
-				log.info('Injecting');
+				log.debug('Injecting');
 
 				if (
 					!injectPointStyle?.position ||
@@ -89,7 +89,7 @@ import config from './config.json';
 					injectPointNode.style.position = 'relative';
 				}
 
-				const style = import(
+				import(
 					/* webpackPreload: true, webpackChunkName: 'advertising/sidewalls/style' */
 					'./styles.scss'
 				).then((style) => {
@@ -126,12 +126,14 @@ import config from './config.json';
 
 				/*
 				if (topPad) {
-					log.info('TOPPAD', topPad);
+					log.debug('TOPPAD', topPad);
 					wrapper.style.setProperty('--top_pad', topPad + 'px');
 				}
 				*/
 
 				injectPointNode.appendChild(wrapper);
+
+				log.info('Injected');
 			},
 			display: () => {
 				if (window._CMLS[nameSpace].isDisabled()) {
@@ -177,12 +179,12 @@ import config from './config.json';
 						prebid: true,
 					};
 
-					log.info('Defining slot cmlsSidewallLeft');
+					log.debug('Defining slot cmlsSidewallLeft');
 					window._CMLS[nameSpace].slots.push(
 						window._CMLS.adTag.defineSlot(slotCommon)
 					);
 
-					log.info('Defining slot cmls-sidewall-right');
+					log.debug('Defining slot cmls-sidewall-right');
 					window._CMLS[nameSpace].slots.push(
 						window._CMLS.adTag.defineSlot({
 							...slotCommon,
@@ -195,14 +197,14 @@ import config from './config.json';
 					);
 
 					if (window.GPT_SITE_SLOTS['cmls-sidewall-left']) {
-						log.info('Calling display for cmls-sidewall-left');
+						log.debug('Calling display for cmls-sidewall-left');
 						window._CMLS.adTag.display(
 							'cmls-sidewall-left',
 							window._CMLS.adTag.isInitialLoadDisabled()
 						);
 					}
 					if (window.GPT_SITE_SLOTS['cmls-sidewall-right']) {
-						log.info('Calling display for cmls-sidewall-right');
+						log.debug('Calling display for cmls-sidewall-right');
 						window._CMLS.adTag.display(
 							'cmls-sidewall-right',
 							window._CMLS.adTag.isInitialLoadDisabled()
