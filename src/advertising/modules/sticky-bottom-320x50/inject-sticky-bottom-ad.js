@@ -26,6 +26,7 @@ import config from './config.json';
 		slot = null;
 		context = context;
 		adTag = context._CMLS.adTag;
+		zIndexInterval;
 
 		constructor() {
 			this.elementId = elementId;
@@ -53,14 +54,29 @@ import config from './config.json';
 				'iframe[name="pwm_pageFrame"]'
 			);
 
-			const playerbarZ = playerbar
+			if (!adDiv) return;
+
+			let playerbarZ = playerbar
 				? this.context.getComputedStyle(playerbar)?.zIndex || 0
 				: 0;
-			const pageframeZ = pageframe
+
+			if (playerbarZ) {
+				playerbarZ = parseInt(playerbarZ) || 0;
+			}
+
+			let pageframeZ = pageframe
 				? this.context.getComputedStyle(pageframe)?.zIndex || 0
 				: 0;
 
-			const currentZ = this.context.getComputedStyle(adDiv)?.zIndex || 0;
+			if (pageframeZ) {
+				pageframeZ = parseInt(pageframeZ) || 0;
+			}
+
+			let currentZ = this.context.getComputedStyle(adDiv)?.zIndex || 0;
+
+			if (currentZ) {
+				currentZ = parseInt(currentZ) || 0;
+			}
 
 			let newZ = playerbarZ - 1;
 			if (
@@ -72,7 +88,7 @@ import config from './config.json';
 			//Math.max(currentZ, playerbarZ - 1);
 
 			if (currentZ != newZ) {
-				log.debug('Adjusting ad div z-index', currentZ, newZ);
+				log.debug('Adjusting ad div z-index', { currentZ, newZ });
 				adDiv.style.setProperty('z-index', newZ, 'important');
 			}
 		}
@@ -105,11 +121,18 @@ import config from './config.json';
 						`player-${detectPlayer()}`
 					);
 					if (detectPlayer() === 'tunegenie') {
-						setInterval(() => {
-							this.updateZindex();
-						}, 1000);
+						this.zIndexInterval = setInterval(
+							this.updateZindex.bind(this),
+							1000
+						);
 					}
 				});
+				/*
+				addAfterPageFrame(() => {
+					clearInterval(this.zIndexInterval);
+					this.zIndexInterval = null;
+				});
+				*/
 
 				/*
 				const style = createElement.el('link', {
