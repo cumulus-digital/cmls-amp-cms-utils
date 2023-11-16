@@ -81,7 +81,7 @@
 
 		function checkRenderEvent(e) {
 			if (e.slot.getTargeting('pos')?.includes(gptPos) && !e.isEmpty) {
-				log.info('Received creative.');
+				log.debug('Received creative.');
 				if (!window._CMLS.pushdownHandler) {
 					import(
 						/* webpackChunkName: 'advertising/pushdown/pushdown-2-handle-delivery' */
@@ -111,8 +111,8 @@
 		adTag.addListener('slotRenderEnded', checkRenderEvent);
 
 		adTag.queue(() => {
-			log.info('Defining slot');
-			var slot = adTag.defineSlot({
+			log.debug('Defining slot');
+			const slot = adTag.defineSlot({
 				outOfPage: true,
 				adUnitPath: window._CMLS.adPath + '/pushdown',
 				div: elementId,
@@ -121,8 +121,10 @@
 				prebid: false,
 			});
 
-			slot && adTag.display(slotDiv, adTag.isInitialLoadDisabled());
+			slot && adTag.display(elementId, adTag.isInitialLoadDisabled());
 		});
+
+		log.info('Initialized');
 	}
 
 	if (window._CMLS?.adPath) {
