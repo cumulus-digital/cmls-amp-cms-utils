@@ -4,7 +4,7 @@ const { detectPlayer, addAfterPageFrame } = window._CMLS.libs.playerTools;
 
 const scriptName = 'AUTO-RELOAD PAGE';
 const nameSpace = 'autoReloadPage';
-const version = '0.3';
+const version = '0.4';
 const log = new window._CMLS.Logger(`${scriptName} ${version}`);
 
 ((window, undefined) => {
