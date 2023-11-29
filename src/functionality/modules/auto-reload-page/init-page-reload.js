@@ -30,7 +30,9 @@ const log = new window._CMLS.Logger(`${scriptName} ${version}`);
 		}
 
 		checkCondition() {
-			const win = window.self;
+			const win = window.self,
+				pathname = win.location.pathname;
+			return !!(pathname.length < 1 || pathname === '/');
 			return !!win?.document?.body?.matches(this.settings.condition);
 		}
 
@@ -48,7 +50,10 @@ const log = new window._CMLS.Logger(`${scriptName} ${version}`);
 			this.stop();
 
 			if (!this.checkCondition()) {
-				log.info('Condition check failed, timer will not start');
+				log.info('Condition check failed, timer will not start', {
+					tag: window.self.document.body,
+					must_match: this.settings.condition,
+				});
 				return;
 			}
 
