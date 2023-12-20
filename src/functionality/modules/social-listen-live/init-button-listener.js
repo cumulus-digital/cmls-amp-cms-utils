@@ -25,7 +25,20 @@ const log = new window._CMLS.Logger(`${scriptName} ${version}`);
 		$(window.document.body)
 			.off(`click.${nameSpace}`)
 			.on(`click.${nameSpace}`, selectors.join(','), (e) => {
-				if (detectPlayer()) {
+				const player = detectPlayer();
+				if (!player) {
+					log.warn('No player detected!');
+					return;
+				}
+
+				if (player === 'cumulus' && window.cmls_player.play) {
+					e.preventDefault();
+					log.info('Caught a listen live request');
+					window.cmls_player.play();
+					return;
+				}
+
+				if (player === 'tunegenie') {
 					e.preventDefault();
 					log.info('Caught a listen live request');
 					window._CMLS.switchStream({
@@ -33,6 +46,7 @@ const log = new window._CMLS.Logger(`${scriptName} ${version}`);
 						theme: window.top?.tgmp_default_theme,
 						autostart: true,
 					});
+					return;
 				}
 			});
 		addAfterPageFrame(() => {

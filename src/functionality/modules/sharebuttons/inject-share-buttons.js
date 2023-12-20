@@ -112,7 +112,7 @@ const log = new window._CMLS.Logger(`${scriptName} ${version}`);
 	//container.shadowRoot.append(share_buttons);
 
 	const style = import(
-		/* webpackPreload: true, webpackChunkName: 'functionality/sharebuttons/style' */
+		/* webpackChunkName: 'functionality/sharebuttons/style' */
 		'./style.scss'
 	).then((style) => {
 		if (style?.default?.use) {

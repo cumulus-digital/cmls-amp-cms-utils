@@ -45,7 +45,6 @@
 
 		const style = import(
 			/*
-				webpackPreload: true,
 				webpackChunkName: 'advertising/pushdown/style'
 			*/
 			'./styles.scss'

@@ -90,7 +90,7 @@ import config from './config.json';
 				}
 
 				import(
-					/* webpackPreload: true, webpackChunkName: 'advertising/sidewalls/style' */
+					/* webpackChunkName: 'advertising/sidewalls/style' */
 					'./styles.scss'
 				).then((style) => {
 					if (style?.default?.use)

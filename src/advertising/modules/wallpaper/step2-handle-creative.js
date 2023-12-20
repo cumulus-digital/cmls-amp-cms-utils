@@ -95,7 +95,7 @@
 			container.shadowRoot.append(containerStyle);
 			*/
 			const style = import(
-				/* webpackPreload: true, webpackChunkName: 'advertising/wallpaper/style-inner' */
+				/* webpackChunkName: 'advertising/wallpaper/style-inner' */
 				'./style-inner.scss'
 			).then((style) => {
 				if (style?.default?.use)
@@ -480,7 +480,7 @@
 		}
 		*/
 		import(
-			/* webpackPreload: true, webpackChunkName: 'advertising/wallpaper/style-outer' */
+			/* webpackChunkName: 'advertising/wallpaper/style-outer' */
 			'./styles.scss'
 		).then((style) => {
 			if (style?.default?.use) style.default.use();

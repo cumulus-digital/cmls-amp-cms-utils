@@ -27,6 +27,10 @@ const querySelectorPageFrames = (w) =>
 			.join(',')
 	);
 
+/**
+ * Detect if a known streaming player is enabled
+ * @returns {false|string}
+ */
 export const detectPlayer = () => {
 	const bodyClass = 'has-detected-player';
 	if (player) {
@@ -38,7 +42,7 @@ export const detectPlayer = () => {
 			hasPlayer = 'tunegenie';
 			return true;
 		}
-		if (window.frames[page_frame_names.cumulus]) {
+		if (w?.cmls_player || window.frames[page_frame_names.cumulus]) {
 			hasPlayer = 'cumulus';
 			return true;
 		}
@@ -67,11 +71,12 @@ window._CMLS.playerTools.detectPlayer = detectPlayer;
 
 export const navigateThroughPlayer = (url) => {
 	const player = detectPlayer();
-	if (player === 'tunegenie') {
+	if (player === 'tunegenie' && window.tgmp.updateLocation) {
 		window.tgmp.updateLocation(url);
-	}
-	if (player === 'cumulus') {
+	} else if (player === 'cumulus' && window.cmls_player.updateLocation) {
 		window.cmls_player.updateLocation(url);
+	} else {
+		window.self.location.href = url;
 	}
 };
 window._CMLS.playerTools.navigateThroughPlayer = navigateThroughPlayer;
@@ -123,12 +128,15 @@ window._CMLS.playerTools.getPlayerFrame = getPlayerFrame;
  * @returns {boolean}
  */
 export const isInIframe = () => {
+	if (window.self !== window.top) return true;
+	if (window.self.name in page_frame_names) return true;
+	return false;
 	return window.self !== window.top || window.self.name === page_frame_name;
 };
 window._CMLS.playerTools.isInIframe = isInIframe;
 
 /**
- * Runs callback when the TG player generates the pageFrame.
+ * Runs callback when the a player generates an iframe.
  * Useful for deregistering stuff since that's loading the next page
  * but the original window context remains
  */
