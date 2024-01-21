@@ -124,7 +124,7 @@ export default class Logger {
 		// Add colors to message type
 		const colors = {
 			debug: '#777777',
-			info: 'darkblue',
+			info: 'inherit',
 			warn: 'darkgoldenrod',
 			error: 'darkred',
 		};
