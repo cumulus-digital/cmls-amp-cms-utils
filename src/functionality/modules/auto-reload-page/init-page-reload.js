@@ -19,6 +19,7 @@ const log = new Logger(`${scriptName} ${version}`);
 		timer = null;
 		timeout = null;
 		active = false;
+		log_timer = null;
 
 		constructor(options = false) {
 			if (options instanceof Object) {
@@ -74,11 +75,15 @@ const log = new Logger(`${scriptName} ${version}`);
 				this.timer = null;
 				this.active = false;
 			}
+			this.log_timer = null;
 		}
 
 		tick() {
+			if (!this.log_timer) {
+				this.log_timer = new Date();
+			}
 			const now = new Date();
-			if (Math.random() > 0.95) {
+			if (now - this.log_timer > 30000) {
 				log.debug({
 					headerLength: Infinity,
 					message: [
@@ -86,6 +91,7 @@ const log = new Logger(`${scriptName} ${version}`);
 						[now.toLocaleString(), this.timeout.toLocaleString()],
 					],
 				});
+				this.log_timer = new Date();
 			}
 			if (now.getTime() > this.timeout.getTime()) {
 				this.fire();
