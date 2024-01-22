@@ -2,20 +2,21 @@
  * Fire GTM/analytics events on streaem play
  */
 ((window, undefined) => {
-	const { detectPlayer, waitForPlayer } = window._CMLS.libs.playerTools;
-	const { push: gtmPush } = window._CMLS.libs.GTM;
+	const { Logger, GTM, playerTools } = window.__CMLSINTERNAL.libs;
+	const { detectPlayer, waitForPlayer } = playerTools;
+	const { push: gtmPush } = GTM;
 	const scriptName = 'TGMP-EVENTS-TO-GTM';
 	const nameSpace = 'streamTracking';
 	const version = '0.1';
 
-	const log = new window._CMLS.Logger(`${scriptName} ${version}`);
+	const log = new Logger(`${scriptName} ${version}`);
 
 	waitForPlayer().then(() => {
 		if (
 			window.tgmp?.TGMP_EVENTS?.streamplaying &&
-			!window._CMLS[nameSpace]
+			!window.__CMLSINTERNAL[nameSpace]
 		) {
-			window._CMLS[nameSpace] = window.tgmp.addEventListener(
+			window.__CMLSINTERNAL[nameSpace] = window.tgmp.addEventListener(
 				window.top.TGMP_EVENTS.streamplaying,
 				(e) => {
 					if (e === true) {

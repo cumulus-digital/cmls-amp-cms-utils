@@ -3,7 +3,9 @@ import config from './config.json';
 const { scriptName, nameSpace, version } = config;
 
 export default () => {
-	const log = new window._CMLS.Logger(`${scriptName} Loader ${version}`);
+	const log = new window.__CMLSINTERNAL.Logger(
+		`${scriptName} Loader ${version}`
+	);
 	const waiting = (resolve, reject) => {
 		if (
 			window.self.location.search.includes('cmlsDisableAdRefresh') ||

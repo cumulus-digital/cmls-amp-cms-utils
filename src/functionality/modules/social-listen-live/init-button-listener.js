@@ -1,14 +1,15 @@
+const { Logger, playerTools } = window.__CMLSINTERNAL.libs;
 const {
 	detectPlayer,
 	waitForPlayer,
 	navigateThroughPlayer,
 	addAfterPageFrame,
-} = window._CMLS.libs.playerTools;
+} = playerTools;
 
 const scriptName = 'SOCIAL LISTEN LIVE LINK';
 const nameSpace = 'socialListenLive';
 const version = '0.2';
-const log = new window._CMLS.Logger(`${scriptName} ${version}`);
+const log = new Logger(`${scriptName} ${version}`);
 
 (($, window, undefined) => {
 	const selectors = [

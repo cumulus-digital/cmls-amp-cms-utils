@@ -1,11 +1,10 @@
-const { navigateThroughPlayer } = require('../../../utils/playerTools');
-
-const { detectPlayer, addAfterPageFrame } = window._CMLS.libs.playerTools;
+const { Logger, playerTools } = window.__CMLSINTERNAL.libs;
+const { detectPlayer, addAfterPageFrame, navigateThroughPlayer } = playerTools;
 
 const scriptName = 'AUTO-RELOAD PAGE';
 const nameSpace = 'autoReloadPage';
 const version = '0.4';
-const log = new window._CMLS.Logger(`${scriptName} ${version}`);
+const log = new Logger(`${scriptName} ${version}`);
 
 ((window, undefined) => {
 	const w = window;

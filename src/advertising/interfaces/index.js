@@ -4,10 +4,6 @@
  * All interfaces must inherit from the DefaultInterface
  */
 
-//import Logger from 'Utils/Logger';
-//import triggerEvent from 'Utils/triggerEvent';
-//import domReady from 'Utils/domReady';
-
 import APSInterface from './aps-gpt';
 import GPTInterface from './gpt';
 
@@ -20,22 +16,16 @@ const registeredDetectors = [APSInterface, GPTInterface];
 		nameSpace = 'adTagDetection',
 		version = '0.1';
 
-	const { triggerEvent, domReady } = window._CMLS.libs;
-	const log = new window._CMLS.Logger(`${scriptName} ${version}`);
-
-	window._CMLS = window._CMLS || {};
-	window._CMLS[nameSpace] = {
-		registeredDetectors: registeredDetectors,
-	};
+	const { Logger, triggerEvent, domReady } = window.__CMLSINTERNAL.libs;
+	const log = new Logger(`${scriptName} ${version}`);
 
 	const runDetectors = (detectLoop = 0) => {
-		if (window._CMLS.adTag || detectLoop > 60) {
+		if (window.__CMLSINTERNAL.adTag || detectLoop > 60) {
 			return;
 		}
 		log.debug(`Running registered detectors (Loop: ${detectLoop})`);
 		let detected = false;
-		for (const TagInterface of window._CMLS[nameSpace]
-			.registeredDetectors) {
+		for (const TagInterface of registeredDetectors) {
 			if (!TagInterface.identity || !TagInterface.detectTag) {
 				log.error('Invalid interface', TagInterface);
 				break;
@@ -43,16 +33,16 @@ const registeredDetectors = [APSInterface, GPTInterface];
 			log.debug('Checking registered detector', TagInterface.identity);
 			if (TagInterface.detectTag()) {
 				detected = true;
-				window._CMLS.adTag = new TagInterface();
-				window._CMLS.adTag.identity = TagInterface.identity;
+				window.__CMLSINTERNAL.adTag = new TagInterface();
+				window.__CMLSINTERNAL.adTag.identity = TagInterface.identity;
 				break;
 			}
 		}
 		if (detected) {
 			log.info(
 				'Interface detected',
-				window._CMLS.adTag.identity,
-				window._CMLS.adTag
+				window.__CMLSINTERNAL.adTag.identity,
+				window.__CMLSINTERNAL.adTag
 			);
 			triggerEvent(window, 'cmls-adtag-loaded', true);
 			return;

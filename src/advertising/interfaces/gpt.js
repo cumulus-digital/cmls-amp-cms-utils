@@ -2,7 +2,6 @@
  * Googletag interface
  */
 import DefaultInterface from './DefaultInterface';
-//import Logger from 'Utils/Logger';
 
 export default class GPTInterface extends DefaultInterface {
 	scriptName = 'GPT INTERFACE';
@@ -22,7 +21,7 @@ export default class GPTInterface extends DefaultInterface {
 
 	constructor() {
 		super();
-		this.log = new window._CMLS.Logger(
+		this.log = new window.__CMLSINTERNAL.Logger(
 			`${this.scriptName} v${this.version}`
 		);
 

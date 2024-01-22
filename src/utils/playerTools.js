@@ -1,10 +1,10 @@
+import Logger from 'Utils/Logger';
+import domReady from 'Utils/domReady';
+import triggerEvent from 'Utils/triggerEvent';
+
 /**
  * Tools related to TuneGenie player
  */
-import triggerEvent from 'Utils/triggerEvent';
-import domReady from 'Utils/domReady';
-import Logger from 'Utils/Logger';
-
 const log = new Logger('PlayerTools');
 let player = null;
 let counter = 0;
@@ -141,73 +141,35 @@ window._CMLS.playerTools.isInIframe = isInIframe;
  * but the original window context remains
  */
 const onAfterPageFrame = [];
-let loadedWithPageFrame = false;
-let pageFrameCreated = false;
-const bodyWatch = new MutationObserver((mutationsList, observer) => {
-	const runCallbacks = () => {
-		for (const cb of onAfterPageFrame) {
-			if (typeof cb === 'function') {
-				cb();
-			}
+function runAfterPageFrameCallbacks() {
+	for (const cb of onAfterPageFrame) {
+		if (typeof cb === 'function') {
+			log.debug('Calling afterPageFrame callback', cb);
+			cb();
 		}
-		bodyWatch.disconnect();
-	};
-	for (const mutation of mutationsList) {
+	}
+}
+const bodyWatch = new MutationObserver((mutations, observer) => {
+	for (const mutation of mutations) {
 		if (mutation.type === 'childList') {
-			let pageFrame;
-			// Get top most window that contains a page_frame_name
-			[window.top, window.parent, window.self].some((w) => {
-				if (
-					Object.values(page_frame_names).some(
-						(name) => w?.frames?.[name]
-					)
-				) {
-					pageFrame = w;
-					return true;
-				}
-			});
-			if (pageFrame) {
-				const detectedPlayer = detectPlayer();
-				if (detectedPlayer === 'tunegenie') {
-					pageFrameCreated = true;
-				}
-				if (
-					detectedPlayer === 'cumulus' &&
-					document.body.classList.contains('iframe-loaded')
-				) {
-					pageFrameCreated = true;
-				}
-				if (pageFrameCreated) {
-					runCallbacks();
-				}
+			const hasPlayer = querySelectorPageFrames(window.self);
+			if (hasPlayer) {
+				observer.disconnect();
+				runAfterPageFrameCallbacks();
+				return;
 			}
 		}
 	}
 });
 domReady(() => {
-	let hasFrame = false;
-	[window.self, window.parent, window.top].some((w) => {
-		if (w?.tgmp || window.frames[page_frame_names.tunegenie]) {
-			hasFrame = 'tunegenie';
-			return true;
-		}
-		if (window.frames[page_frame_names.cumulus]) {
-			hasFrame = 'cumulus';
-			return true;
-		}
-	});
-	if (
-		hasFrame &&
-		(hasFrame === 'tunegenie' ||
-			(hasFrame === 'cumulus' &&
-				document.body.classList.contains('iframe-loaded')))
-	) {
-		log.debug('Page loaded with active page frame');
-		loadedWithPageFrame = true;
+	const hasPlayer = querySelectorPageFrames(window.self);
+	if (hasPlayer) {
+		log.debug(
+			'Loaded with page frame, no afterPageFrame callbacks will be run.'
+		);
+		return;
 	}
-	bodyWatch.observe(window.top.document.body, {
-		childList: true,
-	});
+	bodyWatch.observe(window.self.document.body, { childList: true });
 });
 
 /**

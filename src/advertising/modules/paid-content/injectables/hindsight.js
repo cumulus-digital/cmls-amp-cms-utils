@@ -1,8 +1,8 @@
 export default () => {
-	const { h } = window._CMLS.libs;
+	const { h, Logger } = window.__CMLSINTERNAL.libs;
 	const scriptName = 'HINDSIGHT';
 	const version = '0.1';
-	const log = new window._CMLS.Logger(`${scriptName} ${version}`);
+	const log = new Logger(`${scriptName} ${version}`);
 
 	if (window.self.NO_HINDSIGHT || window.parent.NO_HINDSIGHT) {
 		log.info('NO_HINDSIGHT found, refusing injection.');

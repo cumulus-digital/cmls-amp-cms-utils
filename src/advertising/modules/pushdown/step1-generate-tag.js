@@ -6,7 +6,8 @@
  * ".wrapper-content" with targeting pos="pushdown" ON HOMEPAGES ONLY.
  */
 ((window, undefined) => {
-	const { h, triggerEvent } = window._CMLS.libs;
+	const { h, Logger, triggerEvent, playerTools } = window.__CMLSINTERNAL.libs;
+	const { addAfterPageFrame } = playerTools;
 
 	const scriptName = 'PUSHDOWN AD INJECTOR';
 	const nameSpace = 'pushdownInjector';
@@ -16,7 +17,7 @@
 	const injectPoint = '.wrapper-content, body > .wp-site-blocks > header + *';
 	const defaultTimeout = 15;
 
-	const log = new window._CMLS.Logger(`${scriptName} ${version}`);
+	const log = new Logger(`${scriptName} ${version}`);
 
 	const doc = window.document;
 
@@ -27,7 +28,7 @@
 			return;
 		}
 
-		const adTag = window._CMLS.adTag;
+		const adTag = window.__CMLSINTERNAL.adTag;
 
 		const container = (
 			<div
@@ -81,28 +82,16 @@
 		function checkRenderEvent(e) {
 			if (e.slot.getTargeting('pos')?.includes(gptPos) && !e.isEmpty) {
 				log.debug('Received creative.');
-				if (!window._CMLS.pushdownHandler) {
+				if (!window.__CMLSINTERNAL.pushdownHandler) {
 					import(
 						/* webpackChunkName: 'advertising/pushdown/pushdown-2-handle-delivery' */
 						'./step2-handle-delivery.js'
 					).then((script) => {
-						window._CMLS.pushdownHandler.process(e.slot);
+						window.__CMLSINTERNAL.pushdownHandler.process(e.slot);
 					});
 				} else {
-					window._CMLS.pushdownHandler.process(e.slot);
+					window.__CMLSINTERNAL.pushdownHandler.process(e.slot);
 				}
-				/*
-				if (!window._CMLS.pushdownHandler) {
-					$script(
-						window._CMLS.scriptUrlBase +
-							'/advertising/pushdown-handler.js',
-						'pushdown-handler'
-					);
-				}
-				$script.ready('pushdown-handler', () => {
-					window._CMLS.pushdownHandler.process(e.slot);
-				});
-					*/
 				adTag.removeListener('slotRenderEnded', checkRenderEvent);
 			}
 		}
@@ -113,20 +102,27 @@
 			log.debug('Defining slot');
 			const slot = adTag.defineSlot({
 				outOfPage: true,
-				adUnitPath: window._CMLS.adPath + '/pushdown',
+				adUnitPath: window.__CMLSINTERNAL.adPath + '/pushdown',
 				div: elementId,
 				collapse: true,
 				targeting: { pos: gptPos, noprebid: 'noprebid' },
 				prebid: false,
 			});
+			if (!slot) {
+				log.error('Could not define slot!');
+				return;
+			}
 
-			slot && adTag.display(slotDiv, adTag.isInitialLoadDisabled());
+			adTag.display(slotDiv, adTag.isInitialLoadDisabled());
+			addAfterPageFrame(() => {
+				adTag.destroySlots([slot]);
+			});
 		});
 
 		log.info('Initialized');
 	}
 
-	if (window._CMLS?.adPath) {
+	if (window.__CMLSINTERNAL?.adPath) {
 		init();
 	} else {
 		window.addEventListener('cmls-adpath-discovered', () => init());

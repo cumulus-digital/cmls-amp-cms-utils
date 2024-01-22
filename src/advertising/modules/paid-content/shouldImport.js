@@ -1,6 +1,6 @@
 export default () => {
 	const waiting = (resolve) => {
-		const { getBasicPost } = window._CMLS.libs;
+		const { getBasicPost } = window.__CMLSINTERNAL.libs;
 		if (
 			window.self.NO_PAIDCONTENT ||
 			window.self.NO_PAID_CONTENT ||

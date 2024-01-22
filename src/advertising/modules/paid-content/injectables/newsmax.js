@@ -1,5 +1,5 @@
 export default () => {
-	const { h, Fragment } = window._CMLS.libs;
+	const { h, Fragment } = window.__CMLSINTERNAL.libs;
 	if (window.self.NO_NEWSMAX || window.parent.NO_NEWSMAX) {
 		return '';
 	}

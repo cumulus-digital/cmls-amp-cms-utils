@@ -1,8 +1,5 @@
-//import doDynamicImports from 'Utils/doDynamicImports';
 import shouldImportTGMPTracking from './modules/tgmp-events-to-gtm/shouldImport';
 import shouldImportPromoreelClick from './modules/promoreel-click/shouldImport';
-
-const domReady = window._CMLS.libs.domReady;
 
 const imports = [
 	{
@@ -36,4 +33,4 @@ const imports = [
 		check: shouldImportPromoreelClick,
 	},
 ];
-window._CMLS.libs.doDynamicImports(imports);
+window.__CMLSINTERNAL.libs.doDynamicImports(imports);

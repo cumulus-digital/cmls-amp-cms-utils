@@ -1,9 +1,9 @@
-const { h, getBasicPost } = window._CMLS.libs;
+const { h, Logger, getBasicPost } = window.__CMLSINTERNAL.libs;
 
 const scriptName = 'SHAREBUTTONS';
 const nameSpace = 'shareButtons';
 const version = '0.2';
-const log = new window._CMLS.Logger(`${scriptName} ${version}`);
+const log = new Logger(`${scriptName} ${version}`);
 
 ((window, undefined) => {
 	const services = {

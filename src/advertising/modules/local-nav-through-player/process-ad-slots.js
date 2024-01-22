@@ -2,19 +2,19 @@
  * Ads with relative-ish links should navigate through the TG player
  */
 (($, window, undefined) => {
+	const { Logger, domReady, playerTools } = window.__CMLSINTERNAL.libs;
 	const {
 		detectPlayer,
 		waitForPlayer,
 		navigateThroughPlayer,
 		addAfterPageFrame,
-	} = window._CMLS.libs.playerTools;
-	const { domReady } = window._CMLS.libs;
+	} = playerTools;
 
 	const scriptName = 'NAV THROUGH PLAYER';
 	const nameSpace = 'navThroughPlayer';
 	const version = '0.2';
 
-	const log = new window._CMLS.Logger(`${scriptName} ${version}`);
+	const log = new Logger(`${scriptName} ${version}`);
 
 	const doc = window.document;
 
@@ -23,7 +23,7 @@
 		return;
 	}
 
-	if (window._CMLS[nameSpace]) {
+	if (window.__CMLSINTERNAL[nameSpace]) {
 		return;
 	}
 
@@ -190,14 +190,14 @@
 		});
 
 		// Update future frames
-		window._CMLS.adTag.addListener(
+		window.__CMLSINTERNAL.adTag.addListener(
 			'slotRenderEnded',
 			checkSlotRender.bind(this)
 		);
 
 		// Remove listener when tg builds iframe
 		addAfterPageFrame(() => {
-			window._CMLS.adTag.removeListener(
+			window.__CMLSINTERNAL.adTag.removeListener(
 				'slotRenderEnded',
 				checkSlotRender
 			);
@@ -205,10 +205,10 @@
 	}
 
 	const init = () => {
-		window._CMLS[nameSpace] = new localNavThroughPlayer();
+		window.__CMLSINTERNAL[nameSpace] = new localNavThroughPlayer();
 	};
 
-	if (window?._CMLS?.adTag) {
+	if (window?.__CMLSINTERNAL?.adTag) {
 		init();
 	} else {
 		window.addEventListener('cmls-adtag-loaded', () => init());

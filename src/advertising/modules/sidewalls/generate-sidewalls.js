@@ -8,7 +8,7 @@ import config from './config.json';
 //import './styles.scss';
 
 ((window, undefined) => {
-	const { h, domReady } = window._CMLS.libs;
+	const { h, domReady, Logger } = window.__CMLSINTERNAL.libs;
 
 	const {
 		scriptName,
@@ -23,12 +23,10 @@ import config from './config.json';
 	} = config;
 	let { topPad } = config;
 
-	const log = new window._CMLS.Logger(`${scriptName} ${version}`);
+	const log = new Logger(`${scriptName} ${version}`);
 
-	window._CMLS = window._CMLS || {};
-
-	if (!window._CMLS?.[nameSpace]) {
-		window._CMLS[nameSpace] = {
+	if (!window.__CMLSINTERNAL?.[nameSpace]) {
+		window.__CMLSINTERNAL[nameSpace] = {
 			container: null,
 			slots: [],
 			isDisabled: () => {
@@ -60,7 +58,7 @@ import config from './config.json';
 					return;
 				}
 
-				if (window._CMLS[nameSpace].isDisabled()) {
+				if (window.__CMLSINTERNAL[nameSpace].isDisabled()) {
 					return;
 				}
 
@@ -96,18 +94,7 @@ import config from './config.json';
 					if (style?.default?.use)
 						style.default.use({ target: injectPointNode });
 				});
-				/*
-				if (!window.document.getElementById(`${scriptName}-style`)) {
-					const css = createElement.el('link', {
-						rel: 'stylesheet',
-						id: `${scriptName}-style`,
-						href:
-							window._CMLS.scriptUrlBase +
-							'/advertising/sidewalls.css',
-					});
-					injectPointNode.append(css);
-				}
-				*/
+
 				const wrapper = (
 					<div
 						id={containerId}
@@ -124,25 +111,18 @@ import config from './config.json';
 					</div>
 				);
 
-				/*
-				if (topPad) {
-					log.debug('TOPPAD', topPad);
-					wrapper.style.setProperty('--top_pad', topPad + 'px');
-				}
-				*/
-
 				injectPointNode.appendChild(wrapper);
 
 				log.info('Injected');
 			},
 			display: () => {
-				if (window._CMLS[nameSpace].isDisabled()) {
+				if (window.__CMLSINTERNAL[nameSpace].isDisabled()) {
 					return;
 				}
 
 				// Create slots!
-				window._CMLS.adTag.queue(() => {
-					if (window._CMLS[nameSpace].isDisabled()) {
+				window.__CMLSINTERNAL.adTag.queue(() => {
+					if (window.__CMLSINTERNAL[nameSpace].isDisabled()) {
 						return;
 					}
 
@@ -168,7 +148,7 @@ import config from './config.json';
 					];
 
 					const slotCommon = {
-						adUnitPath: `${window._CMLS.adPath}/sidewallLeft`,
+						adUnitPath: `${window.__CMLSINTERNAL.adPath}/sidewallLeft`,
 						size: [[160, 600]],
 						sizeMap: sizeMap,
 						div: 'cmls-sidewall-left',
@@ -180,15 +160,15 @@ import config from './config.json';
 					};
 
 					log.debug('Defining slot cmlsSidewallLeft');
-					window._CMLS[nameSpace].slots.push(
-						window._CMLS.adTag.defineSlot(slotCommon)
+					window.__CMLSINTERNAL[nameSpace].slots.push(
+						window.__CMLSINTERNAL.adTag.defineSlot(slotCommon)
 					);
 
 					log.debug('Defining slot cmls-sidewall-right');
-					window._CMLS[nameSpace].slots.push(
-						window._CMLS.adTag.defineSlot({
+					window.__CMLSINTERNAL[nameSpace].slots.push(
+						window.__CMLSINTERNAL.adTag.defineSlot({
 							...slotCommon,
-							adUnitPath: `${window._CMLS.adPath}/sidewallRight`,
+							adUnitPath: `${window.__CMLSINTERNAL.adPath}/sidewallRight`,
 							div: 'cmls-sidewall-right',
 							targeting: {
 								pos: 'right',
@@ -198,45 +178,45 @@ import config from './config.json';
 
 					if (window.GPT_SITE_SLOTS['cmls-sidewall-left']) {
 						log.debug('Calling display for cmls-sidewall-left');
-						window._CMLS.adTag.display(
+						window.__CMLSINTERNAL.adTag.display(
 							'cmls-sidewall-left',
-							window._CMLS.adTag.isInitialLoadDisabled()
+							window.__CMLSINTERNAL.adTag.isInitialLoadDisabled()
 						);
 					}
 					if (window.GPT_SITE_SLOTS['cmls-sidewall-right']) {
 						log.debug('Calling display for cmls-sidewall-right');
-						window._CMLS.adTag.display(
+						window.__CMLSINTERNAL.adTag.display(
 							'cmls-sidewall-right',
-							window._CMLS.adTag.isInitialLoadDisabled()
+							window.__CMLSINTERNAL.adTag.isInitialLoadDisabled()
 						);
 					}
 				});
 			},
 			destroy: () => {
-				window._CMLS.adTag.queue(() => {
-					if (window._CMLS[nameSpace]?.slots?.length) {
+				window.__CMLSINTERNAL.adTag.queue(() => {
+					if (window.__CMLSINTERNAL[nameSpace]?.slots?.length) {
 						log.info(
 							'Destroying slots by request',
-							window._CMLS[nameSpace].slots
+							window.__CMLSINTERNAL[nameSpace].slots
 						);
-						window._CMLS.adTag.destroySlots(
-							window._CMLS[nameSpace].slots
+						window.__CMLSINTERNAL.adTag.destroySlots(
+							window.__CMLSINTERNAL[nameSpace].slots
 						);
 					}
 				});
 			},
 			init: () => {
 				domReady(() => {
-					if (!window._CMLS[nameSpace].isDisabled()) {
-						if (window._CMLS.adPath) {
-							window._CMLS[nameSpace].inject();
-							window._CMLS[nameSpace].display();
+					if (!window.__CMLSINTERNAL[nameSpace].isDisabled()) {
+						if (window.__CMLSINTERNAL.adPath) {
+							window.__CMLSINTERNAL[nameSpace].inject();
+							window.__CMLSINTERNAL[nameSpace].display();
 						} else {
 							window.addEventListener(
 								'cmls-adpath-discovered',
 								() => {
-									window._CMLS[nameSpace].inject();
-									window._CMLS[nameSpace].display();
+									window.__CMLSINTERNAL[nameSpace].inject();
+									window.__CMLSINTERNAL[nameSpace].display();
 								}
 							);
 						}
@@ -246,5 +226,5 @@ import config from './config.json';
 		};
 	}
 
-	window._CMLS[nameSpace].init();
+	window.__CMLSINTERNAL[nameSpace].init();
 })(window.self);

@@ -2,10 +2,11 @@ import config from './config.json';
 
 export default () => {
 	const { scriptName, nameSpace, version, elementId } = config;
+	const { Logger, playerTools } = window.__CMLSINTERNAL.libs;
 
-	const log = new window._CMLS.Logger(`${scriptName} ${version}`);
+	const log = new Logger(`${scriptName} ${version}`);
 
-	const { waitForPlayer, detectPlayer } = window._CMLS.libs.playerTools;
+	const { waitForPlayer, detectPlayer } = playerTools;
 
 	const doImport = () => {
 		import(

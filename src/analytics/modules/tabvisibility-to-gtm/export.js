@@ -2,15 +2,16 @@
  * Tracks tab visibility changes and fires GTM events
  */
 ((window, undefined) => {
-	const { addVisibilityListener, isVisible } =
-		window._CMLS.libs.tabVisibility;
-	const { addAfterPageFrame } = window._CMLS.libs.playerTools;
-	const { push: gtmPush } = window._CMLS.libs.GTM;
+	const { Logger, GTM, playerTools, tabVisibility } =
+		window.__CMLSINTERNAL.libs;
+	const { addVisibilityListener, isVisible } = tabVisibility;
+	const { addAfterPageFrame } = playerTools;
+	const { push: gtmPush } = GTM;
 	const scriptName = 'TABVISIBILITY-TO-GTM';
 	const nameSpace = 'gtmTabVisibilityEvent';
 	const version = '0.2';
 
-	const log = new window._CMLS.Logger(`${scriptName} ${version}`);
+	const log = new Logger(`${scriptName} ${version}`);
 
 	let start = Date.now();
 

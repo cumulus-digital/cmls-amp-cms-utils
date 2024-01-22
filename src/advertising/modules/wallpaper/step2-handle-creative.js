@@ -1,14 +1,14 @@
 //import './style-inner.scss';
 
 ((window, undefined) => {
-	const { h } = window._CMLS.libs;
-	const { throttle, debounce } = window._CMLS.libs.lodash;
+	const { h, Logger, lodash } = window.__CMLSINTERNAL.libs;
+	const { throttle, debounce } = lodash;
 
 	const scriptName = 'WALLPAPER HANDLER';
 	const nameSpace = 'wallpaperHandler';
 	const classBase = 'cmls-wallpaper';
 	const version = '0.1';
-	const log = new window._CMLS.Logger(`${scriptName} ${version}`);
+	const log = new Logger(`${scriptName} ${version}`);
 
 	const doc = window.document;
 
@@ -85,15 +85,7 @@
 			this.refreshNodeCache();
 			const container = <div id={id} class={className} />;
 			container.attachShadow({ mode: 'open' });
-			/*
-			const containerStyle = createElement.el('link', {
-				rel: 'stylesheet',
-				href:
-					window._CMLS.scriptUrlBase +
-					'/advertising/wallpaper-handler.css',
-			});
-			container.shadowRoot.append(containerStyle);
-			*/
+
 			const style = import(
 				/* webpackChunkName: 'advertising/wallpaper/style-inner' */
 				'./style-inner.scss'
@@ -159,17 +151,18 @@
 
 		this.clearObstructions = () => {
 			log.debug('Clearing obstructions.', this.nodeCache.obstructions);
+			const adTag = window.__CMLSINTERNAL?.adTag;
 
 			// Handle our sidewalls
 			window.NO_SIDEWALLS = true;
-			if (window._CMLS?.sidewallAds?.destroy) {
-				window._CMLS?.sidewallAds?.destroy();
+			if (window.__CMLSINTERNAL?.sidewallAds?.destroy) {
+				window.__CMLSINTERNAL?.sidewallAds?.destroy();
 			}
 
 			if (this.nodeCache.obstructions?.length) {
 				this.nodeCache.obstructions.forEach((obstruction) => {
 					// Destroy any ad slots in obstructions
-					if (window._CMLS?.adTag) {
+					if (adTag) {
 						const badSlots = [];
 						const adEls = [
 							...obstruction.querySelectorAll(
@@ -188,7 +181,7 @@
 						if (badSlots.length) {
 							log.debug('Found ads in obstructions', badSlots);
 							const slotsToKill = [];
-							window._CMLS.adTag.getSlots().forEach((slot) => {
+							adTag.getSlots().forEach((slot) => {
 								if (
 									badSlots.includes(slot.getSlotElementId())
 								) {
@@ -200,7 +193,7 @@
 									'Found ad slots to kill',
 									slotsToKill
 								);
-								window._CMLS.adTag.destroySlots(slotsToKill);
+								adTag.destroySlots(slotsToKill);
 							}
 						}
 					}
@@ -339,8 +332,8 @@
 			);
 
 			// If navThroughPlayer library is available, attach to our link
-			if (link.href && window._CMLS?.navThroughPlayer) {
-				window._CMLS.navThroughPlayer.updateLink(link);
+			if (link.href && window.__CMLSINTERNAL?.navThroughPlayer) {
+				window.__CMLSINTERNAL.navThroughPlayer.updateLink(link);
 			}
 
 			log.debug('Building wallpaper into container', slotLink, slotImage);
@@ -469,16 +462,6 @@
 		);
 
 		// Inject stylesheet
-		/*
-		if (!doc.getElementById(`${classBase}-styles`)) {
-			const style = createElement.el('link', {
-				rel: 'stylesheet',
-				id: `${classBase}-styles`,
-				href: window._CMLS.scriptUrlBase + '/advertising/wallpaper.css',
-			});
-			doc.body.append(style);
-		}
-		*/
 		import(
 			/* webpackChunkName: 'advertising/wallpaper/style-outer' */
 			'./styles.scss'
@@ -489,7 +472,7 @@
 		this.refreshNodeCache();
 	}
 
-	if (!window._CMLS[nameSpace]) {
-		window._CMLS[nameSpace] = new WallpaperHandler();
+	if (!window.__CMLSINTERNAL[nameSpace]) {
+		window.__CMLSINTERNAL[nameSpace] = new WallpaperHandler();
 	}
 })(window.self);

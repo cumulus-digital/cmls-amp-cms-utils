@@ -1,5 +1,6 @@
 export default async () => {
-	const hasPlayer = await window._CMLS.libs.playerTools.waitForPlayer();
+	const hasPlayer =
+		await window.__CMLSINTERNAL.libs.playerTools.waitForPlayer();
 	if (hasPlayer) {
 		return () => {
 			import(

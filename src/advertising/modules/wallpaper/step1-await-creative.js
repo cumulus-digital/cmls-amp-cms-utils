@@ -4,17 +4,17 @@
  * Detect existance of a wallpaper ad and load the handler
  */
 ((window) => {
-	const { h } = window._CMLS.libs;
+	const { h, Logger } = window.__CMLSINTERNAL.libs;
 	const scriptName = 'WALLPAPER DETECTOR';
 	const nameSpace = 'wallpaperDetector';
 	const version = '0.1';
-	const log = new window._CMLS.Logger(`${scriptName} ${version}`);
+	const log = new Logger(`${scriptName} ${version}`);
 
 	class WallpaperDetector {
 		pos = 'wallpaper-ad';
 
 		constructor() {
-			const adTag = window._CMLS.adTag;
+			const adTag = window.__CMLSINTERNAL.adTag;
 			let hasWallpaper = adTag
 				.getSlots()
 				.some((slot) => this.slotIsWallpaper(slot));
@@ -26,7 +26,7 @@
 			log.info('Wallpaper detector loaded');
 
 			// Check existing slots
-			window._CMLS.adTag.getSlots().some((slot) => {
+			adTag.getSlots().some((slot) => {
 				if (
 					this.slotIsWallpaper(slot) &&
 					this.checkSlotForCreative(slot)
@@ -36,11 +36,11 @@
 			});
 
 			// Check future slots
-			window._CMLS.adTag.addListener('slotRenderEnded', (e) => {
+			adTag.addListener('slotRenderEnded', (e) => {
 				const slot = e.slot;
 				if (this.slotIsWallpaper(slot)) {
 					if (e.isEmpty) {
-						window._CMLS?.wallpaperHandler?.reset();
+						window.__CMLSINTERNAL?.wallpaperHandler?.reset();
 						return;
 					}
 					if (this.checkSlotForCreative(slot)) {
@@ -86,7 +86,7 @@
 
 			if (!slot.getResponseInformation()) {
 				log.debug('Slot was empty.');
-				window._CMLS?.wallpaperHandler?.reset();
+				window.__CMLSINTERNAL?.wallpaperHandler?.reset();
 				return false;
 			}
 
@@ -97,7 +97,7 @@
 			log.debug('Slot has creative, passing to handler.');
 			window.NO_SIDEWALLS = true;
 
-			if (!window._CMLS.wallpaperHandler) {
+			if (!window.__CMLSINTERNAL.wallpaperHandler) {
 				/*
 				$script(
 					window._CMLS.scriptUrlBase +
@@ -109,10 +109,10 @@
 					/* webpackChunkName: 'advertising/wallpaper/wallpaper-2-handle-creative' */
 					'./step2-handle-creative.js'
 				).then(() => {
-					window._CMLS.wallpaperHandler.process(slot);
+					window.__CMLSINTERNAL.wallpaperHandler.process(slot);
 				});
 			} else {
-				window._CMLS.wallpaperHandler.process(slot);
+				window.__CMLSINTERNAL.wallpaperHandler.process(slot);
 			}
 			/*
 			$script.ready('wallpaper-handler', () => {
@@ -123,11 +123,11 @@
 		}
 	}
 
-	if (window?._CMLS?.adPath) {
-		window._CMLS[nameSpace] = new WallpaperDetector();
+	if (window?.__CMLSINTERNAL?.adPath) {
+		window.__CMLSINTERNAL[nameSpace] = new WallpaperDetector();
 	} else {
 		window.addEventListener('cmls-adpath-discovered', () => {
-			window._CMLS[nameSpace] = new WallpaperDetector();
+			window.__CMLSINTERNAL[nameSpace] = new WallpaperDetector();
 		});
 	}
 })(window.self);

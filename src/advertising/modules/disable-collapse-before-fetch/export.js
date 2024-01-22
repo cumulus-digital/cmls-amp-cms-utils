@@ -12,10 +12,10 @@ const {
 } = config;
 
 ((window, undefined) => {
-	const log = new window._CMLS.Logger(`${scriptName} ${version}`);
+	const log = new window.__CMLSINTERNAL.Logger(`${scriptName} ${version}`);
 
 	const init = () => {
-		const slots = window._CMLS.adTag.getSlots();
+		const slots = window.__CMLSINTERNAL.adTag.getSlots();
 		const toDisable = slots.filter((slot) => {
 			const id = slot.getSlotElementId();
 			const pos = slot.getTargeting('pos');
@@ -30,19 +30,19 @@ const {
 		if (toDisable.length) {
 			log.info(
 				`Disabling collapse for ${toDisable.length} slots`,
-				window._CMLS.adTag.listSlotData(toDisable)
+				window.__CMLSINTERNAL.adTag.listSlotData(toDisable)
 			);
 			toDisable.forEach((slot) => slot.setCollapseEmptyDiv(true, false));
 		}
 	};
 
-	if (window._CMLS.adTag) {
-		window._CMLS.adTag.queue(() => {
+	if (window.__CMLSINTERNAL.adTag) {
+		window.__CMLSINTERNAL.adTag.queue(() => {
 			init();
 		});
 	} else {
 		window.addEventListener('cmls-adtag-loaded', () => {
-			window._CMLS.adTag.queue(() => {
+			window.__CMLSINTERNAL.adTag.queue(() => {
 				init();
 			});
 		});

@@ -3,8 +3,6 @@ require('./modules/register-adpath/no-export.js');
 //require('./modules/sticky-bottom-320x50/no-export.js');
 require('./modules/west7-1x1/no-export.js');
 
-//import domReady from 'Utils/domReady';
-//import doDynamicImports from 'Utils/doDynamicImports';
 import shouldDisableCollapse from './modules/disable-collapse-before-fetch/shouldImport';
 import shouldImportStickyBottom from './modules/sticky-bottom-320x50/shouldImport';
 import shouldImportAutoRefreshAds from './modules/auto-refresh-ads/shouldImport';
@@ -61,4 +59,4 @@ const imports = [
 		check: shouldImportSidewalls,
 	},
 ];
-window._CMLS.libs.doDynamicImports(imports);
+window.__CMLSINTERNAL.libs.doDynamicImports(imports);

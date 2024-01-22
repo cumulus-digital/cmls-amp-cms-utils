@@ -1,8 +1,6 @@
-import domReady from './domReady';
-const urlBase = window._CMLS.scriptUrlBase;
-
 export default (imports) => {
-	const log = new window._CMLS.Logger('DYNAMIC IMPORT');
+	const urlBase = window.__CMLSINTERNAL.scriptUrlBase;
+	const log = new window.__CMLSINTERNAL.Logger('DYNAMIC IMPORT');
 	const waitForDomReady = [];
 	const immediate = [];
 
@@ -50,7 +48,7 @@ export default (imports) => {
 	});
 
 	if (waitForDomReady.length) {
-		domReady(() => {
+		window.__CMLSINTERNAL.libs.domReady(() => {
 			waitForDomReady.forEach(async (im) => {
 				if (im.hasOwnProperty('check')) {
 					const checked = await im.check();

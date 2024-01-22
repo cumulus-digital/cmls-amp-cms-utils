@@ -15,15 +15,16 @@
  *
  */
 ((window, undefined) => {
-	const { h, Fragment, triggerEvent } = window._CMLS.libs;
-	const { throttle, debounce } = window._CMLS.libs.lodash;
+	const { h, Fragment, Logger, lodash, playerTools, triggerEvent } =
+		window.__CMLSINTERNAL.libs;
+	const { throttle, debounce } = lodash;
 
 	const scriptName = 'PUSHDOWN HANDLER';
 	const nameSpace = 'pushdownHandler';
 	const version = '0.1';
 	const elementId = 'gpt-pushdown';
 	const defaultTimeout = 15;
-	const log = new window._CMLS.Logger(`${scriptName} ${version}`);
+	const log = new Logger(`${scriptName} ${version}`);
 
 	const doc = window.document;
 
@@ -191,10 +192,9 @@
 			}
 
 			// If localNavThroughPlayer lib is available, process links
-			if (window._CMLS?.navThroughPlayer) {
-				const navThroughPlayer = window._CMLS.navThroughPlayer;
+			if (window.__CMLSINTERNAL?.navThroughPlayer) {
 				[...iDoc.querySelectorAll('a[href]')].forEach((link) =>
-					navThroughPlayer.updateLink(link)
+					window.__CMLSINTERNAL?.navThroughPlayer.updateLink(link)
 				);
 			}
 
@@ -283,7 +283,7 @@
 		});
 	}
 
-	if (!window._CMLS[nameSpace]) {
-		window._CMLS[nameSpace] = new PushdownHandler();
+	if (!window.__CMLSINTERNAL[nameSpace]) {
+		window.__CMLSINTERNAL[nameSpace] = new PushdownHandler();
 	}
 })(window.self);

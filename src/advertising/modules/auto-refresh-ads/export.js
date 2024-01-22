@@ -18,11 +18,12 @@ import config from './config.json';
 		defaultRefreshInMinutes,
 		ALWAYS_REFRESH_POS = [],
 	} = config;
-	const log = new window._CMLS.Logger(`${scriptName} ${version}`);
+	const { Logger } = window.__CMLSINTERNAL.libs;
+	const log = new Logger(`${scriptName} ${version}`);
 
 	// Public access exclusion from refresh
-	if (!window._CMLS.initAutoRefreshAdsExclusion) {
-		window._CMLS.initAutoRefreshAdsExclusion = () => {
+	if (!window.__CMLSINTERNAL?.initAutoRefreshAdsExclusion) {
+		window.__CMLSINTERNAL.initAutoRefreshAdsExclusion = () => {
 			window._CMLS.autoRefreshAdsExclusion =
 				window._CMLS?.autoRefreshAdsExclusion || [];
 
@@ -47,10 +48,10 @@ import config from './config.json';
 			}
 		};
 	}
-	window._CMLS.initAutoRefreshAdsExclusion();
-	window._CMLS.clearAutoRefreshAdsExclusion = () => {
+	window.__CMLSINTERNAL.initAutoRefreshAdsExclusion();
+	window.__CMLSINTERNAL.clearAutoRefreshAdsExclusion = () => {
 		delete window._CMLS.autoRefreshAdsExclusion;
-		window._CMLS.initAutoRefreshAdsExclusion();
+		window.__CMLSINTERNAL.initAutoRefreshAdsExclusion();
 	};
 
 	const init = () => {
@@ -106,7 +107,7 @@ import config from './config.json';
 					return false;
 				}
 
-				const adTag = window._CMLS.adTag;
+				const adTag = window.__CMLSINTERNAL.adTag;
 
 				log.debug(
 					'Adding impressionViewable listener. Refresh timer will be set per-slot once an impression is delivered.'
@@ -162,7 +163,7 @@ import config from './config.json';
 			 */
 			checkGlobalConditions() {
 				const { DISABLED, PAUSED, RUNNING } = this.globalConditions;
-				const autoReloadPage = window._CMLS?.autoReload;
+				const autoReloadPage = window.__CMLSINTERNAL?.autoReload;
 				if (window.DISABLE_AUTO_REFRESH_ADS) {
 					log.warn(
 						'window.DISABLE_AUTO_REFRESH_ADS is set. Ads will not refresh.'
@@ -186,7 +187,7 @@ import config from './config.json';
 				if (
 					typeof window._CMLS.autoRefreshAdsExclusion === 'undefined'
 				) {
-					window._CMLS?.initAutoRefreshAdsExclusion();
+					window.__CMLSINTERNAL?.initAutoRefreshAdsExclusion();
 				}
 				return window._CMLS.autoRefreshAdsExclusion.includes(
 					slot.getSlotElementId()
@@ -268,9 +269,9 @@ import config from './config.json';
 				if (refreshSlots.length) {
 					log.info(
 						`Refreshing ${refreshSlots.length} slots.`,
-						window._CMLS.adTag.listSlotData(refreshSlots)
+						window.__CMLSINTERNAL.adTag.listSlotData(refreshSlots)
 					);
-					window._CMLS.adTag.refresh(refreshSlots);
+					window.__CMLSINTERNAL.adTag.refresh(refreshSlots);
 				}
 			}
 
@@ -282,17 +283,17 @@ import config from './config.json';
 			}
 		}
 
-		window._CMLS[nameSpace] = new adRefresher();
+		window.__CMLSINTERNAL[nameSpace] = new adRefresher();
 		log.debug('Initialized.');
 	};
 
-	if (window._CMLS.adTag) {
-		window._CMLS.adTag.queue(() => {
+	if (window.__CMLSINTERNAL.adTag) {
+		window.__CMLSINTERNAL.adTag.queue(() => {
 			init();
 		});
 	} else {
 		window.addEventListener('cmls-adtag-loaded', () => {
-			window._CMLS.adTag.queue(() => {
+			window.__CMLSINTERNAL.adTag.queue(() => {
 				init();
 			});
 		});

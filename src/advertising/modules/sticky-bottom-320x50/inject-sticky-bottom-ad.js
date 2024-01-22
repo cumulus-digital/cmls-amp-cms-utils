@@ -4,13 +4,12 @@
 import config from './config.json';
 
 ((window) => {
-	const { h, domReady } = window._CMLS.libs;
-	const { waitForPlayer, detectPlayer, addAfterPageFrame } =
-		window._CMLS.libs.playerTools;
+	const { h, domReady, Logger, playerTools } = window.__CMLSINTERNAL.libs;
+	const { waitForPlayer, detectPlayer, addAfterPageFrame } = playerTools;
 
 	const { scriptName, nameSpace, version, elementId } = config;
 
-	const log = new window._CMLS.Logger(`${scriptName} ${version}`);
+	const log = new Logger(`${scriptName} ${version}`);
 
 	// We need to operate in the topmost window with _CMLS lib
 	let context = window.self;
@@ -25,13 +24,13 @@ import config from './config.json';
 		elementId = elementId;
 		slot = null;
 		context = context;
-		adTag = context._CMLS.adTag;
+		adTag = context.__CMLSINTERNAL.adTag;
 		zIndexInterval;
 
 		constructor() {
 			this.elementId = elementId;
 			this.context = context;
-			this.adTag = context._CMLS.adTag;
+			this.adTag = context.__CMLSINTERNAL.adTag;
 
 			this.inject();
 		}
@@ -127,23 +126,7 @@ import config from './config.json';
 						);
 					}
 				});
-				/*
-				addAfterPageFrame(() => {
-					clearInterval(this.zIndexInterval);
-					this.zIndexInterval = null;
-				});
-				*/
 
-				/*
-				const style = createElement.el('link', {
-					id: `${this.elementId}-style`,
-					rel: 'stylesheet',
-					href:
-						window._CMLS.scriptUrlBase +
-						'/advertising/sticky-bottom-320x50.css',
-				});
-				this.context.document.body.append(style);
-				*/
 				const style = import(
 					/*
 						webpackChunkName: 'advertising/sticky-bottom-320x50/style'
@@ -192,7 +175,7 @@ import config from './config.json';
 					],
 				];
 				this.slot = this.adTag.defineSlot({
-					adUnitPath: `${this.context._CMLS.adPath}/stickyBottomAd`,
+					adUnitPath: `${this.context.__CMLSINTERNAL.adPath}/stickyBottomAd`,
 					size: [
 						[120, 60],
 						[300, 50],
@@ -219,14 +202,14 @@ import config from './config.json';
 	}
 
 	const instantiate = () => {
-		if (context._CMLS[nameSpace] instanceof StickyBottomAd) {
-			context._CMLS[nameSpace].refresh();
+		if (context.__CMLSINTERNAL[nameSpace] instanceof StickyBottomAd) {
+			context.__CMLSINTERNAL[nameSpace].refresh();
 			return;
 		}
-		context._CMLS[nameSpace] = new StickyBottomAd();
+		context.__CMLSINTERNAL[nameSpace] = new StickyBottomAd();
 	};
 
-	if (window?._CMLS?.adPath) {
+	if (window?.__CMLSINTERNAL?.adPath) {
 		instantiate();
 	} else {
 		window.addEventListener('cmls-adpath-discovered', () => {

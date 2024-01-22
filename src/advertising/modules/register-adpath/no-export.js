@@ -1,13 +1,15 @@
 import config from './config.json';
 
 ((window) => {
-	const { triggerEvent } = window._CMLS.libs;
+	const { Logger, triggerEvent } = window.__CMLSINTERNAL.libs;
 	const { scriptName, version, networkId } = config;
-	const log = new window._CMLS.Logger(`${scriptName} ${version}`);
+	const log = new Logger(`${scriptName} ${version}`);
 
 	function registerAdPath() {
+		const adTag = window.__CMLSINTERNAL.adTag;
+
 		log.debug('Checking for ad path');
-		const slots = window?._CMLS?.adTag.getSlots();
+		const slots = adTag.getSlots();
 
 		log.debug(`Testing ${slots.length} slots`);
 		if (slots.length) {
@@ -21,11 +23,15 @@ import config from './config.json';
 					);
 					window._CMLS = window._CMLS || {};
 					window._CMLS.adPath = p;
-					log.info('Ad path discovered', window._CMLS.adPath);
+					window.__CMLSINTERNAL.adPath = p;
+					log.info(
+						'Ad path discovered',
+						window.__CMLSINTERNAL.adPath
+					);
 					triggerEvent(
 						window,
 						'cmls-adpath-discovered',
-						window._CMLS.adPath
+						window.__CMLSINTERNAL.adPath
 					);
 					return true;
 				}
@@ -35,7 +41,7 @@ import config from './config.json';
 		}
 	}
 
-	if (window?._CMLS?.adTag?.isReady()) {
+	if (window?.__CMLSINTERNAL?.adTag?.isReady()) {
 		registerAdPath();
 	} else {
 		window.addEventListener('cmls-adtag-loaded', () => registerAdPath());

@@ -6,9 +6,10 @@ import config from './config.json';
 
 ((window, undefined) => {
 	const { scriptName, nameSpace, version } = config;
-	const { waitForPlayer } = window._CMLS.libs.playerTools;
-	const { throttle } = window._CMLS.libs.lodash;
-	const log = new window._CMLS.Logger(`${scriptName} ${version}`);
+	const { Logger, playerTools, lodash } = window.__CMLSINTERNAL.libs;
+	const { waitForPlayer } = playerTools;
+	const { throttle } = lodash;
+	const log = new Logger(`${scriptName} ${version}`);
 
 	class playerEventTracking {
 		initTime = null;
@@ -44,7 +45,7 @@ import config from './config.json';
 		}
 
 		handleTrackChange(track) {
-			if (!window._CMLS.adTag) {
+			if (!window.__CMLSINTERNAL.adTag) {
 				log.warn(
 					'Track change event triggered without adTag interface.',
 					track
@@ -58,7 +59,7 @@ import config from './config.json';
 					this.initTimeout = null;
 				}
 
-				const adTag = window._CMLS.adTag;
+				const adTag = window.__CMLSINTERNAL.adTag;
 
 				/*
 				const refreshSlotsInfo = [];
@@ -136,12 +137,13 @@ import config from './config.json';
 	}
 
 	waitForPlayer().then(() => {
-		if (!window._CMLS[nameSpace]?.active) {
-			if (window._CMLS.adTag) {
-				window._CMLS[nameSpace] = new playerEventTracking();
+		if (!window.__CMLSINTERNAL[nameSpace]?.active) {
+			if (window.__CMLSINTERNAL.adTag) {
+				window.__CMLSINTERNAL[nameSpace] = new playerEventTracking();
 			} else {
 				window.addEventListener('cmls-adtag-loaded', () => {
-					window._CMLS[nameSpace] = new playerEventTracking();
+					window.__CMLSINTERNAL[nameSpace] =
+						new playerEventTracking();
 				});
 			}
 		}

@@ -12,15 +12,14 @@
  * <a href="#" class="tgmp-switchstream tgmp-streamid-wxyz tgmp-theme-550000 tgmp-autostart">Switch Stream</a>
  */
 (($, window, undefined) => {
-	const { detectPlayer, waitForPlayer, addAfterPageFrame } =
-		window._CMLS.libs.playerTools;
-	const domReady = window._CMLS.libs.domReady;
+	const { Logger, playerTools } = window.__CMLSINTERNAL.libs;
+	const { detectPlayer, waitForPlayer, addAfterPageFrame } = playerTools;
 
 	const scriptName = 'TGMP SWITCHSTREAM';
 	const nameSpace = 'tgmpSwitchStream';
 	const version = '0.6';
 
-	const log = new window._CMLS.Logger(`${scriptName} ${version}`);
+	const log = new Logger(`${scriptName} ${version}`);
 
 	const initSelectors = [
 		'.tgmp-switchstream',

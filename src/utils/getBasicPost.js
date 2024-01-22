@@ -8,7 +8,7 @@ function getBasicPost(additional_classes = []) {
 		nameSpace = 'getBasicPost',
 		version = '0.1';
 
-	const log = new window._CMLS.Logger(`${scriptName} ${version}`);
+	const log = new window.__CMLSINTERNAL.Logger(`${scriptName} ${version}`);
 
 	const doc = window.self.document;
 

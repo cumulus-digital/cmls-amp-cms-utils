@@ -2,15 +2,15 @@
  * Send global targeting (cms-sgroups) values as GTM events
  */
 ((window) => {
-	const { triggerEvent } = window._CMLS.libs;
-	const { push: gtmPush } = window._CMLS.libs.GTM;
+	const { Logger, triggerEvent, GTM } = window.__CMLSINTERNAL.libs;
+	const { push: gtmPush } = GTM;
 	const scriptName = 'SGROUPS-TO-GTM';
 	const nameSpace = 'gtmCmsSgroups';
 	const version = '0.3';
 
-	const log = new window._CMLS.Logger(`${scriptName} ${version}`);
+	const log = new Logger(`${scriptName} ${version}`);
 
-	if (window._CMLS[nameSpace]) {
+	if (window.__CMLSINTERNAL[nameSpace]) {
 		log.warn(scriptName, 'Already registered');
 		return;
 	}
@@ -28,13 +28,17 @@
 			return;
 		}
 
-		window._CMLS.adTag.queue(() => {
-			if (!window?._CMLS?.adTag?.isReady()) {
+		window.__CMLSINTERNAL.adTag.queue(() => {
+			if (
+				!window.__CMLSINTERNAL?.adTag?.isReady ||
+				!window.__CMLSINTERNAL.adTag.isReady()
+			) {
 				log.warn('Adtag interface is not ready!');
 				return;
 			}
 
-			const groups = window._CMLS.adTag.getTargeting('cms-sgroup');
+			const groups =
+				window.__CMLSINTERNAL.adTag.getTargeting('cms-sgroup');
 
 			if (!groups || !groups.length) {
 				log.warn('No relevant page-level targeting found.');
@@ -61,7 +65,7 @@
 		hasRun = true;
 	}
 
-	if (window?._CMLS?.adTag) {
+	if (window?.__CMLSINTERNAL?.adTag) {
 		globalizeGroups();
 	} else {
 		window.addEventListener('cmls-adtag-loaded', () => globalizeGroups());

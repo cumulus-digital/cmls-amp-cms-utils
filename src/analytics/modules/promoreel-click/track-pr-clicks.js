@@ -2,15 +2,15 @@
  * Send promo reel clicks to GTM
  */
 ((window) => {
-	const { triggerEvent } = window._CMLS.libs;
-	const { push: gtmPush } = window._CMLS.libs.GTM;
+	const { Logger, GTM, triggerEvent } = window.__CMLSINTERNAL.libs;
+	const { push: gtmPush } = GTM;
 	const scriptName = 'PROMOREEL-CLICK-TO-GTM';
 	const nameSpace = 'gtmPromoReelClicks';
 	const version = '0.2';
 
-	const log = new window._CMLS.Logger(`${scriptName} ${version}`);
+	const log = new Logger(`${scriptName} ${version}`);
 
-	if (window._CMLS[nameSpace]) {
+	if (window.__CMLSINTERNAL[nameSpace]) {
 		log.warn(scriptName, 'Already registered');
 		return;
 	}
@@ -49,5 +49,5 @@
 		}
 	});
 
-	window._CMLS[nameSpace] = true;
+	window.__CMLSINTERNAL[nameSpace] = true;
 })(window.self);

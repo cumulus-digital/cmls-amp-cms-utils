@@ -4,7 +4,7 @@ const scriptName = 'SIDEWALL ADS IMPORTER';
 const nameSpace = 'sidewallAdsImporter';
 const version = '2.1';
 
-const log = new window._CMLS.Logger(`${scriptName} ${version}`);
+const log = new window.__CMLSINTERNAL.Logger(`${scriptName} ${version}`);
 const w = window.self;
 
 export function areSidewallsAllowed() {

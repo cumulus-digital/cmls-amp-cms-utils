@@ -1,16 +1,20 @@
 window._CMLS = window._CMLS || {};
+window.__CMLSINTERNAL = window.__CMLSINTERNAL || {};
 
 import Logger from 'Utils/Logger';
-window._CMLS.Logger = Logger;
-window._CMLS.commonLog = new window._CMLS.Logger('COMMON');
+window.__CMLSINTERNAL.Logger = Logger;
+window.__CMLSINTERNAL.commonLog = new window.__CMLSINTERNAL.Logger('COMMON');
 
 /**
  * Store script URL
  */
 const scriptUrl = document.currentScript.src;
-window._CMLS.scriptUrl = scriptUrl;
+window.__CMLSINTERNAL.scriptUrl = scriptUrl;
 const scriptUrlBase = scriptUrl.replace('/main.js', '');
-window._CMLS.scriptUrlBase = window._CMLS.scriptUrl.replace('/main.js', '');
+window.__CMLSINTERNAL.scriptUrlBase = window.__CMLSINTERNAL.scriptUrl.replace(
+	'/main.js',
+	''
+);
 
 // Load vendor bundle
 // import(
@@ -31,8 +35,9 @@ import * as tabVisibility from 'Utils/tabVisibility';
 import triggerEvent from 'Utils/triggerEvent';
 import doDynamicImports from 'Utils/doDynamicImports';
 
-window._CMLS.libs = {
+window.__CMLSINTERNAL.libs = {
 	//	$script,
+	Logger,
 	doDynamicImports,
 	playerTools,
 	getBasicPost,
@@ -72,9 +77,9 @@ if (urlParams.has('cmlsDisableDebug')) {
 	window.sessionStorage.removeItem('cmlsDebug');
 }
 
-window._CMLS.commonLog.info({
+window.__CMLSINTERNAL.commonLog.info({
 	message: `
-URL BASE: ${window._CMLS.scriptUrlBase}
+URL BASE: ${window.__CMLSINTERNAL.scriptUrlBase}
                       __
  ______ ____ _  __ __/ /_ _____
 / __/ // /  ' \\/ // / / // (_-<

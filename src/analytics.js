@@ -1,5 +1,5 @@
 ((window) => {
-	const log = new window._CMLS.Logger('ANALYTICS');
+	const log = new window.__CMLSINTERNAL.Logger('ANALYTICS');
 
 	log.info({
 		message: `

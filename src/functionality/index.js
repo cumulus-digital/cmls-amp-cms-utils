@@ -1,4 +1,3 @@
-//import doDynamicImports from 'Utils/doDynamicImports';
 import shouldImportShareButtons from './modules/sharebuttons/shouldImport';
 import shouldImportSocialListenLive from './modules/social-listen-live/shouldImport';
 import shouldImportAutoReloadPage from './modules/auto-reload-page/shouldImport';
@@ -25,4 +24,4 @@ const imports = [
 		check: shouldImportSwitchStream,
 	},
 ];
-window._CMLS.libs.doDynamicImports(imports);
+window.__CMLSINTERNAL.libs.doDynamicImports(imports);

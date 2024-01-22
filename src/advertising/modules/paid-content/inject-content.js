@@ -10,13 +10,13 @@
 		Hindsight: './injectables/hindsight.js',
 	};
 
-	const { h, domReady, getBasicPost } = window._CMLS.libs;
+	const { h, domReady, getBasicPost, Logger } = window.__CMLSINTERNAL.libs;
 
 	const scriptName = 'PAID CONTENT INJECTOR';
 	const nameSpace = 'paidContentInjector';
 	const version = '0.2';
 
-	const log = new window._CMLS.Logger(`${scriptName} ${version}`);
+	const log = new Logger(`${scriptName} ${version}`);
 
 	domReady(() => {
 		if (window.NO_PAIDCONTENT) {
