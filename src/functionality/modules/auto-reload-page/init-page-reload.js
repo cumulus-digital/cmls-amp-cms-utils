@@ -3,7 +3,7 @@ const { detectPlayer, addAfterPageFrame, navigateThroughPlayer } = playerTools;
 
 const scriptName = 'AUTO-RELOAD PAGE';
 const nameSpace = 'autoReloadPage';
-const version = '0.4';
+const version = '0.5';
 const log = new Logger(`${scriptName} ${version}`);
 
 ((window, undefined) => {
@@ -63,8 +63,10 @@ const log = new Logger(`${scriptName} ${version}`);
 			this.active = true;
 
 			log.info(
-				'Timer initialized',
-				this.timeout?.toISOString() || this.timeout.toUTCString()
+				'Timer initialized. Scheduled reload:',
+				this.timeout.toLocaleString() ||
+					this.timeout?.toISOString() ||
+					this.timeout.toUTCString()
 			);
 		}
 
@@ -87,7 +89,7 @@ const log = new Logger(`${scriptName} ${version}`);
 				log.debug({
 					headerLength: Infinity,
 					message: [
-						'Checking timer (This notice is random to reduce noise)',
+						'Checking timer',
 						[now.toLocaleString(), this.timeout.toLocaleString()],
 					],
 				});
@@ -109,9 +111,9 @@ const log = new Logger(`${scriptName} ${version}`);
 			}
 
 			// Generate url
-			const protocol = w.location.protocol;
-			const hostname = w.location.hostname;
-			let url = w.location.href.replace(`${protocol}//${hostname}`, '');
+			let url = w.location.href
+				.replace(w.location.origin, '/')
+				.replace(/^\/+/, '/');
 
 			if (url.length < 1) {
 				url = '/';
