@@ -62,7 +62,11 @@ export const h = (tag, props, ...children) => {
 		} else {
 			element.setAttribute(
 				name,
-				typeof value === 'boolean' ? value : value.toString()
+				typeof value === 'boolean'
+					? value
+					: typeof value === 'string'
+					? new String(value).toString()
+					: value
 			);
 		}
 	});

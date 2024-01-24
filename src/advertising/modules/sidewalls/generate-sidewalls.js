@@ -98,7 +98,7 @@ import config from './config.json';
 				const wrapper = (
 					<div
 						id={containerId}
-						style={topPad ? `--top_pad: ${topPad}px` : null}
+						style={topPad ? `--top_pad: ${topPad}px` : ''}
 					>
 						<div
 							id={`${sidewallClass}-left`}
