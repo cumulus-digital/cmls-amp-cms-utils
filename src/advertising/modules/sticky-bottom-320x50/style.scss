@@ -71,7 +71,8 @@
 	}
 }
 
-##{$elementId} + ##{$elementId}-stub {
+##{$elementId} + ##{$elementId}-stub,
+##{$elementId}.force-display {
 	clear: both;
 	display: block;
 	background-color: #000;

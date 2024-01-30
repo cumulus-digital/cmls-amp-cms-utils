@@ -32,13 +32,18 @@ import config from './config.json';
 			this.context = context;
 			this.adTag = context.__CMLSINTERNAL.adTag;
 
+			this.stub = <div id={`${this.elementId}-stub`} />;
+
 			this.inject();
 		}
 
 		refresh() {
 			if (this.slot && this.adTag) {
+				log.info('Refreshing.');
 				this.adTag.refresh(this.slot);
 				this.updateZindex();
+			} else {
+				this.inject();
 			}
 		}
 
@@ -139,70 +144,92 @@ import config from './config.json';
 						});
 				});
 
-				const stub = <div id={`${this.elementId}-stub`} />;
-
-				this.context.document.body.append(adDiv, stub);
+				this.context.document.body.append(adDiv, this.stub);
 				this.context.document.body.classList.add('has-sticky-320x50');
 
 				log.info('Injected');
-			}
 
-			this.adTag.queue(() => {
-				this.adTag.getSlots().some((slot) => {
-					if (slot.getSlotElementId() === this.elementId) {
-						log.info('Destroying existing slot.');
-						this.adTag.destroySlots([slot]);
-						return true;
-					}
-				});
+				this.adTag.queue(() => {
+					this.adTag.getSlots().forEach((slot) => {
+						if (slot.getSlotElementId() === this.elementId) {
+							log.info('Destroying existing slot.');
+							this.adTag.destroySlots([slot]);
+							//return true;
+						}
+					});
 
-				log.debug('Defining ad slot', this.elementId);
-				const sizeMap = [
-					[
-						[800, 0],
+					log.info('Defining new ad slot', this.elementId);
+					const sizeMap = [
 						[
+							[800, 0],
+							[
+								[120, 60],
+								[300, 50],
+								[320, 50],
+							],
+						],
+						[
+							[0, 0],
+							[
+								[300, 50],
+								[320, 50],
+							],
+						],
+					];
+					this.slot = this.adTag.defineSlot({
+						adUnitPath: `${this.context.__CMLSINTERNAL.adPath}/stickyBottomAd`,
+						size: [
 							[120, 60],
 							[300, 50],
 							[320, 50],
 						],
-					],
-					[
-						[0, 0],
-						[
-							[300, 50],
-							[320, 50],
-						],
-					],
-				];
-				this.slot = this.adTag.defineSlot({
-					adUnitPath: `${this.context.__CMLSINTERNAL.adPath}/stickyBottomAd`,
-					size: [
-						[120, 60],
-						[300, 50],
-						[320, 50],
-					],
-					sizeMap: sizeMap,
-					div: this.elementId,
-					collapse: true,
-					targeting: { pos: 'playersponsorlogo' },
-					prebid: true,
+						sizeMap: sizeMap,
+						div: this.elementId,
+						collapse: true,
+						targeting: { pos: 'playersponsorlogo' },
+						prebid: true,
+					});
+
+					if (!this.slot) {
+						log.warn('Slot creation failed!');
+						return;
+					}
+
+					this.adTag.addListener('slotRenderEnded', (e) => {
+						if (!e.isEmpty && e.slot === this.slot) {
+							log.debug('Slot returned creative.');
+
+							if (this.context !== window.self) {
+								log.debug(
+									'Inside iframe, adding stub to inside page.'
+								);
+								const inside_stub = this.stub.cloneNode(true);
+								// Apply outside stub's styles to inside stub
+								const stub_style = context.getComputedStyle(
+									this.stub
+								);
+								for (let i = 0; i < stub_style.length; i++) {
+									inside_stub.style[stub_style[i]] =
+										stub_style.getPropertyValue(
+											stub_style[i]
+										);
+								}
+								window.self.document.body.append(inside_stub);
+							}
+						}
+					});
+
+					this.adTag.display(
+						this.elementId,
+						this.adTag.isInitialLoadDisabled()
+					);
 				});
-
-				if (!this.slot) {
-					log.warn('Slot creation failed!');
-					return;
-				}
-
-				this.adTag.display(
-					this.elementId,
-					this.adTag.isInitialLoadDisabled()
-				);
-			});
+			}
 		}
 	}
 
 	const instantiate = () => {
-		if (context.__CMLSINTERNAL[nameSpace] instanceof StickyBottomAd) {
+		if (context?.__CMLSINTERNAL?.[nameSpace]?.hasDiv()) {
 			context.__CMLSINTERNAL[nameSpace].refresh();
 			return;
 		}
