@@ -215,6 +215,9 @@ import config from './config.json';
 										);
 								}
 								window.self.document.body.append(inside_stub);
+								window.self.document.body.classList.add(
+									'has-sticky-320x50'
+								);
 							}
 						}
 					});
