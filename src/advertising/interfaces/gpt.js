@@ -123,7 +123,12 @@ export default class GPTInterface extends DefaultInterface {
 
 		// Allow defining an out of page slot
 		let slot = false;
-		if (settings.outOfPage) {
+		if (settings.interstitial) {
+			slot = this.rawInterface().defineOutOfPageSlot(
+				settings.adUnitPath,
+				this.rawInterface().enums.OutOfPageFormat.INTERSTITIAL
+			);
+		} else if (settings.outOfPage) {
 			slot = this.rawInterface().defineOutOfPageSlot(
 				settings.adUnitPath,
 				settings.div
@@ -178,7 +183,10 @@ export default class GPTInterface extends DefaultInterface {
 			}
 		}
 
-		if (!slot) {
+		if (!slot && settings.interstitial) {
+			this.log.warn('Interstitial slot did not return', settings);
+			return false;
+		} else if (!slot) {
 			this.log.error('Failed to create slot!', settings);
 			return false;
 		} else {

@@ -189,7 +189,8 @@ export default class APSInterface extends GPTInterface {
 						me.log.debug(
 							'🏷 Refreshing prebid slots after bids received',
 							me.listSlotData(refreshSlots.prebid),
-							bids
+							bids,
+							refreshSlots.prebid
 						);
 						me.pubads().refresh(refreshSlots.prebid, options);
 					});
@@ -202,7 +203,8 @@ export default class APSInterface extends GPTInterface {
 		if (refreshSlots?.noprebid?.length) {
 			me.log.debug(
 				'Refreshing noprebid slots',
-				me.listSlotData(refreshSlots.noprebid)
+				me.listSlotData(refreshSlots.noprebid),
+				refreshSlots.noprebid
 			);
 			return me.pubads().refresh(refreshSlots.noprebid);
 		}

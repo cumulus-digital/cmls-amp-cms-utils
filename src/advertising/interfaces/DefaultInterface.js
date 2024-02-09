@@ -98,6 +98,7 @@ export default class DefaultInterface {
 			init: true,
 			prebid: false,
 			outOfPage: false,
+			interstitial: false,
 		};
 	}
 
