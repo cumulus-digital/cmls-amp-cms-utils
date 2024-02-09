@@ -10,6 +10,10 @@
 	const doc = window.document;
 
 	const init = () => {
+		if (window?.NO_INTERSTITIAL) {
+			log.debug('Interstitial denied by NO_INTERSTITIAL');
+			return;
+		}
 		if (window.self !== window.parent) {
 			log.debug('Interstitials only supported in top window.');
 			return;
