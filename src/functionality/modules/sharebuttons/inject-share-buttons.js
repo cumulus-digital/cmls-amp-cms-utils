@@ -18,17 +18,14 @@ const log = new Logger(`${scriptName} ${version}`);
 			</svg>
 			`,
 		},
-		twitter: {
-			display_name: 'Twitter',
-			url: 'https://twitter.com/intent/tweet?text={{TITLE}}&url={{URL}}',
+		x: {
+			display_name: 'X',
+			url: 'https://x.com/intent/tweet?text={{TITLE}}&url={{URL}}',
 			icon: `
 				<svg xmlns="http://www.w3.org/2000/svg"
-				aria-label="Share via Twitter" alt="Share via Twitter"
-				role="img" viewBox="0 0 410 340">
-				<path fill="currentColor" d="M386,37.6c-15.3,6.7-30.3,10.7-45,12c16.7-10,28-24.3,34-43c-16,9.3-32.7,15.7-50,19
-				c-29.5-32.2-79.5-34.3-111.6-4.8c-21.2,19.4-30.2,48.9-23.4,76.8c-67.3-4.7-121.7-32.3-163-83C6.1,50.8,16.5,97,51,120.6
-				c-11.3,0-23.3-3.3-36-10c-19-10-3,62,64,79c-12.7,3.3-24.7,3.7-36,1c-17-4,15,53,74,55c-33.3,26.7-72.3,37.7-117,33
-				c103.6,67.6,242.4,38.3,310-65.3c26-39.9,38.6-87.1,36-134.7C361.3,67.9,374.7,54.3,386,37.6"/>
+				aria-label="Share via X" alt="Share via X"
+				role="img" viewBox="0 0 1200 1227">
+				<path d="m694.7 535.2 370.8-431h-87.9l-321.9 374.3-257.1-374.3h-296.6l388.9 565.9-388.9 452h87.9l340-395.2 271.6 395.2h296.5zm-120.3 140-39.4-56.4-313.5-448.4h135l253 361.9 39.4 56.4 328.8 470.4h-135z" fill="currentColor"/>
 				</svg>
 			`,
 		},
