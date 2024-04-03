@@ -9,6 +9,15 @@ export default () => {
 		return;
 	}
 
+	if (
+		document.querySelector(
+			'iframe[src*="digitalivy.com"],iframe[src*="clubviprewards.com"]'
+		)
+	) {
+		log.info('Contest embed found, refusing injection.');
+		return;
+	}
+
 	// Hindsight injectable station IDs
 	const hindsightSites = [
 		'WMAL-FM',
@@ -44,7 +53,7 @@ export default () => {
 	];
 
 	if (
-		// Explicitly named
+		// Explicitly named stations
 		(window?._ampconfig?.settings?.syn_site_name &&
 			hindsightSites.includes(
 				window?._ampconfig?.settings?.syn_site_name?.toUpperCase()
