@@ -24,7 +24,7 @@
 			let url = sliderItem.getAttribute('data-href');
 			if (!url) {
 				const onclick = sliderItem.getAttribute('onclick');
-				if (onclick.contains('window.location=')) {
+				if (onclick.includes('window.location=')) {
 					let oUrl = onclick.match(
 						/window\.location=['"]?(^['"]+)['"]?/
 					);
@@ -32,7 +32,7 @@
 						url = oUrl[1];
 					}
 				}
-				if (onclick.contains('window.open(')) {
+				if (onclick.includes('window.open(')) {
 					const nUrl = onclick.match(/window\.open\('([^']+)\)?/);
 					if (nUrl.length > 1) {
 						url = nUrl[1];
