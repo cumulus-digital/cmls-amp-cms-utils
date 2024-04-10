@@ -4,42 +4,25 @@
 const namesToColors = {};
 
 /**
- * Convert RGB to HSV
- */
-const rgb2hsv = (r, g, b) => {
-	r /= 255;
-	g /= 255;
-	b /= 255;
-	const v = Math.max(r, g, b),
-		n = v - Math.min(r, g, b);
-	const h =
-		n === 0
-			? 0
-			: n && v === r
-			? (g - b) / n
-			: v === g
-			? 2 + (b - r) / n
-			: 4 + (r - g) / n;
-	return [60 * (h < 0 ? h + 6 : h), v && (n / v) * 100, v * 100];
-};
-
-/**
  * Generate a random color that's not red.
  * @returns string
  */
 export const generateColor = () => {
-	const genC = () => Math.floor(Math.random() * 0xffffff);
-	let color;
-	let haveColor = false;
-	while (!haveColor) {
-		color = genC();
-		const rgb = [(color >> 16) & 0xff, (color >> 8) & 0xff, color & 0xff];
-		const hsv = rgb2hsv.apply(this, rgb);
-		if (hsv[0] > 25 && hsv[0] < 330) {
-			haveColor = true;
-		}
-	}
-	return ('000000' + color.toString(16)).slice(-6);
+	const randomHex = (max = 256) => Math.floor(Math.random() * max);
+	const hexPad = (i) => i.toString(16).padStart(2, '0');
+
+	let red, green, blue, distanceFromRed;
+	do {
+		red = randomHex();
+		green = randomHex();
+		blue = randomHex();
+
+		distanceFromRed = Math.sqrt(
+			(255 - red) ** 2 + (0 - green) ** 2 + (0 - blue) ** 2
+		);
+	} while (distanceFromRed < 100);
+
+	return `${hexPad(red)}${hexPad(green)}${hexPad(blue)}`;
 };
 
 /**
@@ -79,7 +62,7 @@ export default class Logger {
 		}
 
 		this.header = [
-			`%c ${defaultHeader} %c`,
+			`CL %c ${defaultHeader} %c`,
 			`background: #${this.background}; color: #${this.foreground}`,
 		];
 	}
