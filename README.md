@@ -6,8 +6,8 @@ A collection of front-end scripts which handle custom advertising, analytics, an
 
 Distribution scripts are located in `./dist`. Distribution can be made either through the single bundle.js file or through individual categories to enable loading pure functionality code before CMP tools.
 
-- `main.js` Must be loaded before any other bundle (except bundle.js, which already includes this).
-  - Includes vendor.js and functionality.js bundles.
+- `main.js` *Must be loaded before any other bundle* (except bundle.js, which already includes this).
+  - Includes functionality.js bundle.
   - Initializes window._CMLS and associated libraries.
 - `advertising.js` Advertising support, custom slots and injected placements.
 - `analytics.js` Analytics support and events.

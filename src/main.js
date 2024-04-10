@@ -1,5 +1,21 @@
 window._CMLS = window._CMLS || {};
+window.self._CMLS.debug =
+	window.self._CMLS.debug ||
+	window.location.search.indexOf('cmlsDebug') > -1 ||
+	window.document.cookie.indexOf('cmlsDebug') > -1;
+window._CMLS.libsLoaded = window._CMLS.libsLoaded || [];
 window.__CMLSINTERNAL = window.__CMLSINTERNAL || {};
+
+if (
+	window._CMLS.libsLoaded?.length &&
+	window._CMLS.libsLoaded.indexOf('main') > -1
+) {
+	throw new Error('Main library already loaded!');
+}
+
+if (window.location.search.includes('cmlsDisabled')) {
+	throw new Error('cmlsDisabled in location string.');
+}
 
 import Logger from 'Utils/Logger';
 window.__CMLSINTERNAL.Logger = Logger;
@@ -88,8 +104,11 @@ URL BASE: ${window.__CMLSINTERNAL.scriptUrlBase}
 	headerLength: Infinity,
 });
 
+// Log that main has been loaded
+window._CMLS.libsLoaded.push('main');
+
 // import(
 // 	/* webpackIgnore: true */ window._CMLS.scriptUrlBase +
 // 		'/functionality.js'
 // );
-require(/* webpackPreload: true, webpackChunkName: 'functionality' */ './functionality');
+require(/* webpackPreload: true, webpackChunkName: 'functionality' */ './functionality.js');
