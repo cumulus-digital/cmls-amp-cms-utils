@@ -11,7 +11,8 @@ Distribution scripts are located in `./dist`. Distribution can be made either th
   - Initializes window._CMLS and associated libraries.
 - `advertising.js` Advertising support, custom slots and injected placements.
 - `analytics.js` Analytics support and events.
-- `functionality.js` - Pure functionality support.
+- `functionality.js` Pure functionality support.
+  - NO tracking, ads, or any PII cookies should be created here.
 - `vendor.js` Vendor libraries and webpack runtime.
 
 Each category under `./src` contains an `index.js` file to manage the decision-making and importing code within `modules` subdirectories. Modules which may be imported remotely during runtime contain a `shouldImport.js` file exporting a function to determine if the full library is required. shouldImport functions may return a function or Promise which may then import the rest of the library. Remote modules are asyncronously loaded, automatically, using webpack lazy imports.

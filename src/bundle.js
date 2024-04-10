@@ -1,3 +1,3 @@
 require('./main.js');
-require('./advertising');
-require('./analytics');
+require('./advertising.js');
+require('./analytics.js');
