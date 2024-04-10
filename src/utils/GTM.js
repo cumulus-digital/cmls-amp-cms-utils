@@ -1,7 +1,7 @@
 /**
  * Holder for our multiple dataLayers
  */
-export const dataLayers = [
+export const dataLayerNames = [
 	'dataLayer',
 	'sharedContainerDataLayer',
 	'corpDataLayer',
@@ -12,7 +12,7 @@ export const dataLayers = [
  * @param {object} ev Variables to push to all data layers
  */
 export const push = (ev) => {
-	dataLayers.forEach((dl) => {
+	dataLayerNames.forEach((dl) => {
 		window.self[dl] = window.self[dl] || [];
 		window.self[dl].push(ev);
 	});
