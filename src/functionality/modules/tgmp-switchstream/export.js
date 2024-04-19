@@ -17,7 +17,7 @@
 
 	const scriptName = 'TGMP SWITCHSTREAM';
 	const nameSpace = 'tgmpSwitchStream';
-	const version = '0.6';
+	const version = '0.7';
 
 	const log = new Logger(`${scriptName} ${version}`);
 
