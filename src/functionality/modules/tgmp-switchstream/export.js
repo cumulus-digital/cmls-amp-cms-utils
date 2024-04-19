@@ -66,7 +66,7 @@
 				autostart: false,
 			};
 			const options = el.getAttribute(source);
-			let brandTest = options.match(/tgmp\-streamid\-([a-z0-9]+)/i),
+			let brandTest = options.match(/tgmp\-streamid\-([a-z0-9,]+)/i),
 				themeTest = options.match(/tgmp\-theme-([\#a-z0-9]+)/i),
 				autostartTest = options.match(/tgmp\-autostart/i);
 			if (brandTest?.length > 1) {
