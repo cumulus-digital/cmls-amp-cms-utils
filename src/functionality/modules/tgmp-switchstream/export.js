@@ -49,7 +49,7 @@
 			if (el?.getAttribute('alt')?.includes(this.key)) {
 				return 'alt';
 			}
-			if (el?.href?.includes(key)) {
+			if (el?.href?.includes(this.key)) {
 				return 'href';
 			}
 			return false;
