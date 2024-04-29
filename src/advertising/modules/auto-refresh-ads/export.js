@@ -98,7 +98,11 @@ import config from './config.json';
 			interval = null;
 
 			constructor(minutes = defaultRefreshInMinutes) {
-				this.every = minutes;
+				if (window?._CMLS?.autoRefreshAdsInterval > 0) {
+					this.every = window._CMLS.autoRefreshAdsInterval;
+				} else {
+					this.every = minutes;
+				}
 
 				if (
 					this.checkGlobalConditions() !==
@@ -170,6 +174,12 @@ import config from './config.json';
 					);
 					return DISABLED;
 				}
+				if (window?._CMLS?.autoRefreshAdsInterval === 0) {
+					log.warn(
+						'Auto refresh ads disabled by window._CMLS.autoRefreshAdsInterval = 0'
+					);
+					return DISABLED;
+				}
 				if (
 					autoReloadPage?.active &&
 					autoReloadPage.settings.timeout < this.every * 2
@@ -232,7 +242,7 @@ import config from './config.json';
 				}
 
 				log.debug(
-					'Setting refresh timer on slot.',
+					`Setting ${this.every} minute refresh timer on slot.`,
 					{ pos, id },
 					fireTime.toLocaleString()
 				);
