@@ -28,6 +28,8 @@
 		'[alt*="tgmp-switchstream"] a',
 		'[href*="tgmp-switchstream"]',
 		'[href*="tgmp-switchstream"] a',
+		'[data-href*="tgmp-switchstream"]',
+		'[onclick*="tgmp-switchstream"]',
 	];
 
 	class SwitchStreamHandler {
@@ -51,6 +53,12 @@
 			}
 			if (el?.href?.includes(this.key)) {
 				return 'href';
+			}
+			if (el?.getAttribute('data-href')?.includes(this.key)) {
+				return 'data-href';
+			}
+			if (el?.getAttribute('onclick')?.includes(this.key)) {
+				return 'onclick';
 			}
 			return false;
 		}
@@ -140,15 +148,19 @@
 			.off(`click.${nameSpace}`)
 			.on(`click.${nameSpace}`, initSelectors.join(','), (e) => {
 				if (detectPlayer()) {
+					e.stopImmediatePropagation();
 					e.preventDefault();
 					const command =
 						window._CMLS.switchStreamInstance.parseCommand(
 							e.currentTarget
 						);
+					log.debug('Command:', command);
 					if (command) {
 						log.info('Received command', command);
 						window._CMLS.switchStream(command);
 					}
+				} else {
+					log.warn('No player detected!');
 				}
 			});
 
