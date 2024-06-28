@@ -14,7 +14,7 @@
 
 	const scriptName = 'PAID CONTENT INJECTOR';
 	const nameSpace = 'paidContentInjector';
-	const version = '0.2';
+	const version = '0.3';
 
 	const log = new Logger(`${scriptName} ${version}`);
 
@@ -25,6 +25,7 @@
 		}
 
 		const entry = getBasicPost();
+		log.debug('Entry', entry);
 
 		if (!entry) {
 			log.info('Could not discover entry container, exiting.');
@@ -60,7 +61,7 @@
 					/* webpackChunkName: 'advertising/paid-content/[request]' */
 					`${injectables[i]}`
 				).then((injectable) => {
-					log.warn(injectable);
+					//log.warn(injectable);
 					if (typeof injectable?.default === 'function') {
 						const content = injectable.default();
 						if (content) {
@@ -71,7 +72,7 @@
 				injected = true;
 			}
 			if (injected) {
-				log.info('Injected paid content', i);
+				log.info('Imported injectable', i);
 			}
 		}
 	});

@@ -16,8 +16,11 @@ import config from './config.json';
 		version,
 		viewablePercent,
 		defaultRefreshInMinutes,
-		ALWAYS_REFRESH_POS = [],
+		ALWAYS_REFRESH_POS,
 	} = config;
+	if (!ALWAYS_REFRESH_POS) {
+		ALWAYS_REFRESH_POS = [];
+	}
 	const { Logger } = window.__CMLSINTERNAL.libs;
 	const log = new Logger(`${scriptName} ${version}`);
 

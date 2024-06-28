@@ -1,7 +1,12 @@
 export default () => {
-	const { h, Fragment } = window.__CMLSINTERNAL.libs;
+	const { h, Fragment, Logger } = window.__CMLSINTERNAL.libs;
+	const scriptName = 'PAID CONTENT INJECTOR / AROUNDTHEWEB';
+	const version = '0.2';
+	const log = new Logger(`${scriptName} ${version}`);
+
 	if (window.self.NO_NEWSMAX || window.parent.NO_NEWSMAX) {
-		return '';
+		log.info('NO_NEWSMAX found, refusing injection.');
+		return;
 	}
 	// Don't inject if we already have Daily Wire
 	if (
@@ -9,6 +14,7 @@ export default () => {
 			'#hotwire-incontent, .dwcw-widget-container'
 		)
 	) {
+		log.info('Hotwire content found, refusing injection.');
 		return;
 	}
 
@@ -18,6 +24,7 @@ export default () => {
 	if (window.matchMedia('only screen and (max-width: 760px)').matches) {
 		url =
 			'//static.newsmaxfeednetwork.com/web-clients/bootloaders/Jx44GJqslQrQU3ZULtFwdD/bootloader.js';
+		log.debug('Using mobile widget');
 	}
 
 	const div = <div></div>;
@@ -81,6 +88,6 @@ export default () => {
 	);
 
 	div.shadowRoot.append(content);
-
+	log.info('Injected.');
 	return div;
 };

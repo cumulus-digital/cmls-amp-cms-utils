@@ -88,6 +88,7 @@ module.exports = (env) => {
 	return {
 		mode,
 		target: target,
+		devtool: isProduction ? false : 'source-map',
 		entry: () => {
 			const entries = {
 				bundle: './src/bundle.js',
@@ -119,6 +120,7 @@ module.exports = (env) => {
 		output: {
 			filename: '[name].js',
 			chunkFilename: '[name].[chunkhash].js',
+			sourceMapFilename: '[name].[chunkhash].map',
 			path: resolve(process.cwd(), 'dist'),
 			chunkLoadingGlobal: 'cmlsAmpUtils',
 		},
@@ -143,6 +145,7 @@ module.exports = (env) => {
 						compress: {
 							passes: 5,
 						},
+						sourceMap: true,
 					},
 					extractComments: false,
 				}),

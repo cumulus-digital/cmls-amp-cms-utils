@@ -1,7 +1,7 @@
 export default () => {
 	const { h, Logger } = window.__CMLSINTERNAL.libs;
-	const scriptName = 'HINDSIGHT';
-	const version = '0.1';
+	const scriptName = 'PAID CONTENT INJECTOR / HINDSIGHT';
+	const version = '0.2';
 	const log = new Logger(`${scriptName} ${version}`);
 
 	if (window.self.NO_HINDSIGHT || window.parent.NO_HINDSIGHT) {
