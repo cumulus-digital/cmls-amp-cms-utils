@@ -41,13 +41,7 @@ module.exports = (env) => {
 			loader: require.resolve('style-loader'),
 			options: {
 				injectType: 'lazyAutoStyleTag',
-				insert: function insertIntoTarget(element, options) {
-					var parent =
-						options && options.target
-							? options.target
-							: document.head;
-					parent.appendChild(element);
-				},
+				insert: require.resolve('./src/utils/style-loader-insert.js'),
 			},
 		},
 		{
