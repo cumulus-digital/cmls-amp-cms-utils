@@ -10,20 +10,22 @@
 	const doc = window.document;
 
 	const init = () => {
-		if (window?.NO_INTERSTITIAL) {
+		if (window?.NO_INTERSTITIAL || window?.NO_INTERSTITIALS) {
 			log.debug('Interstitial denied by NO_INTERSTITIAL');
 			return;
 		}
+		/*
 		if (window.self !== window.parent) {
 			log.debug('Interstitials only supported in top window.');
 			return;
 		}
+		*/
 
 		const adTag = window.__CMLSINTERNAL.adTag;
 
 		adTag.queue(() => {
 			const slot = adTag.defineSlot({
-				adUnitPath: window._CMLS.adPath,
+				adUnitPath: window._CMLS.adPath + '/interstitial',
 				targeting: {
 					pos: 'interstitial',
 					noprebid: 'noprebid',
