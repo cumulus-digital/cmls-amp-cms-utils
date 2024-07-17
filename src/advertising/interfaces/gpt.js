@@ -184,7 +184,7 @@ export default class GPTInterface extends DefaultInterface {
 		}
 
 		if (!slot && settings.interstitial) {
-			this.log.warn('Interstitial slot did not return', settings);
+			this.log.warn('Interstitial slot did not return', settings, slot);
 			return false;
 		} else if (!slot) {
 			this.log.error('Failed to create slot!', settings);

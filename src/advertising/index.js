@@ -2,7 +2,7 @@ require('./interfaces');
 require('./modules/register-adpath/no-export.js');
 //require('./modules/sticky-bottom-320x50/no-export.js');
 require('./modules/west7-1x1/no-export.js');
-require('./modules/interstitial/no-export.js');
+//require('./modules/interstitial/no-export.js');
 
 import shouldDisableCollapse from './modules/disable-collapse-before-fetch/shouldImport';
 import shouldImportStickyBottom from './modules/sticky-bottom-320x50/shouldImport';
