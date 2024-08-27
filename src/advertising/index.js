@@ -50,12 +50,10 @@ const imports = [
 		check: shouldImportPaidContent,
 	},
 
-	/*
 	{
 		name: 'advertising/pushdown',
 		check: shouldImportPushdown,
 	},
-	*/
 
 	{
 		name: 'advertising/sidewalls',
