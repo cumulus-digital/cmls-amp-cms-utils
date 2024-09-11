@@ -46,6 +46,13 @@ export const detectPlayer = () => {
 			hasPlayer = 'cumulus';
 			return true;
 		}
+		if (
+			w.cmls_nowplaying_bar &&
+			document.querySelector('cmls-nowplaying-bar')
+		) {
+			hasPlayer = 'cmls_nowplaying_bar';
+			return true;
+		}
 	});
 	log.debug('HASPLAYER?', hasPlayer);
 	/*
