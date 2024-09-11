@@ -43,7 +43,7 @@
 		}
 	}
 
-	&.player-tunegenie {
+	&.player-active {
 		justify-content: end;
 
 		max-width: 1120px;
@@ -67,6 +67,16 @@
 			@media (max-width: 800px) {
 				justify-content: center;
 			}
+		}
+	}
+
+	&.player-cmls-nowplaying {
+		max-width: 900px;
+		height: 50px;
+		padding-right: 55px;
+
+		@media (max-width: 800px) {
+			bottom: 50px;
 		}
 	}
 }

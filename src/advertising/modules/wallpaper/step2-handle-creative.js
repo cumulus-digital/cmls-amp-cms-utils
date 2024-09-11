@@ -7,7 +7,7 @@
 	const scriptName = 'WALLPAPER HANDLER';
 	const nameSpace = 'wallpaperHandler';
 	const classBase = 'cmls-wallpaper';
-	const version = '0.1';
+	const version = '0.3';
 	const log = new Logger(`${scriptName} ${version}`);
 
 	const doc = window.document;
@@ -352,10 +352,10 @@
 
 			// Background color may come from creative itself
 			const colorRegexp = new RegExp(
-				'(#[a-z0-9]+)?(rgba([0-9,s]+))?',
+				'(#[a-z0-9]+)?(rgba?([0-9,s]+))?',
 				'i'
 			);
-			const slotBgColor = slotImage.getAttribute('alt');
+			const slotBgColor = slotImage.getAttribute('data-bgcolor');
 			if (slotBgColor && colorRegexp.test(slotBgColor)) {
 				const bgColorTest = slotBgColor.match(colorRegexp);
 				if (bgColorTest?.length) {

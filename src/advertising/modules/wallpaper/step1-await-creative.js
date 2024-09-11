@@ -4,14 +4,16 @@
  * Detect existance of a wallpaper ad and load the handler
  */
 ((window) => {
-	const { h, Logger } = window.__CMLSINTERNAL.libs;
+	const { h, Logger, playerTools } = window.__CMLSINTERNAL.libs;
+	const { addAfterPageFrame } = playerTools;
 	const scriptName = 'WALLPAPER DETECTOR';
 	const nameSpace = 'wallpaperDetector';
-	const version = '0.1';
+	const version = '0.3';
 	const log = new Logger(`${scriptName} ${version}`);
 
 	class WallpaperDetector {
 		pos = 'wallpaper-ad';
+		elementId = 'gpt-wallpaper-ad';
 
 		constructor() {
 			const adTag = window.__CMLSINTERNAL.adTag;
@@ -55,7 +57,32 @@
 		}
 
 		buildSlot() {
-			log.info('Wallpaper tag does not exist!');
+			//log.info('Wallpaper slot does not exist.');
+			//return;
+
+			log.info('Wallpaper slot does not exist, creating one...');
+
+			const adTag = window.__CMLSINTERNAL.adTag;
+			const slotDiv = <div id={this.elementId} />;
+			window.self.document.body.append(slotDiv);
+
+			const slot = adTag.defineSlot({
+				outOfPage: true,
+				adUnitPath: window.__CMLSINTERNAL.adPath + '/wallpaper',
+				div: this.elementId,
+				collapse: true,
+				targeting: { pos: this.pos, noprebid: 'noprebid' },
+				prebid: false,
+			});
+			if (!slot) {
+				log.error('Could not define slot!');
+				return;
+			}
+
+			adTag.display(slotDiv, adTag.isInitialLoadDisabled());
+			addAfterPageFrame(() => {
+				adTag.destroySlots([slot]);
+			});
 			return;
 			/*
 			const adTag = window._CMLS.adTag;
