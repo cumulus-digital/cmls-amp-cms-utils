@@ -68,6 +68,7 @@ export const detectPlayer = () => {
 	if (hasPlayer) {
 		document.body.classList.add(bodyClass);
 		document.body.classList.add(`player-${hasPlayer}`);
+		document.body.classList.add('player-active');
 		player = hasPlayer;
 		return player;
 	}
