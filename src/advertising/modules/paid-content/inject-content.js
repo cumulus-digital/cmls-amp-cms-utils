@@ -7,7 +7,7 @@
 ((window, undefined) => {
 	const injectables = {
 		Newsmax: './injectables/newsmax.js',
-		Hindsight: './injectables/hindsight.js',
+		//Hindsight: './injectables/hindsight.js',
 	};
 
 	const { h, domReady, getBasicPost, Logger } = window.__CMLSINTERNAL.libs;
