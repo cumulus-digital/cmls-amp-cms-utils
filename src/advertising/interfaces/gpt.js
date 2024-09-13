@@ -121,6 +121,25 @@ export default class GPTInterface extends DefaultInterface {
 			options
 		);
 
+		/*
+		const { h, domReady } = window.__CMLSINTERNAL.libs;
+
+		domReady(() => {
+			window.self.document
+				.querySelector('.wrapper-content')
+				.prepend(<div id="testing-oop" />);
+			googletag.cmd.push(() => {
+				// /6717/cd.WLEV.FM/testing
+				googletag
+					.defineOutOfPageSlot('/6717/cd.gram.fM/testing', 'testing-oop')
+					.addService(googletag.pubads())
+					.setTargeting('pos', 'whatever');
+			});
+		});
+
+		return;
+		*/
+
 		// Allow defining an out of page slot
 		let slot = false;
 		if (settings.interstitial) {
@@ -200,6 +219,10 @@ export default class GPTInterface extends DefaultInterface {
 			slot = slot.setCollapseEmptyDiv.apply(slot, settings.collapse);
 		}
 
+		if (settings.init) {
+			slot = slot.addService(this.pubads());
+		}
+
 		settings.targeting = Array.isArray(settings.targeting)
 			? settings.targeting
 			: [settings.targeting];
@@ -210,10 +233,6 @@ export default class GPTInterface extends DefaultInterface {
 				}
 			}
 		});
-
-		if (settings.init) {
-			slot = slot.addService(this.pubads());
-		}
 
 		this.log.debug('Defined slot', {
 			slot: this.listSlotData(slot).shift(),

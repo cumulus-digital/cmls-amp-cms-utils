@@ -57,8 +57,8 @@
 		}
 
 		buildSlot() {
-			//log.info('Wallpaper slot does not exist.');
-			//return;
+			log.info('Wallpaper slot does not exist.');
+			return;
 
 			log.info('Wallpaper slot does not exist, creating one...');
 
