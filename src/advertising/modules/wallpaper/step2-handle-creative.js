@@ -302,10 +302,12 @@
 			}
 
 			// Links are sometimes relative to the current site
-			const slotLinkHref = slotLink.getAttribute('href');
-			const currentLocation = new URL(window.location.href);
-			const baseUrl = currentLocation.origin;
-			const slotLinkUrl = new URL(slotLinkHref, baseUrl);
+			if (slotLink) {
+				const slotLinkHref = slotLink.getAttribute('href');
+				const currentLocation = new URL(window.location.href);
+				const baseUrl = currentLocation.origin;
+				const slotLinkUrl = new URL(slotLinkHref, baseUrl);
+			}
 
 			this.reset();
 			container.setAttribute('data-hash', hash);
@@ -314,25 +316,27 @@
 				settings.preDisplay.call(this);
 			}
 
+			let link = <span />;
+
 			// Let creative set link target, but if not,
 			// relative links get _top, remote get _blank.
-			let target = slotLink.getAttribute('target');
-			if (!target) {
-				target = slotLinkUrl.origin === baseUrl ? '_top' : '_blank';
+			if (slotLink) {
+				let target = slotLink.getAttribute('target');
+				if (!target) {
+					target = slotLinkUrl.origin === baseUrl ? '_top' : '_blank';
+				}
+
+				link = (
+					<a
+						href={slotLink.getAttribute('href')}
+						target={target}
+						rel={target === '_blank' ? 'noopener' : ''}
+					/>
+				);
 			}
 
-			const link = slotLink ? (
-				<a
-					href={slotLink.getAttribute('href')}
-					target={target}
-					rel={target === '_blank' ? 'noopener' : ''}
-				/>
-			) : (
-				<span />
-			);
-
 			// If navThroughPlayer library is available, attach to our link
-			if (link.href && window.__CMLSINTERNAL?.navThroughPlayer) {
+			if (link?.href && window.__CMLSINTERNAL?.navThroughPlayer) {
 				window.__CMLSINTERNAL.navThroughPlayer.updateLink(link);
 			}
 
