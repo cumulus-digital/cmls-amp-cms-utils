@@ -1,0 +1,9 @@
+{
+	"scriptNamePrefix": "PUSHDOWN V2",
+	"namespacePrefix": "pushdownV2",
+	"version": "2.0",
+	"elementId": "gpt-pushdown",
+	"injectPointQuery": ".wrapper-content, body > .wp-site-blocks > header + *",
+	"pos": "pushdown",
+	"timeout": 15
+}

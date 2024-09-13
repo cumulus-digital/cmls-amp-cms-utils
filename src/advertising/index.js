@@ -10,7 +10,7 @@ import shouldImportAutoRefreshAds from './modules/auto-refresh-ads/shouldImport'
 import shouldImportLocalNavThroughPlayer from './modules/local-nav-through-player/shouldImport';
 import shouldImportTGMPEventTargeting from './modules/tgmp-event-targeting/shouldImport';
 import shouldImportPaidContent from './modules/paid-content/shouldImport';
-import shouldImportPushdown from './modules/pushdown/shouldImport';
+import shouldImportPushdown from './modules/pushdown_v2/shouldImport';
 import shouldImportSidewalls from './modules/sidewalls/shouldImport';
 import shouldImportWallpaper from './modules/wallpaper/shouldImport';
 
@@ -51,7 +51,7 @@ const imports = [
 	},
 
 	{
-		name: 'advertising/pushdown',
+		name: 'advertising/pushdown_v2',
 		check: shouldImportPushdown,
 	},
 
