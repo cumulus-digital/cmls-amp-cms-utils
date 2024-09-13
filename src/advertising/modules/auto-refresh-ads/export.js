@@ -34,7 +34,7 @@ import config from './config.json';
 			if (!window._CMLS.autoRefreshAdsExclusion?._push) {
 				window._CMLS.autoRefreshAdsExclusion._push =
 					window._CMLS.autoRefreshAdsExclusion.push;
-				window._CMLS.autoRefreshAdsExclusion.push = (...args) => {
+				window._CMLS.autoRefreshAdsExclusion.push = function (...args) {
 					args.forEach((item) => {
 						if (!this.includes(item)) {
 							log.info('New ID added to exclusion list', item);
@@ -137,11 +137,7 @@ import config from './config.json';
 
 				// Check existing slots for always refreshers
 				adTag.getSlots().forEach((slot) => {
-					if (
-						!this.slotHasRefreshKey(slot) &&
-						this.slotIsAlwaysRefresh(slot) &&
-						!this.slotIsExcluded(slot)
-					) {
+					if (this.shouldRefresh(slot)) {
 						this.initSlotTimer(slot);
 					}
 				});
@@ -149,11 +145,7 @@ import config from './config.json';
 				// Check future slots for always refreshers
 				adTag.addListener('slotRenderEnded', (e) => {
 					const slot = e.slot;
-					if (
-						!this.slotHasRefreshKey(slot) &&
-						this.slotIsAlwaysRefresh(slot) &&
-						!this.slotIsExcluded(slot)
-					) {
+					if (this.shouldRefresh(slot)) {
 						this.initSlotTimer(slot);
 					}
 				});
@@ -196,17 +188,37 @@ import config from './config.json';
 				return RUNNING;
 			}
 
+			shouldRefresh(slot) {
+				if (!this.checkGlobalConditions()) {
+					return false;
+				}
+				if (this.slotIsExcluded(slot)) {
+					return false;
+				}
+				return true;
+			}
+
 			slotIsExcluded(slot) {
 				if (
 					typeof window._CMLS.autoRefreshAdsExclusion === 'undefined'
 				) {
 					window.__CMLSINTERNAL?.initAutoRefreshAdsExclusion();
 				}
-				return window._CMLS.autoRefreshAdsExclusion.includes(
-					slot.getSlotElementId()
-				)
-					? this.slotConditions.EXCLUDED
-					: false;
+
+				const id = slot.getSlotElementId();
+				if (window._CMLS.autoRefreshAdsExclusion.includes(id)) {
+					return this.slotConditions.EXCLUDED;
+				}
+
+				if (
+					slot
+						.getTargeting(this.TARGET_REFRESH_KEY)
+						.includes(this.TARGET_NEVER_REFRESH_KEY)
+				) {
+					return this.slotConditions.EXCLUDED;
+				}
+
+				return false;
 			}
 
 			slotIsAlwaysRefresh(slot) {
