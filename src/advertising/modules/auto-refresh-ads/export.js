@@ -135,9 +135,28 @@ import config from './config.json';
 					}
 				});
 
+				// Certain slots will always refresh if they
+				// are explicitly set in the ALWAYS_REFRESH_POS array,
+				// are not excluded, and have not already received an
+				// impression which set the refresh key.
+				const checkAlwaysRefresh = (slot) => {
+					if (
+						this.slotHasRefreshKey(slot) ||
+						this.slotIsExcluded(slot) ||
+						!this.slotIsAlwaysRefresh(slot)
+					) {
+						return false;
+					}
+					log.debug(
+						`Slot with div id ${slot.getSlotElementId()} will always refresh`,
+						window.__CMLSINTERNAL.adTag.listSlotData(slot)
+					);
+					return true;
+				};
+
 				// Check existing slots for always refreshers
 				adTag.getSlots().forEach((slot) => {
-					if (this.shouldRefresh(slot)) {
+					if (checkAlwaysRefresh(slot)) {
 						this.initSlotTimer(slot);
 					}
 				});
@@ -145,7 +164,7 @@ import config from './config.json';
 				// Check future slots for always refreshers
 				adTag.addListener('slotRenderEnded', (e) => {
 					const slot = e.slot;
-					if (this.shouldRefresh(slot)) {
+					if (checkAlwaysRefresh(slot)) {
 						this.initSlotTimer(slot);
 					}
 				});
@@ -186,16 +205,6 @@ import config from './config.json';
 				}
 
 				return RUNNING;
-			}
-
-			shouldRefresh(slot) {
-				if (!this.checkGlobalConditions()) {
-					return false;
-				}
-				if (this.slotIsExcluded(slot)) {
-					return false;
-				}
-				return true;
 			}
 
 			slotIsExcluded(slot) {
