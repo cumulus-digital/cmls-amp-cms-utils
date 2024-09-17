@@ -292,10 +292,12 @@ import config from './config.json';
 					}
 				});
 				if (refreshSlots.length) {
-					log.info(
-						`Refreshing ${refreshSlots.length} slots.`,
-						window.__CMLSINTERNAL.adTag.listSlotData(refreshSlots)
-					);
+					refreshSlots.forEach((rSlot) => {
+						log.info(
+							`${new Date().toLocaleString()} Refreshing slot in div id ${rSlot.getSlotElementId()}`,
+							window.__CMLSINTERNAL.adTag.listSlotData(rSlot)
+						);
+					});
 					window.__CMLSINTERNAL.adTag.refresh(refreshSlots);
 				}
 			}
