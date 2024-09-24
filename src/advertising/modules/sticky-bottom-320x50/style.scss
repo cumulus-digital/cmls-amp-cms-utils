@@ -25,6 +25,10 @@
 	@media (max-width: 800px) {
 		background-color: rgba(0, 0, 0, 0.6);
 		backdrop-filter: blur(8px);
+
+		height: fit-content;
+		padding: 0;
+		justify-content: center;
 	}
 
 	> div {

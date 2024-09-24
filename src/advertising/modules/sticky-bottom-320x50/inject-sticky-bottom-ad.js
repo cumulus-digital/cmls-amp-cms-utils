@@ -120,10 +120,15 @@ import config from './config.json';
 				const adDiv = <div id={this.elementId} />;
 
 				waitForPlayer().then(() => {
-					adDiv.classList.add(
-						'player-active',
-						`player-${detectPlayer()}`
-					);
+					const playerName = detectPlayer();
+					if (playerName) {
+						adDiv.classList.add(
+							'player-active',
+							`player-${playerName}`
+						);
+					} else {
+						adDiv.classList.add('player-inactive');
+					}
 					if (detectPlayer() === 'tunegenie') {
 						this.zIndexInterval = setInterval(
 							this.updateZindex.bind(this),
