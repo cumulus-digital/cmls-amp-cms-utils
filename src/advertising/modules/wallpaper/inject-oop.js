@@ -214,10 +214,10 @@
 				return;
 			}
 
-			const bgcolor = iDoc.querySelector('[data-bgcolor]');
-			if (bgcolor) {
+			const bgcolorEl = iDoc.querySelector('[data-bgcolor]');
+			if (bgcolorEl && bgcolorEl.dataset.bgcolor) {
 				log.info('Using background color from data-bgcolor attribute.');
-				iDoc.body.style.backgroundColor = bgcolor.dataset.bgcolor;
+				iDoc.body.style.backgroundColor = bgcolorEl.dataset.bgcolor;
 				return;
 			}
 
