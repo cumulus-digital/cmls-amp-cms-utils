@@ -2,11 +2,9 @@ import config from './config.json';
 
 export default () => {
 	const { scriptName, nameSpace, version, elementId } = config;
-	const { Logger, playerTools } = window.__CMLSINTERNAL.libs;
+	const { Logger } = window.__CMLSINTERNAL.libs;
 
 	const log = new Logger(`${scriptName} ${version}`);
-
-	const { waitForPlayer, detectPlayer } = playerTools;
 
 	const doImport = () => {
 		import(
@@ -15,27 +13,24 @@ export default () => {
 		);
 	};
 
-	const waiting = (resolve, reject) => {
-		if (
-			window.matchMedia('(min-width: 800px)').matches &&
-			detectPlayer() !== 'tunegenie'
-		) {
-			log.debug(
-				'No TuneGenie player detected on desktop, wait for player before re-injecting.'
-			);
-			waitForPlayer().then(() => {
-				if (detectPlayer() === 'tunegenie') {
-					resolve(doImport);
+	const match = '(max-width: 800px)';
+	if (window.matchMedia(match).matches) {
+		doImport();
+	} else {
+		log.info(
+			'Will not init on desktop, waiting for matchMedia change to check again.',
+			match
+		);
+		window.matchMedia(match).addEventListener(
+			'change',
+			() => {
+				if (window.matchMedia(match).matches) {
+					doImport();
 				} else {
-					log.info(
-						'Current player does not support sticky ad on desktop.'
-					);
-					resolve(false);
+					log.info('Will not init on desktop.'.match);
 				}
-			});
-		} else {
-			resolve(doImport);
-		}
-	};
-	return new Promise(waiting);
+			},
+			{ once: true }
+		);
+	}
 };

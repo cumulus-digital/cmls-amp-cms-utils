@@ -1,6 +1,11 @@
 ((window) => {
-	const { Logger, h, domReady, playerTools } = window.__CMLSINTERNAL.libs;
-	const { addAfterPageFrame } = playerTools;
+	const {
+		h,
+		Logger,
+		domReady,
+		//playerTools
+	} = window.__CMLSINTERNAL.libs;
+	//const { addAfterPageFrame } = playerTools;
 	const scriptName = 'WEST7-1X1';
 	const nameSpace = 'west71x1';
 	const version = '0.1';
@@ -47,9 +52,11 @@
 			adTag.display(elementId, adTag.isInitialLoadDisabled());
 			log.info('Slot initialized');
 
+			/*
 			addAfterPageFrame(() => {
 				adTag.destroySlots([slot]);
 			});
+			*/
 		});
 	};
 

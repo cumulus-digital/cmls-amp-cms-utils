@@ -1,9 +1,15 @@
 import config from './config.json';
 
 ((window, undefined) => {
-	const { h, Fragment, Logger, playerTools, domReady, triggerEvent } =
-		window.__CMLSINTERNAL.libs;
-	const { addAfterPageFrame } = playerTools;
+	const {
+		h,
+		Fragment,
+		Logger,
+		//playerTools,
+		domReady,
+		triggerEvent,
+	} = window.__CMLSINTERNAL.libs;
+	//const { addAfterPageFrame } = playerTools;
 	const scriptName = `${config.scriptNamePrefix} Generator`;
 	const nameSpace = `${config.namespacePrefix}Generator`;
 	const version = config.version;
@@ -155,9 +161,11 @@ import config from './config.json';
 				}
 
 				adTag.display(this.slotDiv, adTag.isInitialLoadDisabled());
+				/*
 				addAfterPageFrame(() => {
 					adTag.destroySlots([this.slot]);
 				});
+				*/
 
 				log.info('Slot initialized');
 			});

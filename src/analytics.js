@@ -19,7 +19,8 @@ waitFor(() => window._CMLS.libsLoaded.indexOf('main') > -1).then(
  ______ ____ _  __ __/ /_ _____
 / __/ // /  ' \\/ // / / // (_-<
 \\__/\\_,_/_/_/_/\\_,_/_/\\_,_/___/
-        ANALYTICS LIBRARY LOADED`,
+ ANALYTICS LIBRARY LOADED
+ BUILD DATE: ${__BUILDDATE__}`,
 			headerLength: Infinity,
 		});
 

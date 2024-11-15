@@ -6,5 +6,5 @@
 	"viewablePercent": 50,
 	"defaultRefreshInMinutes": 1,
 
-	"ALWAYS_REFRESH_POS": ["wallpaper-ad"]
+	"ALWAYS_REFRESH_POS": []
 }

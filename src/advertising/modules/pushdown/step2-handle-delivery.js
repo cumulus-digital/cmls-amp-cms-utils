@@ -15,9 +15,15 @@
  *
  */
 ((window, undefined) => {
-	const { h, Fragment, Logger, lodash, playerTools, triggerEvent } =
-		window.__CMLSINTERNAL.libs;
-	const { throttle, debounce } = lodash;
+	const {
+		h,
+		Fragment,
+		Logger,
+		//lodash,
+		//playerTools,
+		triggerEvent,
+	} = window.__CMLSINTERNAL.libs;
+	//const { throttle, debounce } = lodash;
 
 	const scriptName = 'PUSHDOWN HANDLER';
 	const nameSpace = 'pushdownHandler';

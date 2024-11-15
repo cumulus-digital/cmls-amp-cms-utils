@@ -6,8 +6,13 @@
  * ".wrapper-content" with targeting pos="pushdown" ON HOMEPAGES ONLY.
  */
 ((window, undefined) => {
-	const { h, Logger, triggerEvent, playerTools } = window.__CMLSINTERNAL.libs;
-	const { addAfterPageFrame } = playerTools;
+	const {
+		h,
+		Logger,
+		triggerEvent,
+		//playerTools
+	} = window.__CMLSINTERNAL.libs;
+	//const { addAfterPageFrame } = playerTools;
 
 	const scriptName = 'PUSHDOWN AD INJECTOR';
 	const nameSpace = 'pushdownInjector';
@@ -114,9 +119,11 @@
 			}
 
 			adTag.display(slotDiv, adTag.isInitialLoadDisabled());
+			/*
 			addAfterPageFrame(() => {
 				adTag.destroySlots([slot]);
 			});
+			*/
 		});
 
 		log.info('Initialized');

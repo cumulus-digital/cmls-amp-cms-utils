@@ -1,3 +1,49 @@
+const { domReady } = window.__CMLSINTERNAL.libs;
+const scriptName = 'SOCIAL LISTEN LIVE LINK';
+const nameSpace = 'socialListenLive';
+const version = '0.3';
+const log = new Logger(`${scriptName} ${version}`);
+
+((window, undefined) => {
+	const selectors = [
+		'.block-type-social a:has([alt="Listen Live!!"])',
+		'.block-type-social a:has([title="Listen Live!!"])',
+		'.block-type-social a[alt="Listen Live!!"]',
+		'.block-type-social a[title="Listen Live!!"]',
+		'.nav-listenlive a, .nav-listenlive img',
+		'.cmlistenlive-start',
+	];
+
+	domReady(() => {
+		const hostname = window.location.hostname;
+		const hostnameParts = hostname.split('.');
+		if (hostnameParts.length > 2) {
+			hostnameParts[0] = 'player';
+		} else {
+			hostnameParts.unshift('player');
+		}
+		const hasSoCastLink = window.document.querySelector(
+			`a[href="http://${hostnameParts.join('.')}/"], a[href="https://${hostnameParts.join('.')}/"]`
+		);
+		if (hasSoCastLink) {
+			const listener = window.document.body.addEventListener(
+				'click',
+				(e) => {
+					if (!e.target.matches(selectors.join(','))) {
+						e.preventDefault();
+						window.open(
+							`http://${hostnameParts.join('.')}/`,
+							'_blank'
+						);
+						return;
+					}
+				}
+			);
+		}
+	});
+})(window.self);
+
+/*
 const { Logger, playerTools } = window.__CMLSINTERNAL.libs;
 const {
 	detectPlayer,
@@ -32,7 +78,7 @@ const log = new Logger(`${scriptName} ${version}`);
 					return;
 				}
 
-				if (player === 'cumulus' && window.cmls_player.play) {
+				if (player === 'cumulus' && window?.cmls_player?.play) {
 					e.preventDefault();
 					log.info('Caught a listen live request');
 					window.cmls_player.play();
@@ -55,3 +101,4 @@ const log = new Logger(`${scriptName} ${version}`);
 		});
 	});
 })(jQuery, window.self);
+*/

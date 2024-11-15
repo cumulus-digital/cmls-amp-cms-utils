@@ -41,7 +41,7 @@ window.__CMLSINTERNAL.scriptUrlBase = window.__CMLSINTERNAL.scriptUrl.replace(
 import throttle from 'lodash/throttle';
 import debounce from 'lodash/debounce';
 
-import * as playerTools from 'Utils/playerTools';
+//import * as playerTools from 'Utils/playerTools';
 import getBasicPost from 'Utils/getBasicPost';
 import createElement from 'Utils/createElement';
 import { h, Fragment } from 'Utils/createElement';
@@ -55,7 +55,7 @@ window.__CMLSINTERNAL.libs = {
 	//	$script,
 	Logger,
 	doDynamicImports,
-	playerTools,
+	//playerTools,
 	getBasicPost,
 	createElement,
 	h,
@@ -100,7 +100,8 @@ URL BASE: ${window.__CMLSINTERNAL.scriptUrlBase}
  ______ ____ _  __ __/ /_ _____
 / __/ // /  ' \\/ // / / // (_-<
 \\__/\\_,_/_/_/_/\\_,_/_/\\_,_/___/
-          MAIN LIBRARY LOADED`,
+ MAIN LIBRARY LOADED
+ BUILD DATE: ${__BUILDDATE__}`,
 	headerLength: Infinity,
 });
 

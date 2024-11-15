@@ -11,6 +11,8 @@ const path = require('path');
 const fs = require('fs');
 const glob = require('glob');
 
+const __BUILDDATE__ = new Date().toString();
+
 module.exports = (env) => {
 	const isProduction = env.NODE_ENV === 'production';
 	const mode = isProduction ? 'production' : 'development';
@@ -72,7 +74,7 @@ module.exports = (env) => {
 										},
 									],
 								}),
-						  ]
+							]
 						: postCSSPlugins,
 				},
 			},
@@ -213,8 +215,9 @@ module.exports = (env) => {
 							loader: require.resolve('sass-loader'),
 							options: {
 								sourceMap: !isProduction,
+								api: 'modern',
 								sassOptions: {
-									importer: jsonInSassImporter(),
+									//importer: jsonInSassImporter(),
 								},
 							},
 						},
@@ -223,9 +226,21 @@ module.exports = (env) => {
 			],
 		},
 		plugins: [
+			new webpack.DefinePlugin({
+				__BUILDDATE__: JSON.stringify(__BUILDDATE__),
+			}),
 			new ModuleFederationPlugin({
 				runtime: 'cmls-amp-utils',
-				shared: ['core-js', 'lodash', 'style-loader', 'css-loader'],
+				shared: [
+					'vendors',
+					'core-js',
+					'lodash',
+					'style-loader',
+					'css-loader',
+					'postcss-loader',
+					'sass-loader',
+					'main',
+				],
 			}),
 			new CleanWebpackPlugin({
 				cleanAfterEveryBuildPatterns: ['!fonts/**', '!images/**'],

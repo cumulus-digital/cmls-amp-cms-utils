@@ -5,10 +5,10 @@ require('./modules/register-adpath/no-export.js');
 //require('./modules/interstitial/no-export.js');
 
 import shouldDisableCollapse from './modules/disable-collapse-before-fetch/shouldImport';
-import shouldImportStickyBottom from './modules/sticky-bottom-320x50/shouldImport';
+import shouldImportStickyBottom from './modules/sticky-bottom-320x50/shouldImport.js';
 import shouldImportAutoRefreshAds from './modules/auto-refresh-ads/shouldImport';
-import shouldImportLocalNavThroughPlayer from './modules/local-nav-through-player/shouldImport';
-import shouldImportTGMPEventTargeting from './modules/tgmp-event-targeting/shouldImport';
+//import shouldImportLocalNavThroughPlayer from './modules/local-nav-through-player/shouldImport';
+//import shouldImportTGMPEventTargeting from './modules/tgmp-event-targeting/shouldImport';
 import shouldImportPaidContent from './modules/paid-content/shouldImport';
 import shouldImportPushdown from './modules/pushdown_v2/shouldImport';
 import shouldImportSidewalls from './modules/sidewalls/shouldImport';
@@ -30,20 +30,20 @@ const imports = [
 		loaderOptions: { async: false, defer: false },
 	},
 
-	{
-		name: 'advertising/local-nav-through-player',
-		check: shouldImportLocalNavThroughPlayer,
-	},
+	// {
+	// 	name: 'advertising/local-nav-through-player',
+	// 	check: shouldImportLocalNavThroughPlayer,
+	// },
 
 	{
 		name: 'advertising/wallpaper',
 		check: shouldImportWallpaper,
 	},
 
-	{
-		name: 'advertising/tgmp-event-targeting',
-		check: shouldImportTGMPEventTargeting,
-	},
+	// {
+	// 	name: 'advertising/tgmp-event-targeting',
+	// 	check: shouldImportTGMPEventTargeting,
+	// },
 
 	{
 		name: 'advertising/paid-content',

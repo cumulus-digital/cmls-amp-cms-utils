@@ -1,4 +1,4 @@
-import shouldImportTGMPTracking from './modules/tgmp-events-to-gtm/shouldImport';
+//import shouldImportTGMPTracking from './modules/tgmp-events-to-gtm/shouldImport';
 import shouldImportPromoreelClick from './modules/promoreel-click/shouldImport';
 
 const imports = [
@@ -23,10 +23,10 @@ const imports = [
 		},
 	},
 
-	{
-		name: 'analytics/tgmp-events-to-gtm',
-		check: shouldImportTGMPTracking,
-	},
+	// {
+	// 	name: 'analytics/tgmp-events-to-gtm',
+	// 	check: shouldImportTGMPTracking,
+	// },
 
 	{
 		name: 'analytics/promoreel-click',

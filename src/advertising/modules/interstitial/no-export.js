@@ -1,6 +1,11 @@
 ((window) => {
-	const { Logger, h, domReady, playerTools } = window.__CMLSINTERNAL.libs;
-	const { addAfterPageFrame } = playerTools;
+	const {
+		h,
+		Logger,
+		domReady,
+		//playerTools
+	} = window.__CMLSINTERNAL.libs;
+	//const { addAfterPageFrame } = playerTools;
 	const scriptName = 'GPT-INTERSTITIAL';
 	const nameSpace = 'gptInterstitial';
 	const version = '0.1';

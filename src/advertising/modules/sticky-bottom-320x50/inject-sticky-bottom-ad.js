@@ -1,12 +1,7 @@
-/**
- * Send global targeting (cms-sgroups) values as GTM events
- */
 import config from './config.json';
 
 ((window) => {
-	const { h, domReady, Logger, playerTools } = window.__CMLSINTERNAL.libs;
-	const { waitForPlayer, detectPlayer, addAfterPageFrame } = playerTools;
-
+	const { h, domReady, Logger } = window.__CMLSINTERNAL.libs;
 	const { scriptName, nameSpace, version, elementId } = config;
 
 	const log = new Logger(`${scriptName} ${version}`);
@@ -25,8 +20,9 @@ import config from './config.json';
 		slot = null;
 		context = context;
 		adTag = context.__CMLSINTERNAL.adTag;
+		matchMedia = '(max-width: 800px)';
+		maxZIndex = 2147483647;
 		zIndexInterval;
-
 		constructor() {
 			this.elementId = elementId;
 			this.context = context;
@@ -39,7 +35,7 @@ import config from './config.json';
 
 		refresh() {
 			if (this.slot && this.adTag) {
-				log.info('Refreshing.');
+				log.info('Refreshing');
 				this.adTag.refresh(this.slot);
 				this.updateZindex();
 			} else {
@@ -47,192 +43,138 @@ import config from './config.json';
 			}
 		}
 
+		/**
+		 * Get the slot container if it exists
+		 * @returns {Element|undefined}
+		 */
 		hasDiv() {
 			return this.context.document.getElementById(this.elementId);
 		}
 
 		updateZindex() {
-			const adDiv = this.context.document.getElementById(this.elementId);
-			const playerbar = this.context.document.getElementById('playerbar');
-			const pageframe = this.context.document.querySelector(
-				'iframe[name="pwm_pageFrame"]'
-			);
-
+			const adDiv = this.hasDiv();
 			if (!adDiv) return;
 
-			let playerbarZ = playerbar
-				? this.context.getComputedStyle(playerbar)?.zIndex || 0
-				: 0;
+			const els = this.context.document.querySelectorAll('body > *');
+			const currentZ =
+				parseInt(this.context.getComputedStyle(adDiv)?.zIndex) || 0;
+			let newZ = 0;
 
-			if (playerbarZ) {
-				playerbarZ = parseInt(playerbarZ) || 0;
-			}
+			[...els].some((el) => {
+				const style = this.context.getComputedStyle(el);
+				if (style.zIndex && style.zIndex !== 'auto') {
+					const elZ = parseInt(style.zIndex);
+					if (elZ >= this.maxZIndex) {
+						newZ = this.maxZIndex;
+						return true;
+					}
+					newZ = Math.min(newZ, parseInt(style.zIndex));
+				}
+			});
 
-			let pageframeZ = pageframe
-				? this.context.getComputedStyle(pageframe)?.zIndex || 0
-				: 0;
-
-			if (pageframeZ) {
-				pageframeZ = parseInt(pageframeZ) || 0;
-			}
-
-			let currentZ = this.context.getComputedStyle(adDiv)?.zIndex || 0;
-
-			if (currentZ) {
-				currentZ = parseInt(currentZ) || 0;
-			}
-
-			let newZ = playerbarZ - 1;
-			if (
-				this.context.matchMedia('(min-width: 800px)').matches &&
-				detectPlayer() === 'tunegenie'
-			) {
-				newZ = playerbarZ + 1;
-			}
-			//Math.max(currentZ, playerbarZ - 1);
-
-			if (currentZ != newZ) {
-				log.debug('Adjusting ad div z-index', { currentZ, newZ });
+			if (currentZ !== newZ && newZ > currentZ) {
+				log.debug('Adjusting z-index', { currentZ, newZ });
 				adDiv.style.setProperty('z-index', newZ, 'important');
 			}
 		}
 
 		inject() {
-			// Don't inject on desktop without a player
-			if (
-				window.matchMedia('(min-width: 800px)').matches &&
-				detectPlayer() !== 'tunegenie'
-			) {
-				log.debug(
-					'No TuneGenie player detected on desktop, wait for player before re-injecting.'
-				);
-				waitForPlayer().then(() => {
-					if (detectPlayer() === 'tunegenie') {
-						this.inject();
-					}
-				});
+			// Don't inject on desktop
+			if (!window.matchMedia(this.matchMedia).matches) {
+				log.info('Will not inject on desktop.');
 				return;
 			}
 
-			if (!this.hasDiv()) {
-				log.debug('Injecting');
+			if (this.hasDiv()) {
+				log.info('Already injected');
+				return;
+			}
 
-				const adDiv = <div id={this.elementId} />;
+			log.debug('Injecting ad slot');
 
-				waitForPlayer().then(() => {
-					const playerName = detectPlayer();
-					if (playerName) {
-						adDiv.classList.add(
-							'player-active',
-							`player-${playerName}`
-						);
-					} else {
-						adDiv.classList.add('player-inactive');
-					}
-					if (detectPlayer() === 'tunegenie') {
-						this.zIndexInterval = setInterval(
-							this.updateZindex.bind(this),
-							1000
-						);
-					}
-				});
+			const adDiv = <div id={this.elementId} />;
+			adDiv.classList.add('player-inactive');
 
-				const style = import(
-					/*
+			const style = import(
+				/*
 						webpackChunkName: 'advertising/sticky-bottom-320x50/style'
 					*/
-					'./style.scss'
-				).then((style) => {
-					if (style?.default?.use)
-						style.default.use({
-							target: this.context.document.body,
-						});
-				});
-
-				this.context.document.body.append(adDiv, this.stub);
-				this.context.document.body.classList.add('has-sticky-320x50');
-
-				log.info('Injected');
-
-				this.adTag.queue(() => {
-					this.adTag.getSlots().forEach((slot) => {
-						if (slot.getSlotElementId() === this.elementId) {
-							log.info('Destroying existing slot.');
-							this.adTag.destroySlots([slot]);
-							//return true;
-						}
+				'./style.scss'
+			).then((style) => {
+				if (style?.default?.use)
+					style.default.use({
+						target: this.context.document.body,
 					});
+			});
 
-					log.info('Defining new ad slot', this.elementId);
-					const sizeMap = [
+			this.context.document.body.append(adDiv, this.stub);
+			this.context.document.body.classList.add('has-sticky-320x50');
+
+			log.info('Injected slot, initializing ad tag.');
+
+			this.adTag.queue(() => {
+				const destroySlots = [];
+				this.adTag.getSlots().forEach((slot) => {
+					if (slot.getSlotElementId() === this.elementId) {
+						destroySlots.push(slot);
+					}
+				});
+				if (destroySlots.length) {
+					log.info('Destroying existing slots', destroySlots);
+					this.adTag.destroySlots(destroySlots);
+				}
+
+				const sizeMap = [
+					[
+						[800, 0],
 						[
-							[800, 0],
-							[
-								[120, 60],
-								[300, 50],
-								[320, 50],
-							],
-						],
-						[
-							[0, 0],
-							[
-								[300, 50],
-								[320, 50],
-							],
-						],
-					];
-					this.slot = this.adTag.defineSlot({
-						adUnitPath: `${this.context.__CMLSINTERNAL.adPath}/stickyBottomAd`,
-						size: [
 							[120, 60],
 							[300, 50],
 							[320, 50],
 						],
-						sizeMap: sizeMap,
-						div: this.elementId,
-						collapse: true,
-						targeting: { pos: 'playersponsorlogo' },
-						prebid: true,
-					});
-
-					if (!this.slot) {
-						log.warn('Slot creation failed!');
-						return;
-					}
-
-					this.adTag.addListener('slotRenderEnded', (e) => {
-						if (!e.isEmpty && e.slot === this.slot) {
-							log.debug('Slot returned creative.');
-
-							if (this.context !== window.self) {
-								log.debug(
-									'Inside iframe, adding stub to inside page.'
-								);
-								const inside_stub = this.stub.cloneNode(true);
-								// Apply outside stub's styles to inside stub
-								const stub_style = context.getComputedStyle(
-									this.stub
-								);
-								for (let i = 0; i < stub_style.length; i++) {
-									inside_stub.style[stub_style[i]] =
-										stub_style.getPropertyValue(
-											stub_style[i]
-										);
-								}
-								window.self.document.body.append(inside_stub);
-								window.self.document.body.classList.add(
-									'has-sticky-320x50'
-								);
-							}
-						}
-					});
-
-					this.adTag.display(
-						this.elementId,
-						this.adTag.isInitialLoadDisabled()
-					);
+					],
+					[
+						[0, 0],
+						[
+							[300, 50],
+							[320, 50],
+						],
+					],
+				];
+				this.slot = this.adTag.defineSlot({
+					adUnitPath: `${this.context.__CMLSINTERNAL.adPath}/stickyBottomAd`,
+					size: [
+						[120, 60],
+						[300, 50],
+						[320, 50],
+					],
+					sizeMap: sizeMap,
+					div: this.elementId,
+					collapse: true,
+					targeting: {
+						pos: ['playersponsorlogo', 'mobile-sticky-bottom'],
+					},
+					prebid: true,
 				});
-			}
+
+				if (!this.slot) {
+					log.warn('Failed to define slot!');
+					return;
+				}
+
+				this.adTag.addListener('slotRenderEnded', (e) => {
+					if (e.isEmpty || e.slot !== this.slot) return;
+
+					log.debug('Slot returned creative.');
+					this.hasDiv().classList.add('delivered');
+					this.updateZindex();
+				});
+
+				this.adTag.display(
+					this.elementId,
+					this.adTag.isInitialLoadDisabled()
+				);
+			});
 		}
 	}
 

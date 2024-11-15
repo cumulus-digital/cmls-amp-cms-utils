@@ -1,5 +1,8 @@
-const { Logger, playerTools } = window.__CMLSINTERNAL.libs;
-const { detectPlayer, addAfterPageFrame, navigateThroughPlayer } = playerTools;
+const {
+	Logger,
+	//playerTools
+} = window.__CMLSINTERNAL.libs;
+//const { detectPlayer, addAfterPageFrame, navigateThroughPlayer } = playerTools;
 
 const scriptName = 'AUTO-RELOAD PAGE';
 const nameSpace = 'autoReloadPage';
@@ -33,11 +36,11 @@ const log = new Logger(`${scriptName} ${version}`);
 			const win = window.self,
 				pathname = win.location.pathname;
 			return !!(pathname.length < 1 || pathname === '/');
-			return !!win?.document?.body?.matches(this.settings.condition);
+			//return !!win?.document?.body?.matches(this.settings.condition);
 		}
 
 		start(options = {}) {
-			if (!options instanceof Object) {
+			if ((!options) instanceof Object) {
 				log.error('Received malformed options');
 				return;
 			}
@@ -126,11 +129,13 @@ const log = new Logger(`${scriptName} ${version}`);
 				window._CMLS.clearAutoRefreshAdsExclusion();
 			}
 
+			/*
 			if (detectPlayer()) {
 				log.info('Reloading page through player.');
 				navigateThroughPlayer(url);
 				return;
 			}
+			*/
 			w.location.href = url;
 		}
 
@@ -150,14 +155,14 @@ const log = new Logger(`${scriptName} ${version}`);
 
 	w._CMLS.autoReload = new AutoReloadPage(w._CMLS.autoReload.pop());
 
+	/*
 	// Stop timer after TG navigates away
 	addAfterPageFrame(() => {
 		autoReloadPageInstance.stop();
-		/*
-		if (w?._CMLS?.autoReload instanceof AutoReloadPage) {
-			w._CMLS.autoReload.stop();
-			delete w._CMLS.autoReload;
-		}
-		*/
+		// if (w?._CMLS?.autoReload instanceof AutoReloadPage) {
+		// 	w._CMLS.autoReload.stop();
+		// 	delete w._CMLS.autoReload;
+		// }
 	});
+	*/
 })(window.self);
