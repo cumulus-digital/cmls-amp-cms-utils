@@ -222,7 +222,6 @@
 			}
 
 			// Get color from center of image
-			log.debug('Attempting to discover color from image...');
 			const slot_img = iDoc.querySelector(
 				'.img_ad,img[src]:not([width="1"]):not([width="0"])'
 			);
@@ -231,6 +230,7 @@
 				return;
 			}
 
+			log.info('Attempting to discover color from image', slot_img);
 			const xhr = new XMLHttpRequest();
 			xhr.onload = () => {
 				if (xhr.status !== 200) {
@@ -276,9 +276,11 @@
 						log.info('Setting background color to', newColor);
 						iDoc.body.style.backgroundColor = `rgb(${newColor.join(',')})`;
 					};
+					img.setAttribute('src', dataURI);
 				};
+				reader.readAsDataURL(xhr.response);
 			};
-			xhr.open('GET', slot_img.src);
+			xhr.open('GET', slot_img.getAttribute('src'));
 			xhr.responseType = 'blob';
 			xhr.send();
 		}
