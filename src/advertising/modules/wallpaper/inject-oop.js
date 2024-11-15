@@ -112,22 +112,11 @@
 							this.elementId
 						);
 					}
-					this.clearObstructions();
 					this.context.document.body.classList.add(
 						'has-wallpaper-ad'
 					);
 					this.container.classList.add('delivered');
-					const iframe = this.div.querySelector('iframe');
-					if (iframe) {
-						// check if iframe is loaded
-						if (iframe.readyState === 'complete') {
-							this.centerIframeContent();
-						} else {
-							iframe.addEventListener('load', () => {
-								this.centerIframeContent();
-							});
-						}
-					}
+					this.handleCreative(e.slot);
 				});
 
 				this.adTag.display(
@@ -138,29 +127,33 @@
 			});
 		}
 
-		centerIframeContent() {
+		handleCreative(slot) {
+			this.clearObstructions();
+
 			const iframe = this.div.querySelector('iframe');
-			if (iframe) {
-				const iDoc = iframe.contentWindow.document;
-				if (!iDoc) {
-					log.error('Could not get iframe document!');
-					return;
-				}
-				const a = iDoc.querySelector('a[href*="/pcs/click"]');
-				if (a) {
-					a.style.display = 'flex';
-					a.style.justifyContent = 'center';
-					a.style.width = '100%';
-					a.style.height = '100%';
-					if (a.style.backgroundColor) {
-						iDoc.body.style.backgroundColor =
-							a.style.backgroundColor;
-					}
-				}
-				const bgcolor = iDoc.querySelector('[data-bgcolor]');
-				if (bgcolor) {
-					iDoc.body.style.backgroundColor = bgcolor.dataset.bgcolor;
-				}
+			if (!iframe) {
+				log.warn('Could not find iframe!');
+				return;
+			}
+
+			const iDoc = iframe.contentWindow.document;
+			if (!iDoc) {
+				log.error('Could not get iframe document!');
+				return;
+			}
+
+			this.centerIframeContent(iframe);
+			this.getBackgroundColorFromImage(iframe);
+		}
+
+		centerIframeContent(iframe) {
+			const iDoc = iframe.contentWindow.document;
+			const a = iDoc.querySelector('a[href*="/pcs/click"]');
+			if (a) {
+				a.style.display = 'flex';
+				a.style.justifyContent = 'center';
+				a.style.width = '100%';
+				a.style.height = '100%';
 			}
 		}
 
@@ -206,6 +199,88 @@
 					obstruction.remove();
 				});
 			}
+		}
+
+		getBackgroundColorFromImage(iframe) {
+			const iDoc = iframe.contentWindow.document;
+			const a = iDoc.querySelector('a[href*="/pcs/click"]');
+			if (
+				a.style.backgroundColor &&
+				a.style.backgroundColor !== 'none' &&
+				a.style.backgroundColor !== 'transparent'
+			) {
+				log.info('Using background color from a tag.');
+				iDoc.body.style.backgroundColor = a.style.backgroundColor;
+				return;
+			}
+
+			const bgcolor = iDoc.querySelector('[data-bgcolor]');
+			if (bgcolor) {
+				log.info('Using background color from data-bgcolor attribute.');
+				iDoc.body.style.backgroundColor = bgcolor.dataset.bgcolor;
+				return;
+			}
+
+			// Get color from center of image
+			log.debug('Attempting to discover color from image...');
+			const slot_img = iDoc.querySelector(
+				'.img_ad,img[src]:not([width="1"]):not([width="0"])'
+			);
+			if (!slot_img) {
+				log.debug('Could not find .img_ad!');
+				return;
+			}
+
+			const xhr = new XMLHttpRequest();
+			xhr.onload = () => {
+				if (xhr.status !== 200) {
+					log.debug('Could not get image data!');
+					return;
+				}
+				const reader = new FileReader();
+				reader.onloadend = () => {
+					const dataURI = reader.result;
+					if (!dataURI) {
+						log.debug('Could not get data URI for image');
+						return;
+					}
+
+					const img = new Image();
+					img.onload = () => {
+						const canvas = <canvas />;
+						const context = canvas.getContext('2d');
+						const imageWidth =
+							img.naturalWidth || img.offsetWidth || img.width;
+						const imageHeight =
+							img.naturalHeight || img.offsetHeight || img.height;
+						const center = {
+							x: imageWidth / 2,
+							y: imageHeight / 2,
+						};
+						canvas.width = imageWidth;
+						canvas.height = imageHeight;
+						context.drawImage(img, 0, 0);
+
+						const colorData = context.getImageData(
+							center.x,
+							center.y,
+							1,
+							1
+						);
+						if (!colorData.data) {
+							log.debug('Could not get color data');
+							return;
+						}
+
+						const newColor = colorData.data.slice(0, 3);
+						log.info('Setting background color to', newColor);
+						iDoc.body.style.backgroundColor = `rgb(${newColor.join(',')})`;
+					};
+				};
+			};
+			xhr.open('GET', slot_img.src);
+			xhr.responseType = 'blob';
+			xhr.send();
 		}
 	}
 
