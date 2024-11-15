@@ -16,14 +16,42 @@ export default () => {
 			return;
 		}
 
-		log.info('Injecting wallpaper ad controller.');
-		resolve(() => {
-			import(
-				/* webpackChunkName: "advertising/wallpaper/wallpaper-1-await-creative" */
-				//'./step1-await-creative.js'
-				'./inject-oop.js'
-			);
-		});
+		const resolveIfNotExists = () => {
+			const adTag = window.__CMLSINTERNAL.adTag;
+			let hasWallpaper = adTag
+				.getSlots()
+				.some((slot) =>
+					slot.getTargeting('pos').includes('wallpaper-ad')
+				);
+			if (hasWallpaper) {
+				log.info(
+					'In-page Wallpaper slot exists, injecting old handler.'
+				);
+				resolve(() => {
+					import(
+						/* webpackChunkName: "advertising/wallpaper/wallpaper-1-await-creative" */
+						'./old/step1-await-creative.js'
+					);
+				});
+
+				return false;
+			}
+			log.info('Injecting wallpaper ad controller.');
+			resolve(() => {
+				import(
+					/* webpackChunkName: "advertising/wallpaper/wallpaper-oop" */
+					'./inject-oop.js'
+				);
+			});
+		};
+
+		if (window.__CMLSINTERNAL.adTag) {
+			resolveIfNotExists();
+		} else {
+			window.addEventListener('cmls-adtag-loaded', () => {
+				resolveIfNotExists();
+			});
+		}
 	};
 	return new Promise(waiting);
 };

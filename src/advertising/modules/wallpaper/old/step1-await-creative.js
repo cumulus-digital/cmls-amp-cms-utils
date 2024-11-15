@@ -4,8 +4,12 @@
  * Detect existance of a wallpaper ad and load the handler
  */
 ((window) => {
-	const { h, Logger, playerTools } = window.__CMLSINTERNAL.libs;
-	const { addAfterPageFrame } = playerTools;
+	const {
+		h,
+		Logger,
+		//playerTools
+	} = window.__CMLSINTERNAL.libs;
+	//const { addAfterPageFrame } = playerTools;
 	const scriptName = 'WALLPAPER DETECTOR';
 	const nameSpace = 'wallpaperDetector';
 	const version = '0.3';
@@ -60,43 +64,43 @@
 			log.info('Wallpaper slot does not exist.');
 			return;
 
-			log.info('Wallpaper slot does not exist, creating one...');
+			// log.info('Wallpaper slot does not exist, creating one...');
 
-			const adTag = window.__CMLSINTERNAL.adTag;
-			const slotDiv = <div id={this.elementId} />;
-			window.self.document.body.append(slotDiv);
+			// const adTag = window.__CMLSINTERNAL.adTag;
+			// const slotDiv = <div id={this.elementId} />;
+			// window.self.document.body.append(slotDiv);
 
-			const slot = adTag.defineSlot({
-				outOfPage: true,
-				adUnitPath: window.__CMLSINTERNAL.adPath + '/wallpaper',
-				div: this.elementId,
-				collapse: true,
-				targeting: { pos: this.pos, noprebid: 'noprebid' },
-				prebid: false,
-			});
-			if (!slot) {
-				log.error('Could not define slot!');
-				return;
-			}
+			// const slot = adTag.defineSlot({
+			// 	outOfPage: true,
+			// 	adUnitPath: window.__CMLSINTERNAL.adPath + '/wallpaper',
+			// 	div: this.elementId,
+			// 	collapse: true,
+			// 	targeting: { pos: this.pos, noprebid: 'noprebid' },
+			// 	prebid: false,
+			// });
+			// if (!slot) {
+			// 	log.error('Could not define slot!');
+			// 	return;
+			// }
 
-			adTag.display(slotDiv, adTag.isInitialLoadDisabled());
-			addAfterPageFrame(() => {
-				adTag.destroySlots([slot]);
-			});
-			return;
-			/*
-			const adTag = window._CMLS.adTag;
-			const adDiv = createElement.el('div', {
-				id: `${elementId}`,
-				'aria-hidden': 'true',
-			});
-			Object.assign(container.style, {
-				position: 'relative !important',
-				zIndex: '99999999 !important',
-				maxWidth: '1020px !important',
-				overflow: 'hidden !important',
-			});
-			*/
+			// adTag.display(slotDiv, adTag.isInitialLoadDisabled());
+			// addAfterPageFrame(() => {
+			// 	adTag.destroySlots([slot]);
+			// });
+			// return;
+			// /*
+			// const adTag = window._CMLS.adTag;
+			// const adDiv = createElement.el('div', {
+			// 	id: `${elementId}`,
+			// 	'aria-hidden': 'true',
+			// });
+			// Object.assign(container.style, {
+			// 	position: 'relative !important',
+			// 	zIndex: '99999999 !important',
+			// 	maxWidth: '1020px !important',
+			// 	overflow: 'hidden !important',
+			// });
+			// */
 		}
 
 		checkSlotForCreative(slot) {
