@@ -1,4 +1,4 @@
-const { domReady } = window.__CMLSINTERNAL.libs;
+const { domReady, Logger } = window.__CMLSINTERNAL.libs;
 const scriptName = 'SOCIAL LISTEN LIVE LINK';
 const nameSpace = 'socialListenLive';
 const version = '0.3';
