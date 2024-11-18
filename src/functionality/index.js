@@ -9,10 +9,12 @@ const imports = [
 		check: shouldImportShareButtons,
 	},
 
+	/*
 	{
 		name: 'functionality/social-listen-live',
 		check: shouldImportSocialListenLive,
 	},
+	*/
 
 	{
 		name: 'functionality/auto-reload-page',

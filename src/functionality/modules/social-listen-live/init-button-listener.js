@@ -30,6 +30,7 @@ const log = new Logger(`${scriptName} ${version}`);
 				'click',
 				(e) => {
 					if (!e.target.matches(selectors.join(','))) {
+						log.info('Activating player link', e.target);
 						e.preventDefault();
 						window.open(
 							`http://${hostnameParts.join('.')}/`,
