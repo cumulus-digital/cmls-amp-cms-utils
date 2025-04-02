@@ -1,7 +1,7 @@
 const { domReady, Logger } = window.__CMLSINTERNAL.libs;
 const scriptName = 'SOCIAL LISTEN LIVE LINK';
 const nameSpace = 'socialListenLive';
-const version = '0.3';
+const version = '0.4';
 const log = new Logger(`${scriptName} ${version}`);
 
 ((window, undefined) => {
@@ -26,10 +26,9 @@ const log = new Logger(`${scriptName} ${version}`);
 			`a[href="http://${hostnameParts.join('.')}/"], a[href="https://${hostnameParts.join('.')}/"]`
 		);
 		if (hasSoCastLink) {
-			const listener = window.document.body.addEventListener(
-				'click',
-				(e) => {
-					if (!e.target.matches(selectors.join(','))) {
+			window.__CMLSINTERNAL[nameSpace] =
+				window.document.body.addEventListener('click', (e) => {
+					if (e.target.matches(selectors.join(','))) {
 						log.info('Activating player link', e.target);
 						e.preventDefault();
 						window.open(
@@ -38,8 +37,7 @@ const log = new Logger(`${scriptName} ${version}`);
 						);
 						return;
 					}
-				}
-			);
+				});
 		}
 	});
 })(window.self);
