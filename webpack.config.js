@@ -284,5 +284,6 @@ module.exports = (env) => {
 				);
 			},
 		},
+		watchOptions: { poll: 1000 },
 	};
 };
