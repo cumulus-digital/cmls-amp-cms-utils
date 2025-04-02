@@ -7,8 +7,29 @@ import GPTInterface from './gpt';
 
 export default class APSInterface extends GPTInterface {
 	scriptName = 'APS-GPT INTERFACE';
-	version = '0.1';
+	version = '0.2';
 	log = null;
+	allowedSizes = [
+		'120x240',
+		'120x600',
+		'160x600',
+		'250x250',
+		'300x50',
+		'300x100',
+		'300x1050',
+		'300x300',
+		'300x75',
+		'300x250',
+		'300x600',
+		'320x50',
+		'320x100',
+		'336x280',
+		'400x300',
+		'468x60',
+		'728x90',
+		'970x250',
+		'970x90',
+	];
 
 	static identity = 'APS-GPT';
 
@@ -77,33 +98,13 @@ export default class APSInterface extends GPTInterface {
 			me.log.debug('Checking', slot.getSlotElementId());
 			let isPrebid = false;
 
-			const allowedSizes = [
-				'120x240',
-				'120x600',
-				'160x600',
-				'250x250',
-				'300x50',
-				'300x100',
-				'300x1050',
-				'300x300',
-				'300x75',
-				'300x250',
-				'300x600',
-				'320x50',
-				'320x100',
-				'336x280',
-				'400x300',
-				'468x60',
-				'728x90',
-				'970x250',
-				'970x90',
-			];
-
 			// Only allow expected sizes in prebid
 			const sizes = slot.getSizes();
 			if (sizes?.length) {
 				sizes.some((size) => {
-					if (allowedSizes.includes(`${size.width}x${size.height}`)) {
+					if (
+						me.allowedSizes.includes(`${size.width}x${size.height}`)
+					) {
 						isPrebid = true;
 						return true;
 					}
@@ -156,6 +157,15 @@ export default class APSInterface extends GPTInterface {
 			return;
 		}
 
+		if (refreshSlots?.noprebid?.length) {
+			me.log.debug(
+				'Refreshing noprebid slots',
+				me.listSlotData(refreshSlots.noprebid),
+				refreshSlots.noprebid
+			);
+			me.pubads().refresh(refreshSlots.noprebid);
+		}
+
 		if (refreshSlots?.prebid?.length) {
 			me.log.debug(
 				`🏷 Requesting bids for ${refreshSlots.prebid.length} prebid slots`,
@@ -176,13 +186,13 @@ export default class APSInterface extends GPTInterface {
 			const apsconfig = {
 				// Reformat GPT slot into what APS really wants
 				slots: apsSlots,
+				timeout: 2e3,
 				params: {
 					adRefresh: '1',
 				},
 			};
 
 			const fetchBids = (apsconfig) => {
-				me.log.debug('fetchBids called', apsconfig, apsconfig.slots);
 				window.apstag.fetchBids(apsconfig, (bids) => {
 					me.queue(() => {
 						window.apstag.setDisplayBids();
@@ -198,15 +208,6 @@ export default class APSInterface extends GPTInterface {
 			};
 
 			fetchBids(apsconfig);
-		}
-
-		if (refreshSlots?.noprebid?.length) {
-			me.log.debug(
-				'Refreshing noprebid slots',
-				me.listSlotData(refreshSlots.noprebid),
-				refreshSlots.noprebid
-			);
-			return me.pubads().refresh(refreshSlots.noprebid);
 		}
 	}
 
