@@ -17,7 +17,8 @@ export default function waitFor(
 		if (checked) {
 			resolve(checked);
 		} else if (Date.now() - start >= timeout) {
-			reject(new Error('Timed out waiting for ref'));
+			console.warn('waitFor timed out', { check, timeout, interval });
+			reject();
 		} else {
 			setTimeout(waiting.bind(this, resolve, reject), interval);
 		}
