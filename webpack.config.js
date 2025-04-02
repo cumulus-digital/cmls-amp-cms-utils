@@ -6,7 +6,6 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const MiniCSSExtractPlugin = require('mini-css-extract-plugin');
 const postCSSPlugins = require('@wordpress/postcss-plugins-preset');
-const jsonInSassImporter = require('node-sass-json-importer');
 const path = require('path');
 const fs = require('fs');
 const glob = require('glob');
@@ -48,12 +47,7 @@ module.exports = (env) => {
 		},
 		{
 			loader: require.resolve('css-loader'),
-			options: {
-				sourceMap: !isProduction,
-				modules: {
-					auto: true,
-				},
-			},
+			options: { sourceMap: !isProduction, modules: { auto: true } },
 		},
 		{
 			loader: require.resolve('postcss-loader'),
@@ -137,12 +131,7 @@ module.exports = (env) => {
 			minimizer: [
 				new TerserPlugin({
 					parallel: true,
-					terserOptions: {
-						compress: {
-							passes: 5,
-						},
-						sourceMap: true,
-					},
+					terserOptions: { compress: { passes: 5 }, sourceMap: true },
 					extractComments: false,
 				}),
 			],
@@ -194,19 +183,13 @@ module.exports = (env) => {
 								['@babel/plugin-transform-runtime'],
 								[
 									'@babel/plugin-transform-react-jsx',
-									{
-										pragma: 'h',
-										pragmaFrag: 'Fragment',
-									},
+									{ pragma: 'h', pragmaFrag: 'Fragment' },
 								],
 							],
 						},
 					},
 				},
-				{
-					test: /\.css$/,
-					use: cssLoaders,
-				},
+				{ test: /\.css$/, use: cssLoaders },
 				{
 					test: /\.(sc|sa)ss$/,
 					use: [
@@ -273,7 +256,7 @@ module.exports = (env) => {
 			static: resolveAppPath('./'),
 
 			// Enable compression
-			compress: true,
+			compress: false,
 
 			// Enable hot reloading
 			hot: false,
@@ -293,6 +276,13 @@ module.exports = (env) => {
 			},
 
 			client: { overlay: false },
+
+			setupMiddlewares: (middlewares) => {
+				return middlewares.filter(
+					(middleware) =>
+						middleware.name !== 'cross-origin-header-check'
+				);
+			},
 		},
 	};
 };
