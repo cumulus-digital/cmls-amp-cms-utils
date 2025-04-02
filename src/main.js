@@ -50,6 +50,8 @@ import * as GTM from 'Utils/GTM';
 import * as tabVisibility from 'Utils/tabVisibility';
 import triggerEvent from 'Utils/triggerEvent';
 import doDynamicImports from 'Utils/doDynamicImports';
+import waitFor from 'Utils/waitFor';
+import isInteractive from 'Utils/isInteractive';
 
 window.__CMLSINTERNAL.libs = {
 	//	$script,
@@ -64,10 +66,9 @@ window.__CMLSINTERNAL.libs = {
 	GTM,
 	tabVisibility,
 	triggerEvent,
-	lodash: {
-		throttle,
-		debounce,
-	},
+	lodash: { throttle, debounce },
+	waitFor,
+	isInteractive,
 };
 
 const urlParams = new URLSearchParams(window.location.search);
@@ -112,4 +113,8 @@ window._CMLS.libsLoaded.push('main');
 // 	/* webpackIgnore: true */ window._CMLS.scriptUrlBase +
 // 		'/functionality.js'
 // );
-require(/* webpackPreload: true, webpackChunkName: 'functionality' */ './functionality.js');
+import(
+	/* webpackPreload: true */
+	/* webpackChunkName: 'functionality-inline' */
+	'./functionality.js'
+);
