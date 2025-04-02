@@ -118,8 +118,7 @@ const log = new Logger(`${scriptName} ${version}`);
 		<nav class="container">
 			<div class="label">Share this:</div>
 			<ul>
-				{Object.keys(services).map((service) => {
-					if (!allowedServices.includes(service)) return '';
+				{allowedServices.map((service) => {
 					const s = services[service];
 					const url = replaceTokens(s.url);
 					const icon = s.icon;
